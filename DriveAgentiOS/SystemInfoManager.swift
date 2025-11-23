@@ -4,7 +4,7 @@ import Network
 import Combine
 
 class SystemInfoManager: ObservableObject {
-    @Published var batteryLevel: Float = 0.0
+    @Published var batteryLevel: Float = -1.0 // Default to -1 to indicate unknown
     @Published var networkStatusSymbol: String = "network.slash"
 
     private let monitor = NWPathMonitor()

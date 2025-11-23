@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  DriveAgentiOS
-//
-//  Created by Justin Li on 2025/11/19.
-//
-
 import SwiftUI
 import CoreLocation
 import MapKit
@@ -95,16 +88,17 @@ struct TopBarView: View {
 
     private func batteryIcon(for level: Float) -> String {
         switch level {
-        case 0.75...: return "battery.100"
-        case 0.50...: return "battery.75"
-        case 0.20...: return "battery.50"
-        default: return "battery.25"
+        case 0.75...: return "battery.100percent"
+        case 0.50...: return "battery.75percent"
+        case 0.25...: return "battery.50percent"
+        case 0.0...: return "battery.25percent"
+        default: return "battery.0percent"
         }
     }
 
     private func batteryColor(for level: Float) -> Color {
         switch level {
-        case 0.20...: return .white
+        case 0.20...: return .primary
         case 0.10...: return .yellow
         default: return .red
         }
@@ -133,7 +127,13 @@ struct ContentView: View {
                 switch locationManager.authorizationStatus {
                 case .denied, .restricted:
                     PermissionDeniedView()
-                default: // Handles .authorizedWhenInUse, .authorizedAlways, and .notDetermined
+                case .notDetermined:
+                    // Show a loading screen while waiting for authorization
+                    ProgressView()
+                        .onAppear {
+                            locationManager.requestPermission()
+                        }
+                default: // Handles .authorizedWhenInUse, .authorizedAlways
                     mainContentView
                 }
             }
@@ -142,9 +142,6 @@ struct ContentView: View {
                 SettingsView()
             }
             .onAppear {
-                if locationManager.authorizationStatus == .notDetermined {
-                    locationManager.requestPermission()
-                }
                 liveActivityManager = LiveActivityManager(locationManager: locationManager)
             }
             .onReceive(locationManager.$currentLocation) { location in
@@ -154,7 +151,7 @@ struct ContentView: View {
                     hasCenteredMap = true
                 }
             }
-            .onReceive(locationManager.recenterPublisher) {_ in 
+            .onReceive(locationManager.recenterPublisher) {_ in
                 if let location = locationManager.currentLocation {
                     // Animate to user's location when relocate is tapped
                     withAnimation {

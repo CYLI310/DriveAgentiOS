@@ -2,6 +2,8 @@ import Foundation
 import ActivityKit
 import Combine
 
+
+
 @MainActor
 class LiveActivityManager {
     private var currentActivity: Activity<SpeedActivityAttributes>?

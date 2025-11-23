@@ -6,32 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		523A31252ECDEA6100DD8FC4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523A31242ECDEA6100DD8FC4 /* WidgetKit.framework */; };
-		523A31272ECDEA6100DD8FC4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523A31262ECDEA6100DD8FC4 /* SwiftUI.framework */; };
-		523A31382ECDEA6200DD8FC4 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 523A31222ECDEA6100DD8FC4 /* WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		523A31452ECDEAB000DD8FC4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523A31242ECDEA6100DD8FC4 /* WidgetKit.framework */; };
-		523A31462ECDEAB000DD8FC4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 523A31262ECDEA6100DD8FC4 /* SwiftUI.framework */; };
-		523A31572ECDEAB100DD8FC4 /* SpeedWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 523A31442ECDEAB000DD8FC4 /* SpeedWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		523A31362ECDEA6200DD8FC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 523A30F92ECDDEC100DD8FC4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 523A31212ECDEA6100DD8FC4;
-			remoteInfo = WidgetExtension;
-		};
-		523A31552ECDEAB100DD8FC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 523A30F92ECDDEC100DD8FC4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 523A31432ECDEAB000DD8FC4;
-			remoteInfo = SpeedWidgetExtension;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		523A313D2ECDEA6200DD8FC4 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -39,8 +13,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				523A31572ECDEAB100DD8FC4 /* SpeedWidgetExtension.appex in Embed Foundation Extensions */,
-				523A31382ECDEA6200DD8FC4 /* WidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,48 +21,17 @@
 
 /* Begin PBXFileReference section */
 		523A31012ECDDEC100DD8FC4 /* DriveAgentiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveAgentiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		523A31222ECDEA6100DD8FC4 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		523A31242ECDEA6100DD8FC4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		523A31262ECDEA6100DD8FC4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		523A31442ECDEAB000DD8FC4 /* SpeedWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpeedWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		523A311D2ECDE9FB00DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "DriveAgentiOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				DriveAgentiOSApp.swift,
+
 			);
 			target = 523A31002ECDDEC100DD8FC4 /* DriveAgentiOS */;
-		};
-		523A313C2ECDEA6200DD8FC4 /* Exceptions for "Widget" folder in "WidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 523A31212ECDEA6100DD8FC4 /* WidgetExtension */;
-		};
-		523A313F2ECDEA6F00DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "WidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				DriveAgentiOSApp.swift,
-			);
-			target = 523A31212ECDEA6100DD8FC4 /* WidgetExtension */;
-		};
-		523A315B2ECDEAB100DD8FC4 /* Exceptions for "SpeedWidget" folder in "SpeedWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 523A31432ECDEAB000DD8FC4 /* SpeedWidgetExtension */;
-		};
-		523A315E2ECDEB0500DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "SpeedWidgetExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ContentView.swift,
-				SpeedActivityAttributes.swift,
-			);
-			target = 523A31432ECDEAB000DD8FC4 /* SpeedWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -99,25 +40,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				523A311D2ECDE9FB00DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "DriveAgentiOS" target */,
-				523A313F2ECDEA6F00DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "WidgetExtension" target */,
-				523A315E2ECDEB0500DD8FC4 /* Exceptions for "DriveAgentiOS" folder in "SpeedWidgetExtension" target */,
 			);
 			path = DriveAgentiOS;
 			sourceTree = "<group>";
 		};
 		523A31282ECDEA6100DD8FC4 /* Widget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				523A313C2ECDEA6200DD8FC4 /* Exceptions for "Widget" folder in "WidgetExtension" target */,
-			);
 			path = Widget;
 			sourceTree = "<group>";
 		};
 		523A31472ECDEAB000DD8FC4 /* SpeedWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				523A315B2ECDEAB100DD8FC4 /* Exceptions for "SpeedWidget" folder in "SpeedWidgetExtension" target */,
-			);
 			path = SpeedWidget;
 			sourceTree = "<group>";
 		};
@@ -128,24 +61,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		523A311F2ECDEA6100DD8FC4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				523A31272ECDEA6100DD8FC4 /* SwiftUI.framework in Frameworks */,
-				523A31252ECDEA6100DD8FC4 /* WidgetKit.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		523A31412ECDEAB000DD8FC4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				523A31462ECDEAB000DD8FC4 /* SwiftUI.framework in Frameworks */,
-				523A31452ECDEAB000DD8FC4 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,8 +82,6 @@
 			isa = PBXGroup;
 			children = (
 				523A31012ECDDEC100DD8FC4 /* DriveAgentiOS.app */,
-				523A31222ECDEA6100DD8FC4 /* WidgetExtension.appex */,
-				523A31442ECDEAB000DD8FC4 /* SpeedWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,8 +110,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				523A31372ECDEA6200DD8FC4 /* PBXTargetDependency */,
-				523A31562ECDEAB100DD8FC4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				523A31032ECDDEC100DD8FC4 /* DriveAgentiOS */,
@@ -209,50 +120,6 @@
 			productName = DriveAgentiOS;
 			productReference = 523A31012ECDDEC100DD8FC4 /* DriveAgentiOS.app */;
 			productType = "com.apple.product-type.application";
-		};
-		523A31212ECDEA6100DD8FC4 /* WidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 523A31392ECDEA6200DD8FC4 /* Build configuration list for PBXNativeTarget "WidgetExtension" */;
-			buildPhases = (
-				523A311E2ECDEA6100DD8FC4 /* Sources */,
-				523A311F2ECDEA6100DD8FC4 /* Frameworks */,
-				523A31202ECDEA6100DD8FC4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				523A31282ECDEA6100DD8FC4 /* Widget */,
-			);
-			name = WidgetExtension;
-			packageProductDependencies = (
-			);
-			productName = WidgetExtension;
-			productReference = 523A31222ECDEA6100DD8FC4 /* WidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
-		523A31432ECDEAB000DD8FC4 /* SpeedWidgetExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 523A31582ECDEAB100DD8FC4 /* Build configuration list for PBXNativeTarget "SpeedWidgetExtension" */;
-			buildPhases = (
-				523A31402ECDEAB000DD8FC4 /* Sources */,
-				523A31412ECDEAB000DD8FC4 /* Frameworks */,
-				523A31422ECDEAB000DD8FC4 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				523A31472ECDEAB000DD8FC4 /* SpeedWidget */,
-			);
-			name = SpeedWidgetExtension;
-			packageProductDependencies = (
-			);
-			productName = SpeedWidgetExtension;
-			productReference = 523A31442ECDEAB000DD8FC4 /* SpeedWidgetExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -265,12 +132,6 @@
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					523A31002ECDDEC100DD8FC4 = {
-						CreatedOnToolsVersion = 26.1.1;
-					};
-					523A31212ECDEA6100DD8FC4 = {
-						CreatedOnToolsVersion = 26.1.1;
-					};
-					523A31432ECDEAB000DD8FC4 = {
 						CreatedOnToolsVersion = 26.1.1;
 					};
 				};
@@ -290,28 +151,12 @@
 			projectRoot = "";
 			targets = (
 				523A31002ECDDEC100DD8FC4 /* DriveAgentiOS */,
-				523A31212ECDEA6100DD8FC4 /* WidgetExtension */,
-				523A31432ECDEAB000DD8FC4 /* SpeedWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		523A30FF2ECDDEC100DD8FC4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		523A31202ECDEA6100DD8FC4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		523A31422ECDEAB000DD8FC4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -328,34 +173,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		523A311E2ECDEA6100DD8FC4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		523A31402ECDEAB000DD8FC4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		523A31372ECDEA6200DD8FC4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 523A31212ECDEA6100DD8FC4 /* WidgetExtension */;
-			targetProxy = 523A31362ECDEA6200DD8FC4 /* PBXContainerItemProxy */;
-		};
-		523A31562ECDEAB100DD8FC4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 523A31432ECDEAB000DD8FC4 /* SpeedWidgetExtension */;
-			targetProxy = 523A31552ECDEAB100DD8FC4 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		523A310A2ECDDEC200DD8FC4 /* Debug */ = {
@@ -539,122 +357,6 @@
 			};
 			name = Release;
 		};
-		523A313A2ECDEA6200DD8FC4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Widget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS.Widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		523A313B2ECDEA6200DD8FC4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Widget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Widget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS.Widget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		523A31592ECDEAB100DD8FC4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SpeedWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SpeedWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS.SpeedWidget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		523A315A2ECDEAB100DD8FC4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SpeedWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SpeedWidget;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS.SpeedWidget;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -672,24 +374,6 @@
 			buildConfigurations = (
 				523A310D2ECDDEC200DD8FC4 /* Debug */,
 				523A310E2ECDDEC200DD8FC4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		523A31392ECDEA6200DD8FC4 /* Build configuration list for PBXNativeTarget "WidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				523A313A2ECDEA6200DD8FC4 /* Debug */,
-				523A313B2ECDEA6200DD8FC4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		523A31582ECDEAB100DD8FC4 /* Build configuration list for PBXNativeTarget "SpeedWidgetExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				523A31592ECDEAB100DD8FC4 /* Debug */,
-				523A315A2ECDEAB100DD8FC4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

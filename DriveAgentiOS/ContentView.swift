@@ -109,13 +109,10 @@ struct TopBarView: View {
 struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
-    @State private var liveActivityManager: LiveActivityManager?
-    
     @State private var showingSettings = false
     @State private var cameraPosition: MapCameraPosition = .automatic
     @State private var hasCenteredMap = false
     @State private var isMapVisible = false
-    @State private var isTripActive = false
 
     var body: some View {
         NavigationStack {
@@ -140,9 +137,6 @@ struct ContentView: View {
             .foregroundColor(.primary)
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
-            }
-            .onAppear {
-                liveActivityManager = LiveActivityManager(locationManager: locationManager)
             }
             .onReceive(locationManager.$currentLocation) { location in
                 if let location, !hasCenteredMap {
@@ -187,23 +181,6 @@ struct ContentView: View {
             
             Spacer()
             
-            // "Start Trip" Button
-            Button {
-                if isTripActive {
-                    liveActivityManager?.stop()
-                } else {
-                    liveActivityManager?.start()
-                }
-                isTripActive.toggle()
-            } label: {
-                Text(isTripActive ? "End Trip" : "Start Trip")
-                    .font(.headline)
-                    .foregroundColor(isTripActive ? .red : .green)
-            }
-            .buttonStyle(GlassButtonStyle())
-            .padding(.bottom)
-
-
             // Map View
             if isMapVisible {
                 Map(position: $cameraPosition) {

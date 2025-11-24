@@ -45,23 +45,110 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
 
+    @Published var accelerationState: AccelerationState = .steady
+    @Published var accelerationMagnitude: Double = 0.0 // m/s² change
+    @Published var tripDistance: Double = 0.0 // meters
+    @Published var maxSpeed: Double = 0.0 // m/s
+    @Published var useMetric: Bool = true
+    
+    private var previousSpeed: CLLocationSpeed = 0
+    private var lastTripLocation: CLLocation?
+
+    enum AccelerationState {
+        case accelerating
+        case decelerating
+        case steady
+        case stopped
+    }
+
+    // ... inside didUpdateLocations ...
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location.coordinate
         
         let speedInMetersPerSecond = location.speed
-        if speedInMetersPerSecond >= 0 {
-            let speedInKilometersPerHour = speedInMetersPerSecond * 3.6
-            currentSpeed = String(format: "%.0f km/h", speedInKilometersPerHour)
-        } else {
-            currentSpeed = "0 km/h"
+        
+        // Update trip distance
+        if let lastLocation = lastTripLocation {
+            let distance = location.distance(from: lastLocation)
+            if distance > 0 && distance < 100 { // Sanity check to avoid GPS jumps
+                tripDistance += distance
+            }
         }
+        lastTripLocation = location
+        
+        if speedInMetersPerSecond > 0 {
+            let speedInKilometersPerHour = speedInMetersPerSecond * 3.6
+            currentSpeed = formatSpeed(speedInMetersPerSecond)
+            
+            // Track max speed
+            if speedInMetersPerSecond > maxSpeed {
+                maxSpeed = speedInMetersPerSecond
+            }
+            
+            // Determine acceleration
+            let speedDiff = speedInMetersPerSecond - previousSpeed
+            accelerationMagnitude = abs(speedDiff)
+            
+            if speedDiff > 0.1 { // Threshold for noise
+                accelerationState = .accelerating
+            } else if speedDiff < -0.1 {
+                accelerationState = .decelerating
+            } else {
+                accelerationState = .steady
+            }
+        } else {
+            currentSpeed = useMetric ? "0 km/h" : "0 mph"
+            accelerationState = .stopped
+            accelerationMagnitude = 0.0
+        }
+        
+        previousSpeed = speedInMetersPerSecond
+
 
         if shouldGeocode(newLocation: location) {
             Task {
                 await geocode(location: location)
             }
         }
+    }
+    
+    private func formatSpeed(_ speedInMetersPerSecond: Double) -> String {
+        if useMetric {
+            let speedInKmh = speedInMetersPerSecond * 3.6
+            return String(format: "%.0f km/h", speedInKmh)
+        } else {
+            let speedInMph = speedInMetersPerSecond * 2.23694
+            return String(format: "%.0f mph", speedInMph)
+        }
+    }
+    
+    func getFormattedDistance() -> String {
+        if useMetric {
+            if tripDistance < 1000 {
+                return String(format: "%.0f m", tripDistance)
+            } else {
+                return String(format: "%.2f km", tripDistance / 1000)
+            }
+        } else {
+            let miles = tripDistance * 0.000621371
+            if miles < 0.1 {
+                let feet = tripDistance * 3.28084
+                return String(format: "%.0f ft", feet)
+            } else {
+                return String(format: "%.2f mi", miles)
+            }
+        }
+    }
+    
+    func getFormattedMaxSpeed() -> String {
+        return formatSpeed(maxSpeed)
+    }
+    
+    func resetTrip() {
+        tripDistance = 0.0
+        maxSpeed = 0.0
+        lastTripLocation = nil
     }
     
     private func shouldGeocode(newLocation: CLLocation) -> Bool {

@@ -107,18 +107,25 @@ struct TopBarView: View {
 
 
 struct ContentView: View {
+    @StateObject private var themeManager = ThemeManager()
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
+
     @State private var showingSettings = false
-    @State private var cameraPosition: MapCameraPosition = .automatic
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 25.0330, longitude: 121.5654),
+        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    )
     @State private var hasCenteredMap = false
     @State private var isMapVisible = false
+    
+    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
     var body: some View {
         NavigationStack {
             ZStack {
-                // Simple dark background
-                Color.black
+                // Background color based on theme
+                (themeManager.currentTheme == .dark ? Color.black : Color(UIColor.systemBackground))
                     .ignoresSafeArea()
 
                 switch locationManager.authorizationStatus {
@@ -126,22 +133,31 @@ struct ContentView: View {
                     PermissionDeniedView()
                 case .notDetermined:
                     // Show a loading screen while waiting for authorization
-                    ProgressView()
-                        .onAppear {
-                            locationManager.requestPermission()
-                        }
+                    VStack {
+                        ProgressView()
+                        Text("Waiting for location permission...")
+                            .padding(.top)
+                        Text("Status: \(locationManager.authorizationStatus.rawValue)")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                    .onAppear {
+                        print("Requesting permission...")
+                        locationManager.requestPermission()
+                    }
                 default: // Handles .authorizedWhenInUse, .authorizedAlways
                     mainContentView
                 }
             }
             .foregroundColor(.primary)
             .sheet(isPresented: $showingSettings) {
-                SettingsView()
+                SettingsView(themeManager: themeManager, locationManager: locationManager)
             }
+
             .onReceive(locationManager.$currentLocation) { location in
                 if let location, !hasCenteredMap {
                     // Center map on the first location update
-                    cameraPosition = .region(MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000))
+                    region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
                     hasCenteredMap = true
                 }
             }
@@ -149,12 +165,19 @@ struct ContentView: View {
                 if let location = locationManager.currentLocation {
                     // Animate to user's location when relocate is tapped
                     withAnimation {
-                        cameraPosition = .region(MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000))
+                        region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
+                    }
+                }
+            }
+            .onReceive(timer) { _ in
+                if isMapVisible, let location = locationManager.currentLocation {
+                    withAnimation {
+                        region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
                     }
                 }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(themeManager.currentTheme.colorScheme)
     }
 
     private var mainContentView: some View {
@@ -163,48 +186,108 @@ struct ContentView: View {
             
             Spacer()
             
-            // Speed and Location Display
-            VStack {
-                Text(locationManager.currentSpeed)
-                    .font(.system(size: 80, weight: .bold, design: .rounded))
-                if let location = locationManager.currentLocation {
-                    Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                } else {
-                    Text("Searching for location...")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+            // Speed and Location Display with Particle Effect
+            ZStack {
+                ParticleEffectView(
+                    accelerationState: locationManager.accelerationState,
+                    accelerationMagnitude: locationManager.accelerationMagnitude
+                )
+                .frame(width: 400, height: 400)
+                
+                VStack(spacing: 8) {
+                    Text(locationManager.currentSpeed)
+                        .font(.system(size: 80, weight: .bold, design: .rounded))
+                    
+                    if locationManager.currentSpeed == "0 km/h" && !isMapVisible {
+                        // Show additional info when stopped
+                        VStack(spacing: 4) {
+                            Text(locationManager.currentStreetName)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+                            
+                            if let location = locationManager.currentLocation {
+                                Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Divider()
+                                .padding(.vertical, 4)
+                            
+                            HStack(spacing: 20) {
+                                VStack(spacing: 2) {
+                                    Text("Trip Distance")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    Text(locationManager.getFormattedDistance())
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                }
+                                
+                                VStack(spacing: 2) {
+                                    Text("Max Speed")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    Text(locationManager.getFormattedMaxSpeed())
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                            
+                            if systemInfoManager.batteryLevel >= 0 {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "battery.100percent")
+                                        .foregroundColor(.green)
+                                    Text("\(Int(systemInfoManager.batteryLevel * 100))%")
+                                        .font(.caption)
+                                }
+                                .padding(.top, 4)
+                            }
+                        }
+                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                    } else if let location = locationManager.currentLocation {
+                        Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Searching for location...")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
-            .padding()
+            .padding(.vertical, 20)
             
             Spacer()
             
             // Map View
             if isMapVisible {
-                Map(position: $cameraPosition) {
-                    if let location = locationManager.currentLocation {
-                        Annotation("", coordinate: location) {
-                            Image(systemName: "car.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .padding(8)
-                                .background(Color.blue)
-                                .clipShape(Circle())
-                                .shadow(radius: 5)
+                ZStack(alignment: .topTrailing) {
+                    Map(coordinateRegion: $region, showsUserLocation: true)
+                        .frame(height: 450)
+                        .clipShape(RoundedRectangle(cornerRadius: 24))
+                    
+                    // Exit button
+                    Button {
+                        withAnimation(.spring()) {
+                            isMapVisible = false
                         }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .background(Circle().fill(Color.black.opacity(0.6)))
                     }
+                    .padding(16)
                 }
-                .mapStyle(.standard(elevation: .realistic))
-                .frame(height: 450)
-                .clipShape(RoundedRectangle(cornerRadius: 24))
-                .padding(.horizontal)
+                .padding(.horizontal, 20)
                 .transition(.opacity.combined(with: .scale(scale: 0.8)))
             }
+            
+            Spacer()
 
             // Buttons
-            HStack(spacing: 30) {
+            HStack(spacing: 40) {
                 Button {
                     locationManager.centerMapOnUserLocation()
                 } label: {
@@ -229,7 +312,8 @@ struct ContentView: View {
                 }
                 .buttonStyle(GlassButtonStyle())
             }
-            .padding()
+            .padding(.vertical, 30)
+            .padding(.bottom, 20)
         }
     }
 }

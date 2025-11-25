@@ -206,7 +206,8 @@ struct ContentView: View {
             ZStack {
                 ParticleEffectView(
                     accelerationState: locationManager.accelerationState,
-                    accelerationMagnitude: locationManager.accelerationMagnitude
+                    accelerationMagnitude: locationManager.accelerationMagnitude,
+                    style: themeManager.particleEffectStyle
                 )
                 .frame(width: 400, height: 400)
                 

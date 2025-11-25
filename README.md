@@ -43,6 +43,11 @@ DriveAgentiOS is built with SwiftUI and relies on the following Apple frameworks
 - **Combine:** For handling asynchronous events and data streams.
 - **WidgetKit:** For creating the home screen widgets.
 
+## Known Issues
+
+- **Xcode Build Cache:** The project may fail to build on the first attempt due to a stale Xcode cache. If you encounter a build error related to a duplicate `SpeedActivityAttributes` struct, please try cleaning the build folder (`Cmd+Shift+K`) and rebuilding the project.
+- **`CLGeocoder` Deprecation:** The `CLGeocoder` class is deprecated in iOS 16.0. The app currently uses this deprecated API and will be updated in a future release.
+
 ## Contributing
 
 We welcome contributions from the community! If you'd like to contribute to DriveAgentiOS, please follow these steps:

@@ -110,6 +110,7 @@ struct ContentView: View {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
+    @StateObject private var speedTrapDetector = SpeedTrapDetector()
 
     @State private var showingSettings = false
     @State private var region = MKCoordinateRegion(
@@ -118,6 +119,7 @@ struct ContentView: View {
     )
     @State private var hasCenteredMap = false
     @State private var isMapVisible = false
+    @State private var showOnboarding = false
     
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
@@ -151,7 +153,16 @@ struct ContentView: View {
             }
             .foregroundColor(.primary)
             .sheet(isPresented: $showingSettings) {
-                SettingsView(themeManager: themeManager, locationManager: locationManager)
+                SettingsView(themeManager: themeManager, locationManager: locationManager, speedTrapDetector: speedTrapDetector)
+            }
+            .fullScreenCover(isPresented: $showOnboarding) {
+                OnboardingView(isPresented: $showOnboarding)
+            }
+            .onAppear {
+                // Check if this is the first launch
+                if !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
+                    showOnboarding = true
+                }
             }
 
             .onReceive(locationManager.$currentLocation) { location in
@@ -159,6 +170,11 @@ struct ContentView: View {
                     // Center map on the first location update
                     region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
                     hasCenteredMap = true
+                }
+                
+                // Check for nearby speed traps
+                if let location {
+                    speedTrapDetector.checkForNearbyTraps(userLocation: location)
                 }
             }
             .onReceive(locationManager.recenterPublisher) {_ in
@@ -285,6 +301,46 @@ struct ContentView: View {
             }
             
             Spacer()
+            
+            // Speed Trap Warning
+            if let trap = speedTrapDetector.closestTrap, speedTrapDetector.isWithinRange {
+                VStack(spacing: 8) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "camera.fill")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Speed Camera Ahead!")
+                                .font(.headline)
+                                .foregroundColor(.red)
+                            
+                            Text("\(Int(trap.distance))m • Limit: \(trap.speedLimit.replacingOccurrences(of: ".0", with: "")) km/h")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text(trap.address)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.red.opacity(0.5), lineWidth: 2)
+                            )
+                    )
+                }
+                .padding(.horizontal, 20)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(), value: speedTrapDetector.isWithinRange)
+            }
 
             // Buttons
             HStack(spacing: 40) {

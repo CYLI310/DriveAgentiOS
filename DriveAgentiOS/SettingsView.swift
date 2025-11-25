@@ -37,6 +37,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var themeManager: ThemeManager
     @ObservedObject var locationManager: LocationManager
+    @ObservedObject var speedTrapDetector: SpeedTrapDetector
     @State private var alertProximity: Double = 500 // meters
 
     var body: some View {
@@ -79,16 +80,26 @@ struct SettingsView: View {
                     .foregroundColor(.red)
                 }
                 
-                Section(header: Text("Alerts")) {
+                Section(header: Text("Speed Camera Alerts")) {
                     VStack(alignment: .leading) {
-                        Text("Alert Proximity: \(Int(alertProximity)) meters")
+                        Text("Alert Distance: \(Int(alertProximity)) meters")
                         Slider(value: $alertProximity, in: 100...2000, step: 50)
+                            .onChange(of: alertProximity) { newValue in
+                                speedTrapDetector.alertDistance = newValue
+                            }
                     }
+                    Text("You'll be alerted when within this distance of a speed camera")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 
                 Section(header: Text("Other Settings")) {
                     Text("More settings will go here...")
                 }
+            }
+            .onAppear {
+                // Sync with current detector value
+                alertProximity = speedTrapDetector.alertDistance
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -104,5 +115,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(themeManager: ThemeManager(), locationManager: LocationManager())
+    SettingsView(themeManager: ThemeManager(), locationManager: LocationManager(), speedTrapDetector: SpeedTrapDetector())
 }

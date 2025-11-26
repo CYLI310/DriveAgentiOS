@@ -9,72 +9,125 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct SpeedWidgetAttributes: ActivityAttributes {
+// Import the shared attributes from the main app
+@available(iOS 16.1, *)
+struct SpeedActivityAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
+        var speed: String
     }
-
-    // Fixed non-changing properties about your activity go here!
-    var name: String
 }
 
+@available(iOS 16.1, *)
 struct SpeedWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: SpeedWidgetAttributes.self) { context in
+        ActivityConfiguration(for: SpeedActivityAttributes.self) { context in
             // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
+            HStack(spacing: 16) {
+                // Speed icon
+                Image(systemName: "speedometer")
+                    .font(.title2)
+                    .foregroundStyle(.white)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Current Speed")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.8))
+                    
+                    Text(context.state.speed)
+                        .font(.title.bold())
+                        .foregroundStyle(.white)
+                }
+                
+                Spacer()
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .padding(16)
+            .activityBackgroundTint(Color.black.opacity(0.8))
+            .activitySystemActionForegroundColor(Color.white)
 
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
+                // Expanded UI - shows detailed speed information
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    Image(systemName: "speedometer")
+                        .font(.title2)
+                        .foregroundStyle(.white)
                 }
+                
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("Speed")
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.7))
+                        Text(context.state.speed)
+                            .font(.title3.bold())
+                            .foregroundStyle(.white)
+                    }
                 }
+                
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    HStack {
+                        Image(systemName: "car.fill")
+                            .foregroundStyle(.white.opacity(0.6))
+                        Text("DriveAgent")
+                            .font(.caption)
+                            .foregroundStyle(.white.opacity(0.8))
+                        Spacer()
+                        Text("Tracking...")
+                            .font(.caption2)
+                            .foregroundStyle(.green)
+                    }
+                    .padding(.top, 8)
                 }
             } compactLeading: {
-                Text("L")
+                // Compact leading - speedometer icon
+                Image(systemName: "speedometer")
+                    .foregroundStyle(.white)
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                // Compact trailing - just the speed number
+                Text(extractSpeedNumber(from: context.state.speed))
+                    .font(.system(.body, design: .rounded).bold())
+                    .foregroundStyle(.white)
             } minimal: {
-                Text(context.state.emoji)
+                // Minimal - just a speedometer icon
+                Image(systemName: "speedometer")
+                    .foregroundStyle(.white)
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            .keylineTint(Color.blue)
         }
     }
-}
-
-extension SpeedWidgetAttributes {
-    fileprivate static var preview: SpeedWidgetAttributes {
-        SpeedWidgetAttributes(name: "World")
+    
+    // Helper function to extract just the number from "XX km/h" or "XX mph"
+    private func extractSpeedNumber(from speedString: String) -> String {
+        let components = speedString.components(separatedBy: " ")
+        return components.first ?? "0"
     }
 }
 
-extension SpeedWidgetAttributes.ContentState {
-    fileprivate static var smiley: SpeedWidgetAttributes.ContentState {
-        SpeedWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: SpeedWidgetAttributes.ContentState {
-         SpeedWidgetAttributes.ContentState(emoji: "🤩")
-     }
+// Preview support
+extension SpeedActivityAttributes {
+    fileprivate static var preview: SpeedActivityAttributes {
+        SpeedActivityAttributes()
+    }
 }
 
-#Preview("Notification", as: .content, using: SpeedWidgetAttributes.preview) {
+extension SpeedActivityAttributes.ContentState {
+    fileprivate static var slow: SpeedActivityAttributes.ContentState {
+        SpeedActivityAttributes.ContentState(speed: "25 km/h")
+    }
+    
+    fileprivate static var fast: SpeedActivityAttributes.ContentState {
+        SpeedActivityAttributes.ContentState(speed: "80 km/h")
+    }
+    
+    fileprivate static var stopped: SpeedActivityAttributes.ContentState {
+        SpeedActivityAttributes.ContentState(speed: "0 km/h")
+    }
+}
+
+#Preview("Notification", as: .content, using: SpeedActivityAttributes.preview) {
    SpeedWidgetLiveActivity()
 } contentStates: {
-    SpeedWidgetAttributes.ContentState.smiley
-    SpeedWidgetAttributes.ContentState.starEyes
+    SpeedActivityAttributes.ContentState.slow
+    SpeedActivityAttributes.ContentState.fast
+    SpeedActivityAttributes.ContentState.stopped
 }

@@ -111,6 +111,8 @@ struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
     @StateObject private var speedTrapDetector = SpeedTrapDetector()
+    @State private var liveActivityManager: LiveActivityManager?
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingSettings = false
     @State private var region = MKCoordinateRegion(
@@ -162,6 +164,31 @@ struct ContentView: View {
                 // Check if this is the first launch
                 if !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
                     showOnboarding = true
+                }
+                
+                // Initialize LiveActivityManager (iOS 16.1+)
+                if #available(iOS 16.1, *) {
+                    if liveActivityManager == nil {
+                        liveActivityManager = LiveActivityManager(locationManager: locationManager)
+                    }
+                }
+            }
+            .onChange(of: scenePhase) { oldPhase, newPhase in
+                if #available(iOS 16.1, *) {
+                    switch newPhase {
+                    case .background:
+                        // Start Live Activity when app goes to background
+                        liveActivityManager?.start()
+                        print("App moved to background - starting Live Activity")
+                    case .active:
+                        // Stop Live Activity when app comes to foreground
+                        liveActivityManager?.stop()
+                        print("App moved to foreground - stopping Live Activity")
+                    case .inactive:
+                        break
+                    @unknown default:
+                        break
+                    }
                 }
             }
 

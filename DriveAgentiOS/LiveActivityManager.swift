@@ -4,6 +4,7 @@ import Combine
 
 
 
+@available(iOS 16.1, *)
 @MainActor
 class LiveActivityManager {
     private var currentActivity: Activity<SpeedActivityAttributes>?

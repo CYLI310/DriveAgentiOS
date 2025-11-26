@@ -45,13 +45,24 @@ struct SettingsView: View {
     @ObservedObject var themeManager: ThemeManager
     @ObservedObject var locationManager: LocationManager
     @ObservedObject var speedTrapDetector: SpeedTrapDetector
+    @ObservedObject var languageManager: LanguageManager
     @State private var alertProximity: Double = 500 // meters
+    @State private var showTutorial = false
 
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Appearance")) {
-                    Picker("Theme", selection: $themeManager.currentTheme) {
+                Section(header: Text(languageManager.localize("Language"))) {
+                    Picker(languageManager.localize("Language"), selection: $languageManager.currentLanguage) {
+                        ForEach(AppLanguage.allCases) { language in
+                            Text(language.rawValue).tag(language)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
+                Section(header: Text(languageManager.localize("Appearance"))) {
+                    Picker(languageManager.localize("Theme"), selection: $themeManager.currentTheme) {
                         ForEach(AppTheme.allCases) { theme in
                             Text(theme.rawValue).tag(theme)
                         }
@@ -59,77 +70,100 @@ struct SettingsView: View {
                     .pickerStyle(.segmented)
                 }
                 
-                Section(header: Text("Particle Effects")) {
-                    Picker("Effect Style", selection: $themeManager.particleEffectStyle) {
+                Section(header: Text(languageManager.localize("Particle Effects"))) {
+                    Picker(languageManager.localize("Effect Style"), selection: $themeManager.particleEffectStyle) {
                         ForEach(ParticleEffectStyle.allCases) { style in
                             Text(style.rawValue).tag(style)
                         }
                     }
                     .pickerStyle(.menu)
                     
-                    Text(effectDescription)
+                    Text(languageManager.localize(effectDescription))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 
-                Section(header: Text("Units")) {
-                    Toggle("Use Metric (km/h, km)", isOn: $locationManager.useMetric)
-                    Text(locationManager.useMetric ? "Speed in km/h, distance in km/m" : "Speed in mph, distance in mi/ft")
+                Section(header: Text(languageManager.localize("Units"))) {
+                    Toggle(languageManager.localize("Use Metric"), isOn: $locationManager.useMetric)
+                    Text(locationManager.useMetric ? languageManager.localize("Metric Description") : languageManager.localize("Imperial Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 
-                Section(header: Text("Trip")) {
+                Section(header: Text(languageManager.localize("Trip"))) {
                     HStack {
-                        Text("Distance")
+                        Text(languageManager.localize("Distance"))
                         Spacer()
                         Text(locationManager.getFormattedDistance())
                             .foregroundColor(.secondary)
                     }
                     
                     HStack {
-                        Text("Max Speed")
+                        Text(languageManager.localize("Max Speed"))
                         Spacer()
                         Text(locationManager.getFormattedMaxSpeed())
                             .foregroundColor(.secondary)
                     }
                     
-                    Button("Reset Trip") {
+                    Button(languageManager.localize("Reset Trip")) {
                         locationManager.resetTrip()
                     }
                     .foregroundColor(.red)
                 }
                 
-                Section(header: Text("Speed Camera Alerts")) {
+                Section(header: Text(languageManager.localize("Speed Camera Alerts"))) {
+                    Toggle(languageManager.localize("Infinite Proximity"), isOn: $speedTrapDetector.infiniteProximity)
+                    Text(speedTrapDetector.infiniteProximity ? 
+                         languageManager.localize("Infinite Proximity On") :
+                         languageManager.localize("Infinite Proximity Off"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Divider()
+                    
                     VStack(alignment: .leading) {
-                        Text("Alert Distance: \(Int(alertProximity)) meters")
+                        Text("\(languageManager.localize("Alert Distance")): \(Int(alertProximity)) m")
                         Slider(value: $alertProximity, in: 100...2000, step: 50)
                             .onChange(of: alertProximity) { newValue in
                                 speedTrapDetector.alertDistance = newValue
                             }
                     }
-                    Text("You'll be alerted when within this distance of a speed camera")
+                    Text(languageManager.localize("Alert Distance Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
                 
-                Section(header: Text("Other Settings")) {
-                    Text("More settings will go here...")
+                Section(header: Text(languageManager.localize("Other Settings"))) {
+                    Button {
+                        showTutorial = true
+                    } label: {
+                        HStack {
+                            Text(languageManager.localize("Show Tutorial"))
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .foregroundColor(.primary)
                 }
             }
             .onAppear {
                 // Sync with current detector value
                 alertProximity = speedTrapDetector.alertDistance
             }
-            .navigationTitle("Settings")
+            .navigationTitle(languageManager.localize("Settings"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
+                    Button(languageManager.localize("Done")) {
                         dismiss()
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showTutorial) {
+            OnboardingView(isPresented: $showTutorial, languageManager: languageManager)
         }
     }
     
@@ -148,5 +182,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(themeManager: ThemeManager(), locationManager: LocationManager(), speedTrapDetector: SpeedTrapDetector())
+    SettingsView(themeManager: ThemeManager(), locationManager: LocationManager(), speedTrapDetector: SpeedTrapDetector(), languageManager: LanguageManager())
 }

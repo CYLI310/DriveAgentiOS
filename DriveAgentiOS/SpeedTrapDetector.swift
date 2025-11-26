@@ -33,6 +33,7 @@ class SpeedTrapDetector: ObservableObject {
     @Published var closestTrap: SpeedTrapInfo?
     @Published var isWithinRange: Bool = false
     @Published var alertDistance: Double = 500 // meters - configurable
+    @Published var infiniteProximity: Bool = false // when true, ignores 2km limit
     
     private var lastCheckLocation: CLLocation?
     private var isChecking = false
@@ -46,13 +47,17 @@ class SpeedTrapDetector: ObservableObject {
         
         if let lastLocation = lastCheckLocation {
             let distance = currentLocation.distance(from: lastLocation)
-            if distance < 100 {
+            // Skip check if haven't moved 100m AND infinite proximity is OFF
+            if distance < 100 && !infiniteProximity {
                 return
             }
         }
         
         lastCheckLocation = currentLocation
         isChecking = true
+        
+        // Capture the setting value before entering detached task
+        let useInfiniteProximity = infiniteProximity
         
         Task.detached(priority: .utility) {
             defer {
@@ -87,8 +92,11 @@ class SpeedTrapDetector: ObservableObject {
                     
                     let distance = currentLocation.distance(from: trapLocation)
                     
-                    // Only consider traps within 2km and closer than current closest
-                    if distance < 2000 && distance < closestDistance {
+                    // Check distance based on infiniteProximity setting
+                    let withinRange = useInfiniteProximity || distance < 2000
+                    
+                    // Only consider traps within range and closer than current closest
+                    if withinRange && distance < closestDistance {
                         closestDistance = distance
                         closestTrapData = (
                             coordinate: CLLocationCoordinate2D(
@@ -123,6 +131,59 @@ class SpeedTrapDetector: ObservableObject {
             } catch {
                 print("Error reading speed traps: \(error)")
             }
+        }
+    }
+    
+    func getNearestSpeedTraps(userLocation: CLLocationCoordinate2D, count: Int = 10) async -> [SpeedTrapInfo] {
+        let currentLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        
+        guard let url = Bundle.main.url(forResource: "speedtraps", withExtension: "geojson") else {
+            print("Speed traps file not found")
+            return []
+        }
+        
+        do {
+            let data = try Data(contentsOf: url)
+            let decoder = JSONDecoder()
+            let collection = try decoder.decode(MinimalFeatureCollection.self, from: data)
+            
+            // Calculate distances for all traps
+            var trapsWithDistance: [(trap: SpeedTrapInfo, distance: Double)] = []
+            
+            for feature in collection.features {
+                guard feature.geometry.coordinates.count >= 2 else { continue }
+                
+                let trapLocation = CLLocation(
+                    latitude: feature.geometry.coordinates[1],
+                    longitude: feature.geometry.coordinates[0]
+                )
+                
+                let distance = currentLocation.distance(from: trapLocation)
+                
+                let trapInfo = SpeedTrapInfo(
+                    coordinate: CLLocationCoordinate2D(
+                        latitude: feature.geometry.coordinates[1],
+                        longitude: feature.geometry.coordinates[0]
+                    ),
+                    speedLimit: feature.properties.name,
+                    address: feature.properties.設置地址,
+                    distance: distance
+                )
+                
+                trapsWithDistance.append((trap: trapInfo, distance: distance))
+            }
+            
+            // Sort by distance and take the nearest 'count' traps
+            let nearestTraps = trapsWithDistance
+                .sorted { $0.distance < $1.distance }
+                .prefix(count)
+                .map { $0.trap }
+            
+            return Array(nearestTraps)
+            
+        } catch {
+            print("Error reading speed traps: \(error)")
+            return []
         }
     }
 }

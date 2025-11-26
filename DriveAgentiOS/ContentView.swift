@@ -111,10 +111,12 @@ struct ContentView: View {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
     @StateObject private var speedTrapDetector = SpeedTrapDetector()
+    @StateObject private var languageManager = LanguageManager()
     @State private var liveActivityManager: LiveActivityManager?
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingSettings = false
+    @State private var showingSpeedTrapList = false
     @State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 25.0330, longitude: 121.5654),
         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
@@ -134,7 +136,7 @@ struct ContentView: View {
 
                 switch locationManager.authorizationStatus {
                 case .denied, .restricted:
-                    PermissionDeniedView()
+                    PermissionDeniedView(languageManager: languageManager)
                 case .notDetermined:
                     // Show a loading screen while waiting for authorization
                     VStack {
@@ -155,10 +157,10 @@ struct ContentView: View {
             }
             .foregroundColor(.primary)
             .sheet(isPresented: $showingSettings) {
-                SettingsView(themeManager: themeManager, locationManager: locationManager, speedTrapDetector: speedTrapDetector)
+                SettingsView(themeManager: themeManager, locationManager: locationManager, speedTrapDetector: speedTrapDetector, languageManager: languageManager)
             }
             .fullScreenCover(isPresented: $showOnboarding) {
-                OnboardingView(isPresented: $showOnboarding)
+                OnboardingView(isPresented: $showOnboarding, languageManager: languageManager)
             }
             .onAppear {
                 // Check if this is the first launch
@@ -204,6 +206,12 @@ struct ContentView: View {
                     speedTrapDetector.checkForNearbyTraps(userLocation: location)
                 }
             }
+            .onChange(of: speedTrapDetector.infiniteProximity) { newValue in
+                // Force a check when the setting is toggled
+                if let location = locationManager.currentLocation {
+                    speedTrapDetector.checkForNearbyTraps(userLocation: location)
+                }
+            }
             .onReceive(locationManager.recenterPublisher) {_ in
                 if let location = locationManager.currentLocation {
                     // Animate to user's location when relocate is tapped
@@ -226,6 +234,7 @@ struct ContentView: View {
     private var mainContentView: some View {
         VStack {
             TopBarView(systemInfoManager: systemInfoManager, locationManager: locationManager)
+                .padding(.top, 40)
             
             Spacer()
             
@@ -260,7 +269,7 @@ struct ContentView: View {
                             
                             HStack(spacing: 20) {
                                 VStack(spacing: 2) {
-                                    Text("Trip Distance")
+                                    Text(languageManager.localize("Trip Distance"))
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                     Text(locationManager.getFormattedDistance())
@@ -269,7 +278,7 @@ struct ContentView: View {
                                 }
                                 
                                 VStack(spacing: 2) {
-                                    Text("Max Speed")
+                                    Text(languageManager.localize("Max Speed"))
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                     Text(locationManager.getFormattedMaxSpeed())
@@ -294,7 +303,7 @@ struct ContentView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     } else {
-                        Text("Searching for location...")
+                        Text(languageManager.localize("Searching for location..."))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -303,6 +312,48 @@ struct ContentView: View {
             .padding(.vertical, 20)
             
             Spacer()
+            
+            // Speed Trap Warning
+            if let trap = speedTrapDetector.closestTrap, 
+               speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity {
+                VStack(spacing: 8) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "camera.fill")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(languageManager.localize("Speed Camera Ahead!"))
+                                .font(.headline)
+                                .foregroundColor(.red)
+                            
+                            Text("\(formatDistance(trap.distance)) • \(languageManager.localize("Limit")): \(trap.speedLimit.replacingOccurrences(of: ".0", with: "")) km/h")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text(trap.address)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(.ultraThinMaterial)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.red.opacity(0.5), lineWidth: 2)
+                            )
+                    )
+                }
+                .padding(.horizontal, 20)
+                .transition(.opacity.combined(with: .scale))
+                .animation(.spring(), value: speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity)
+                .padding(.bottom, 10)
+            }
             
             // Map View
             if isMapVisible {
@@ -328,54 +379,28 @@ struct ContentView: View {
                 .transition(.opacity.combined(with: .scale(scale: 0.8)))
             }
             
+            // Speed Trap List View
+            if showingSpeedTrapList {
+                SpeedTrapListView(
+                    speedTrapDetector: speedTrapDetector,
+                    locationManager: locationManager,
+                    languageManager: languageManager,
+                    isPresented: $showingSpeedTrapList
+                )
+            }
+            
             Spacer()
             
-            // Speed Trap Warning
-            if let trap = speedTrapDetector.closestTrap, speedTrapDetector.isWithinRange {
-                VStack(spacing: 8) {
-                    HStack(spacing: 12) {
-                        Image(systemName: "camera.fill")
-                            .font(.title2)
-                            .foregroundColor(.red)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Speed Camera Ahead!")
-                                .font(.headline)
-                                .foregroundColor(.red)
-                            
-                            Text("\(Int(trap.distance))m • Limit: \(trap.speedLimit.replacingOccurrences(of: ".0", with: "")) km/h")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Text(trap.address)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.red.opacity(0.5), lineWidth: 2)
-                            )
-                    )
-                }
-                .padding(.horizontal, 20)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                .animation(.spring(), value: speedTrapDetector.isWithinRange)
-            }
+
 
             // Buttons
             HStack(spacing: 40) {
                 Button {
-                    locationManager.centerMapOnUserLocation()
+                    withAnimation(.spring()) {
+                        showingSpeedTrapList = true
+                    }
                 } label: {
-                    Image(systemName: "location.circle")
+                    Image(systemName: "camera.metering.multispot")
                 }
                 .buttonStyle(GlassButtonStyle())
                 
@@ -397,26 +422,37 @@ struct ContentView: View {
                 .buttonStyle(GlassButtonStyle())
             }
             .padding(.vertical, 30)
-            .padding(.bottom, 20)
+            .padding(.bottom, 40)
+        }
+    }
+    
+    // Helper function to format distance
+    private func formatDistance(_ meters: Double) -> String {
+        if meters < 1000 {
+            return "\(Int(meters))m"
+        } else {
+            return String(format: "%.1f km", meters / 1000)
         }
     }
 }
 
 struct PermissionDeniedView: View {
+    @ObservedObject var languageManager: LanguageManager
+    
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "location.slash.fill")
                 .font(.largeTitle)
                 .foregroundColor(.secondary)
-            Text("Location Access Denied")
+            Text(languageManager.localize("Location Access Denied"))
                 .font(.title2.bold())
-            Text("To provide speed and location data, this app needs access to your location. Please enable it in Settings.")
+            Text(languageManager.localize("Location Permission Text"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            Button("Open Settings") {
+            Button(languageManager.localize("Open Settings")) {
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }

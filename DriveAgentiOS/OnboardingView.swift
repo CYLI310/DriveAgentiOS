@@ -2,37 +2,38 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Binding var isPresented: Bool
+    @ObservedObject var languageManager: LanguageManager
     @State private var currentPage = 0
     
     let pages = [
         OnboardingPage(
             icon: "speedometer",
             title: "Track Your Speed",
-            description: "See your current speed in real-time with dynamic particle effects that change color based on acceleration",
+            description: "Track Speed Desc",
             color: .blue
         ),
         OnboardingPage(
             icon: "map.fill",
             title: "View Your Route",
-            description: "Tap the map button to see your location on the map. Use the X button to exit map view",
+            description: "View Route Desc",
             color: .green
         ),
         OnboardingPage(
-            icon: "location.circle.fill",
-            title: "Recenter Map",
-            description: "Tap the location button to recenter the map on your current position",
-            color: .orange
+            icon: "camera.metering.multispot",
+            title: "Speed Cameras",
+            description: "Speed Cameras Desc",
+            color: .red
         ),
         OnboardingPage(
             icon: "gearshape.fill",
             title: "Customize Settings",
-            description: "Access settings to switch between metric/imperial units, change theme, view trip stats, and reset your trip",
+            description: "Customize Settings Desc",
             color: .purple
         ),
         OnboardingPage(
             icon: "info.circle.fill",
             title: "Trip Information",
-            description: "When stopped, you'll see your current street, trip distance, max speed, and battery level",
+            description: "Trip Info Desc",
             color: .cyan
         )
     ]
@@ -55,7 +56,7 @@ struct OnboardingView: View {
                 
                 TabView(selection: $currentPage) {
                     ForEach(0..<pages.count, id: \.self) { index in
-                        OnboardingPageView(page: pages[index])
+                        OnboardingPageView(page: pages[index], languageManager: languageManager)
                             .tag(index)
                     }
                 }
@@ -64,7 +65,7 @@ struct OnboardingView: View {
                 // Navigation buttons
                 HStack {
                     if currentPage > 0 {
-                        Button("Back") {
+                        Button(languageManager.localize("Back")) {
                             withAnimation {
                                 currentPage -= 1
                             }
@@ -75,15 +76,16 @@ struct OnboardingView: View {
                     Spacer()
                     
                     if currentPage < pages.count - 1 {
-                        Button("Next") {
+                        Button(languageManager.localize("Next")) {
                             withAnimation {
                                 currentPage += 1
                             }
                         }
                         .foregroundColor(.white)
                         .fontWeight(.semibold)
+                        .transition(.opacity)
                     } else {
-                        Button("Get Started") {
+                        Button(languageManager.localize("Get Started")) {
                             isPresented = false
                             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                         }
@@ -99,8 +101,10 @@ struct OnboardingView: View {
                             )
                         )
                         .clipShape(Capsule())
+                        .transition(.scale.combined(with: .opacity))
                     }
                 }
+                .animation(.spring(), value: currentPage)
                 .padding(.horizontal, 30)
                 .padding(.bottom, 40)
             }
@@ -110,6 +114,7 @@ struct OnboardingView: View {
 
 struct OnboardingPageView: View {
     let page: OnboardingPage
+    @ObservedObject var languageManager: LanguageManager
     
     var body: some View {
         VStack(spacing: 30) {
@@ -125,12 +130,12 @@ struct OnboardingPageView: View {
                 .padding(.top, 50)
             
             VStack(spacing: 16) {
-                Text(page.title)
+                Text(languageManager.localize(page.title))
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                 
-                Text(page.description)
+                Text(languageManager.localize(page.description))
                     .font(.body)
                     .foregroundColor(.white.opacity(0.8))
                     .multilineTextAlignment(.center)
@@ -150,5 +155,5 @@ struct OnboardingPage {
 }
 
 #Preview {
-    OnboardingView(isPresented: .constant(true))
+    OnboardingView(isPresented: .constant(true), languageManager: LanguageManager())
 }

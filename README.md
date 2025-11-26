@@ -5,6 +5,7 @@ DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhanc
 ## Features
 
 - **Real-Time Speed and Location Tracking:** Get accurate, up-to-the-second information on your speed and GPS coordinates.
+- **Speed Camera Detection:** View the nearest 10 speed cameras with distance and speed limit information at a glance.
 - **Interactive Map View:** Visualize your current location on a dynamic map with smooth animations and user-friendly controls.
 - **"Liquid Glass" UI:** A stunning, modern interface with translucent elements and fluid animations that create a unique "liquid glass" effect.
 - **Live Activities:** Keep track of your trip's progress with Live Activities on your lock screen and Dynamic Island.

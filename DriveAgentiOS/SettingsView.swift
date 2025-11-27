@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import AudioToolbox
 
 enum AppTheme: String, CaseIterable, Identifiable {
     case system = "System"
@@ -48,6 +49,7 @@ struct SettingsView: View {
     @ObservedObject var languageManager: LanguageManager
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
+    @State private var selectedSoundID: Int = UserDefaults.standard.integer(forKey: "selectedAlertSound") != 0 ? UserDefaults.standard.integer(forKey: "selectedAlertSound") : AlertFeedbackManager.AlertSound.pop.rawValue
 
     var body: some View {
         NavigationStack {
@@ -131,6 +133,19 @@ struct SettingsView: View {
                     Text(languageManager.localize("Alert Distance Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        
+                    Divider()
+                    
+                    Picker(languageManager.localize("Alert Sound"), selection: $selectedSoundID) {
+                        ForEach(AlertFeedbackManager.AlertSound.allCases) { sound in
+                            Text(sound.name).tag(sound.rawValue)
+                        }
+                    }
+                    .onChange(of: selectedSoundID) { newValue in
+                        // Save selection and preview sound
+                        UserDefaults.standard.set(newValue, forKey: "selectedAlertSound")
+                        AudioServicesPlaySystemSound(SystemSoundID(newValue))
+                    }
                 }
                 
                 Section(header: Text(languageManager.localize("Other Settings"))) {

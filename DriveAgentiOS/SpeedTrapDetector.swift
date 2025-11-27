@@ -32,13 +32,14 @@ private struct MinimalFeatureCollection: Decodable {
 class SpeedTrapDetector: ObservableObject {
     @Published var closestTrap: SpeedTrapInfo?
     @Published var isWithinRange: Bool = false
+    @Published var isSpeeding: Bool = false // true when speed exceeds speed limit
     @Published var alertDistance: Double = 500 // meters - configurable
     @Published var infiniteProximity: Bool = false // when true, ignores 2km limit
     
     private var lastCheckLocation: CLLocation?
     private var isChecking = false
     
-    func checkForNearbyTraps(userLocation: CLLocationCoordinate2D) {
+    func checkForNearbyTraps(userLocation: CLLocationCoordinate2D, currentSpeed: Double = 0) {
         // Prevent concurrent checks
         guard !isChecking else { return }
         
@@ -122,9 +123,18 @@ class SpeedTrapDetector: ObservableObject {
                             distance: closestDistance
                         )
                         self.isWithinRange = closestDistance <= self.alertDistance
+                        
+                        // Check if speeding (compare current speed in km/h with speed limit)
+                        if let speedLimitValue = Double(trapData.speedLimit.replacingOccurrences(of: ".0", with: "")) {
+                            let currentSpeedKmh = currentSpeed * 3.6 // Convert m/s to km/h
+                            self.isSpeeding = (self.isWithinRange || self.infiniteProximity) && currentSpeedKmh > speedLimitValue
+                        } else {
+                            self.isSpeeding = false
+                        }
                     } else {
                         self.closestTrap = nil
                         self.isWithinRange = false
+                        self.isSpeeding = false
                     }
                 }
                 

@@ -13,8 +13,10 @@ struct ParticleEffectView: View {
     let accelerationState: LocationManager.AccelerationState
     let accelerationMagnitude: Double
     let style: ParticleEffectStyle
+    let isSpeeding: Bool // New parameter for speeding state
     @State private var particles: [Particle] = []
     @State private var breathingOpacity: Double = 1.0
+    @State private var speedingBreathingOpacity: Double = 1.0 // Fast breathing for speeding
     @State private var rotationAngle: Double = 0
     @State private var pulseScale: Double = 1.0
     
@@ -28,17 +30,17 @@ struct ParticleEffectView: View {
                     
                     for (index, particle) in particles.enumerated() {
                         let position = calculatePosition(for: particle, at: index, center: center)
-                        let opacity = breathingOpacity * particle.opacity * 0.9
+                        let finalOpacity = isSpeeding ? speedingBreathingOpacity * particle.opacity * 0.9 : breathingOpacity * particle.opacity * 0.9
                         
                         // Draw glow
-                        context.opacity = opacity * 0.3
+                        context.opacity = finalOpacity * 0.3
                         context.fill(
                             Circle().path(in: CGRect(x: position.x - particle.size * 2, y: position.y - particle.size * 2, width: particle.size * 4, height: particle.size * 4)),
                             with: .color(glowColor)
                         )
                         
                         // Draw particle
-                        context.opacity = opacity
+                        context.opacity = finalOpacity
                         context.fill(
                             Circle().path(in: CGRect(x: position.x - particle.size / 2, y: position.y - particle.size / 2, width: particle.size, height: particle.size)),
                             with: .color(particleColor)
@@ -58,6 +60,19 @@ struct ParticleEffectView: View {
                     } else if particles.isEmpty {
                         generateParticles()
                         startAnimations()
+                    }
+                }
+                .onChange(of: isSpeeding) { newValue in
+                    if newValue {
+                        // Start fast breathing animation when speeding
+                        withAnimation(.easeInOut(duration: 0.4).repeatForever(autoreverses: true)) {
+                            speedingBreathingOpacity = 0.3
+                        }
+                    } else {
+                        // Reset speeding breathing opacity
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            speedingBreathingOpacity = 1.0
+                        }
                     }
                 }
             }
@@ -92,6 +107,10 @@ struct ParticleEffectView: View {
     }
     
     private var particleColor: Color {
+        if isSpeeding {
+            return .red
+        }
+        
         switch accelerationState {
         case .accelerating:
             return .blue
@@ -110,6 +129,10 @@ struct ParticleEffectView: View {
     }
     
     private var glowColor: Color {
+        if isSpeeding {
+            return .red
+        }
+        
         switch accelerationState {
         case .accelerating:
             return .blue

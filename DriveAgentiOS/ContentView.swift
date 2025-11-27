@@ -112,6 +112,7 @@ struct ContentView: View {
     @StateObject private var systemInfoManager = SystemInfoManager()
     @StateObject private var speedTrapDetector = SpeedTrapDetector()
     @StateObject private var languageManager = LanguageManager()
+    @StateObject private var alertFeedbackManager = AlertFeedbackManager()
     @State private var liveActivityManager: LiveActivityManager?
     @Environment(\.scenePhase) private var scenePhase
 
@@ -124,6 +125,7 @@ struct ContentView: View {
     @State private var hasCenteredMap = false
     @State private var isMapVisible = false
     @State private var showOnboarding = false
+    @State private var alertGlowOpacity: Double = 1.0 // For ambient glow blinking
     
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
@@ -181,10 +183,16 @@ struct ContentView: View {
                     case .background:
                         // Start Live Activity when app goes to background
                         liveActivityManager?.start()
+                        // Stop alert feedback to avoid background sounds
+                        alertFeedbackManager.stopSpeedingAlert()
                         print("App moved to background - starting Live Activity")
                     case .active:
                         // Stop Live Activity when app comes to foreground
                         liveActivityManager?.stop()
+                        // Restart alert if still speeding
+                        if speedTrapDetector.isSpeeding {
+                            alertFeedbackManager.startSpeedingAlert()
+                        }
                         print("App moved to foreground - stopping Live Activity")
                     case .inactive:
                         break
@@ -203,13 +211,13 @@ struct ContentView: View {
                 
                 // Check for nearby speed traps
                 if let location {
-                    speedTrapDetector.checkForNearbyTraps(userLocation: location)
+                    speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
                 }
             }
             .onChange(of: speedTrapDetector.infiniteProximity) { newValue in
                 // Force a check when the setting is toggled
                 if let location = locationManager.currentLocation {
-                    speedTrapDetector.checkForNearbyTraps(userLocation: location)
+                    speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
                 }
             }
             .onReceive(locationManager.recenterPublisher) {_ in
@@ -243,7 +251,8 @@ struct ContentView: View {
                 ParticleEffectView(
                     accelerationState: locationManager.accelerationState,
                     accelerationMagnitude: locationManager.accelerationMagnitude,
-                    style: themeManager.particleEffectStyle
+                    style: themeManager.particleEffectStyle,
+                    isSpeeding: speedTrapDetector.isSpeeding
                 )
                 .frame(width: 400, height: 400)
                 
@@ -423,6 +432,45 @@ struct ContentView: View {
             }
             .padding(.vertical, 30)
             .padding(.bottom, 40)
+        }
+        .background(
+            // Modern ambient glow effect when speeding
+            ZStack {
+                if speedTrapDetector.isSpeeding {
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            Color.red.opacity(alertGlowOpacity * 0.5),
+                            Color.red.opacity(alertGlowOpacity * 0.2),
+                            Color.clear
+                        ]),
+                        center: .center,
+                        startRadius: 50,
+                        endRadius: 600
+                    )
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
+        )
+        .onChange(of: speedTrapDetector.isSpeeding) { newValue in
+            if newValue {
+                // Start fast breathing animation for glow
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    alertGlowOpacity = 0.2
+                }
+                
+                // Start audio chime and haptic feedback
+                alertFeedbackManager.startSpeedingAlert()
+            } else {
+                // Reset glow opacity
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    alertGlowOpacity = 0.0
+                }
+                
+                // Stop audio chime and haptic feedback
+                alertFeedbackManager.stopSpeedingAlert()
+            }
         }
     }
     

@@ -50,6 +50,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var tripDistance: Double = 0.0 // meters
     @Published var maxSpeed: Double = 0.0 // m/s
     @Published var useMetric: Bool = true
+    @Published var currentSpeedMps: Double = 0.0 // Current speed in m/s
     
     private var previousSpeed: CLLocationSpeed = 0
     private var lastTripLocation: CLLocation?
@@ -80,6 +81,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         if speedInMetersPerSecond > 0 {
             let speedInKilometersPerHour = speedInMetersPerSecond * 3.6
             currentSpeed = formatSpeed(speedInMetersPerSecond)
+            currentSpeedMps = speedInMetersPerSecond
             
             // Track max speed
             if speedInMetersPerSecond > maxSpeed {
@@ -99,6 +101,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             }
         } else {
             currentSpeed = useMetric ? "0 km/h" : "0 mph"
+            currentSpeedMps = 0.0
             accelerationState = .stopped
             accelerationMagnitude = 0.0
         }

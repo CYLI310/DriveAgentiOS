@@ -8,7 +8,10 @@ DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhanc
 - **Speed Camera Detection:** View the nearest 10 speed cameras with distance and speed limit information at a glance.
 - **Interactive Map View:** Visualize your current location on a dynamic map with smooth animations and user-friendly controls.
 - **"Liquid Glass" UI:** A stunning, modern interface with translucent elements and fluid animations that create a unique "liquid glass" effect.
-- **Live Activities:** Keep track of your trip's progress with Live Activities on your lock screen and Dynamic Island.
+- **Live Activities & Dynamic Island:** Keep track of your trip's progress with Live Activities on your lock screen and get real-time speed updates in the Dynamic Island.
+- **Speed Limit Alerts:** Receive multi-sensory alerts (visual, audio, and haptic) when you exceed the speed limit near a detected speed camera.
+- **Audio & Haptic Feedback:** Get gentle, non-intrusive chimes and haptic feedback for important alerts.
+- **Infinite Proximity:** A setting that allows you to always see the absolute closest speed camera, no matter how far away it is.
 - **Customizable Widgets:** Add widgets to your home screen to get quick access to your speed and other driving data.
 - **Permissions Handling:** A user-friendly permissions system that guides users to enable location services when necessary.
 

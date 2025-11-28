@@ -47,6 +47,7 @@ struct SettingsView: View {
     @ObservedObject var locationManager: LocationManager
     @ObservedObject var speedTrapDetector: SpeedTrapDetector
     @ObservedObject var languageManager: LanguageManager
+    @ObservedObject var distractionDetector: DistractionDetector
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
     @State private var selectedSoundID: Int = UserDefaults.standard.integer(forKey: "selectedAlertSound") != 0 ? UserDefaults.standard.integer(forKey: "selectedAlertSound") : AlertFeedbackManager.AlertSound.pop.rawValue
@@ -60,7 +61,7 @@ struct SettingsView: View {
                             Text(language.rawValue).tag(language)
                         }
                     }
-                    .pickerStyle(.segmented)
+                    .pickerStyle(.menu)
                 }
                 
                 Section(header: Text(languageManager.localize("Appearance"))) {
@@ -148,6 +149,18 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section(header: Text(languageManager.localize("Distraction Alert"))) {
+                    if distractionDetector.isSupported {
+                        Toggle(languageManager.localize("Distraction Alert"), isOn: $distractionDetector.isEnabled)
+                        Text(languageManager.localize("Warns you if you look at the screen while driving fast."))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Face tracking is not supported on this device.")
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
                 Section(header: Text(languageManager.localize("Other Settings"))) {
                     Button {
                         showTutorial = true
@@ -192,10 +205,22 @@ struct SettingsView: View {
             return "Particles pulse in and out rhythmically"
         case .spiral:
             return "Particles move in a dynamic spiral pattern"
+        case .linearGradient:
+            return "A rotating gradient background"
+        case .grid:
+            return "A retro-style moving perspective grid"
+        case .waves:
+            return "Flowing sine waves"
         }
     }
 }
 
 #Preview {
-    SettingsView(themeManager: ThemeManager(), locationManager: LocationManager(), speedTrapDetector: SpeedTrapDetector(), languageManager: LanguageManager())
+    SettingsView(
+        themeManager: ThemeManager(),
+        locationManager: LocationManager(),
+        speedTrapDetector: SpeedTrapDetector(),
+        languageManager: LanguageManager(),
+        distractionDetector: DistractionDetector()
+    )
 }

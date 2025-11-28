@@ -113,6 +113,7 @@ struct ContentView: View {
     @StateObject private var speedTrapDetector = SpeedTrapDetector()
     @StateObject private var languageManager = LanguageManager()
     @StateObject private var alertFeedbackManager = AlertFeedbackManager()
+    @StateObject private var distractionDetector = DistractionDetector()
     @State private var liveActivityManager: LiveActivityManager?
     @Environment(\.scenePhase) private var scenePhase
 
@@ -159,7 +160,13 @@ struct ContentView: View {
             }
             .foregroundColor(.primary)
             .sheet(isPresented: $showingSettings) {
-                SettingsView(themeManager: themeManager, locationManager: locationManager, speedTrapDetector: speedTrapDetector, languageManager: languageManager)
+                SettingsView(
+                    themeManager: themeManager,
+                    locationManager: locationManager,
+                    speedTrapDetector: speedTrapDetector,
+                    languageManager: languageManager,
+                    distractionDetector: distractionDetector
+                )
             }
             .fullScreenCover(isPresented: $showOnboarding) {
                 OnboardingView(isPresented: $showOnboarding, languageManager: languageManager)
@@ -212,6 +219,7 @@ struct ContentView: View {
                 // Check for nearby speed traps
                 if let location {
                     speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
+                    distractionDetector.updateSpeed(speedMps: locationManager.currentSpeedMps)
                 }
             }
             .onChange(of: speedTrapDetector.infiniteProximity) { newValue in
@@ -472,6 +480,41 @@ struct ContentView: View {
                 alertFeedbackManager.stopSpeedingAlert()
             }
         }
+
+    
+        .overlay(
+            ZStack {
+                if distractionDetector.isDistracted {
+                    Color.black.opacity(0.8)
+                        .ignoresSafeArea()
+                    
+                    VStack(spacing: 20) {
+                        Image(systemName: "eye.trianglebadge.exclamationmark.fill")
+                            .font(.system(size: 80))
+                            .foregroundColor(.yellow)
+                            .symbolEffect(.bounce, options: .repeating)
+                        
+                        Text(languageManager.localize("Eyes on the road!"))
+                            .font(.largeTitle)
+                            .fontWeight(.heavy)
+                            .foregroundColor(.white)
+                        
+                        Text(languageManager.localize("Focus on driving"))
+                            .font(.title2)
+                            .foregroundColor(.white.opacity(0.9))
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.red.opacity(0.3))
+                            .background(.ultraThinMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
+                    )
+                    .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .animation(.spring(), value: distractionDetector.isDistracted)
+        )
     }
     
     // Helper function to format distance

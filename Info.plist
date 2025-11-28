@@ -10,5 +10,7 @@
 	<string>We need your location to show your speed and map position.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to show your speed and map position even when the app is in the background.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to detect if you are looking at the screen while driving.</string>
 </dict>
 </plist>

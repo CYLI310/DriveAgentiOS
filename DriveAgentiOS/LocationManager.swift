@@ -51,6 +51,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var maxSpeed: Double = 0.0 // m/s
     @Published var useMetric: Bool = true
     @Published var currentSpeedMps: Double = 0.0 // Current speed in m/s
+    @Published var currentCourse: Double = -1.0 // Course in degrees (0-360), -1 if invalid
     
     private var previousSpeed: CLLocationSpeed = 0
     private var lastTripLocation: CLLocation?
@@ -66,6 +67,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         currentLocation = location.coordinate
+        currentCourse = location.course
         
         let speedInMetersPerSecond = location.speed
         

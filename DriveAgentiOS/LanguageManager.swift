@@ -33,8 +33,9 @@ class LanguageManager: ObservableObject {
         let savedLanguage = UserDefaults.standard.string(forKey: "selectedLanguage")
         if let saved = savedLanguage, let lang = AppLanguage(rawValue: saved) {
             self.currentLanguage = lang
+
         } else {
-            self.currentLanguage = .english
+            self.currentLanguage = .chineseTraditional
         }
     }
     
@@ -146,6 +147,18 @@ class LanguageManager: ObservableObject {
             .korean: "화면", .japanese: "外観", .vietnamese: "Giao diện", .thai: "รูปลักษณ์",
             .filipino: "Hitsura", .hindi: "दिखावट", .arabic: "المظهر", .spanish: "Apariencia",
             .german: "Erscheinungsbild", .french: "Apparence", .italian: "Aspetto", .portuguese: "Aparência", .russian: "Внешний вид"
+        ],
+        "Show Top Bar": [
+            .english: "Show Top Bar", .chineseTraditional: "顯示頂部資訊列", .chineseSimplified: "显示顶部信息栏",
+            .korean: "상단 바 표시", .japanese: "トップバーを表示", .vietnamese: "Hiện thanh trên cùng", .thai: "แสดงแถบด้านบน",
+            .filipino: "Ipakita ang Top Bar", .hindi: "शीर्ष पट्टी दिखाएं", .arabic: "إظهار الشريط العلوي", .spanish: "Mostrar barra superior",
+            .german: "Obere Leiste anzeigen", .french: "Afficher la barre supérieure", .italian: "Mostra barra superiore", .portuguese: "Mostrar barra superior", .russian: "Показать верхнюю панель"
+        ],
+        "Reduce speed immediately": [
+            .english: "Reduce speed immediately", .chineseTraditional: "立即減速", .chineseSimplified: "立即减速",
+            .korean: "즉시 속도를 줄이세요", .japanese: "すぐに減速してください", .vietnamese: "Giảm tốc độ ngay lập tức", .thai: "ลดความเร็วทันที",
+            .filipino: "Bawasan ang bilis agad", .hindi: "तुरंत गति कम करें", .arabic: "خفف السرعة فورا", .spanish: "Reduzca la velocidad inmediatamente",
+            .german: "Geschwindigkeit sofort reduzieren", .french: "Réduisez immédiatement la vitesse", .italian: "Riduci immediatamente la velocità", .portuguese: "Reduza a velocidade imediatamente", .russian: "Немедленно снизьте скорость"
         ],
         "Theme": [
             .english: "Theme", .chineseTraditional: "主題", .chineseSimplified: "主题",

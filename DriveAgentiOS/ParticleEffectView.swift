@@ -3,11 +3,7 @@ import SwiftUI
 enum ParticleEffectStyle: String, CaseIterable, Identifiable {
     case off = "Off"
     case orbit = "Orbit"
-    case pulse = "Pulse"
-    case spiral = "Spiral"
     case linearGradient = "Gradient"
-    case grid = "Grid"
-    case waves = "Waves"
     
     var id: String { self.rawValue }
 }
@@ -36,9 +32,10 @@ struct ParticleEffectView: View {
                     center: .center,
                     angle: .degrees(rotationAngle * 100)
                 )
-                .blur(radius: 20)
-                .opacity(0.3)
-                .mask(Circle())
+
+                .blur(radius: 60)
+                .opacity(0.15)
+                .ignoresSafeArea()
             }
             .onAppear {
                 startAnimations()
@@ -49,53 +46,47 @@ struct ParticleEffectView: View {
                     let center = CGPoint(x: size.width / 2, y: size.height / 2)
                     let time = timeline.date.timeIntervalSinceReferenceDate
                     
-                    if style == .grid {
-                        drawGrid(context: context, size: size, center: center, time: time)
-                    } else if style == .waves {
-                        drawWaves(context: context, size: size, center: center, time: time)
-                    } else {
-                        // Particle Effects
-                        for (index, particle) in particles.enumerated() {
-                            let position = calculatePosition(for: particle, at: index, center: center)
-                            let finalOpacity = isSpeeding ? speedingBreathingOpacity * particle.opacity * 0.9 : breathingOpacity * particle.opacity * 0.9
-                            
-                            // Draw glow
-                            context.opacity = finalOpacity * 0.3
-                            context.fill(
-                                Circle().path(in: CGRect(x: position.x - particle.size * 2, y: position.y - particle.size * 2, width: particle.size * 4, height: particle.size * 4)),
-                                with: .color(glowColor)
-                            )
-                            
-                            // Draw particle
-                            context.opacity = finalOpacity
-                            context.fill(
-                                Circle().path(in: CGRect(x: position.x - particle.size / 2, y: position.y - particle.size / 2, width: particle.size, height: particle.size)),
-                                with: .color(particleColor)
-                            )
-                        }
+
+                    // Particle Effects
+                    for (index, particle) in particles.enumerated() {
+                        let position = calculatePosition(for: particle, at: index, center: center)
+                        let finalOpacity = isSpeeding ? speedingBreathingOpacity * particle.opacity * 0.9 : breathingOpacity * particle.opacity * 0.9
+                        
+                        // Draw glow
+                        context.opacity = finalOpacity * 0.3
+                        context.fill(
+                            Circle().path(in: CGRect(x: position.x - particle.size * 2, y: position.y - particle.size * 2, width: particle.size * 4, height: particle.size * 4)),
+                            with: .color(glowColor)
+                        )
+                        
+                        // Draw particle
+                        context.opacity = finalOpacity
+                        context.fill(
+                            Circle().path(in: CGRect(x: position.x - particle.size / 2, y: position.y - particle.size / 2, width: particle.size, height: particle.size)),
+                            with: .color(particleColor)
+                        )
                     }
+
                 }
-                .blur(radius: style == .grid || style == .waves ? 0 : 1)
+                .blur(radius: 1)
                 .onAppear {
                     currentAccelerationState = accelerationState
                     currentRotationSpeed = calculateRotationSpeed()
-                    if accelerationState != .stopped || style == .grid || style == .waves {
+                    if accelerationState != .stopped {
                         generateParticles()
                         startAnimations()
                     }
                 }
                 .onChange(of: accelerationState) { newState in
                     currentAccelerationState = newState
-                    if newState == .stopped && (style == .orbit || style == .pulse || style == .spiral) {
+                    if newState == .stopped && style == .orbit {
                         particles.removeAll()
-                    } else if particles.isEmpty && (style == .orbit || style == .pulse || style == .spiral) {
+                    } else if particles.isEmpty && style == .orbit {
                         generateParticles()
                         startAnimations()
                     }
                 }
-                .onChange(of: accelerationMagnitude) { _ in
-                    currentRotationSpeed = calculateRotationSpeed()
-                }
+
                 .onChange(of: isSpeeding) { newValue in
                     if newValue {
                         // Start fast breathing animation when speeding
@@ -113,81 +104,17 @@ struct ParticleEffectView: View {
         }
     }
     
-    private func drawGrid(context: GraphicsContext, size: CGSize, center: CGPoint, time: TimeInterval) {
-        let speed = isSpeeding ? 2.0 : 0.5 + accelerationMagnitude * 2
-        let phase = (time * speed).truncatingRemainder(dividingBy: 1.0)
-        let spacing: CGFloat = 40
-        
-        context.stroke(
-            Path { path in
-                // Vertical lines (perspective)
-                for i in -5...5 {
-                    let x = center.x + CGFloat(i) * spacing * 2
-                    path.move(to: CGPoint(x: x, y: 0))
-                    path.addLine(to: CGPoint(x: center.x + (x - center.x) * 0.2, y: size.height))
-                }
-                
-                // Horizontal lines (moving)
-                for i in 0..<10 {
-                    let yProgress = (Double(i) / 10.0 + phase).truncatingRemainder(dividingBy: 1.0)
-                    let y = size.height * CGFloat(1.0 - pow(yProgress, 2)) // Perspective spacing
-                    
-                    path.move(to: CGPoint(x: 0, y: y))
-                    path.addLine(to: CGPoint(x: size.width, y: y))
-                }
-            },
-            with: .color(particleColor.opacity(0.5)),
-            lineWidth: 2
-        )
-    }
-    
-    private func drawWaves(context: GraphicsContext, size: CGSize, center: CGPoint, time: TimeInterval) {
-        let speed = isSpeeding ? 3.0 : 1.0 + accelerationMagnitude * 2
-        
-        for i in 0..<5 {
-            let wavePhase = time * speed + Double(i) * 0.5
-            let yOffset = CGFloat(i) * 20 - 40
-            
-            context.stroke(
-                Path { path in
-                    path.move(to: CGPoint(x: 0, y: center.y))
-                    
-                    for x in stride(from: 0, to: size.width, by: 5) {
-                        let relativeX = x / size.width
-                        let sine = sin(Double(relativeX) * .pi * 4 + wavePhase)
-                        let y = center.y + yOffset + CGFloat(sine * 30)
-                        path.addLine(to: CGPoint(x: x, y: y))
-                    }
-                },
-                with: .color(particleColor.opacity(0.6 - Double(i) * 0.1)),
-                lineWidth: 3
-            )
-        }
-    }
+
     
     private func calculatePosition(for particle: Particle, at index: Int, center: CGPoint) -> CGPoint {
         switch style {
-        case .off, .linearGradient, .grid, .waves:
+        case .off, .linearGradient:
             return center
             
         case .orbit:
             let angle = particle.baseAngle + rotationAngle
             let x = center.x + CGFloat(cos(angle) * particle.radius)
             let y = center.y + CGFloat(sin(angle) * particle.radius)
-            return CGPoint(x: x, y: y)
-            
-        case .pulse:
-            let angle = particle.baseAngle
-            let pulsedRadius = particle.radius * pulseScale
-            let x = center.x + CGFloat(cos(angle) * pulsedRadius)
-            let y = center.y + CGFloat(sin(angle) * pulsedRadius)
-            return CGPoint(x: x, y: y)
-            
-        case .spiral:
-            let spiralAngle = particle.baseAngle + rotationAngle * 2
-            let spiralRadius = particle.radius + sin(rotationAngle * 3 + Double(index) * 0.5) * 20
-            let x = center.x + CGFloat(cos(spiralAngle) * spiralRadius)
-            let y = center.y + CGFloat(sin(spiralAngle) * spiralRadius)
             return CGPoint(x: x, y: y)
         }
     }
@@ -253,9 +180,7 @@ struct ParticleEffectView: View {
     }
     
     private func calculateRotationSpeed() -> Double {
-        let baseSpeed = 0.02
-        let accelerationBoost = min(accelerationMagnitude * 3.0, 0.12)
-        return baseSpeed + accelerationBoost
+        return 0.005 // Static, slower speed
     }
     
     private func generateParticles() {
@@ -280,7 +205,7 @@ struct ParticleEffectView: View {
         case .off:
             break
             
-        case .orbit, .spiral, .linearGradient:
+        case .orbit, .linearGradient:
             // Rotation animation
             Timer.scheduledTimer(withTimeInterval: 0.033, repeats: true) { timer in
                 if style != .linearGradient && currentAccelerationState == .stopped {
@@ -289,19 +214,10 @@ struct ParticleEffectView: View {
                 }
                 rotationAngle += currentRotationSpeed
             }
-            
-        case .pulse:
-            // Pulse animation
-            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                pulseScale = 1.3
-            }
-            
-        case .grid, .waves:
-            // Handled by TimelineView
-            break
         }
     }
 }
+
 
 struct Particle: Identifiable {
     let id = UUID()

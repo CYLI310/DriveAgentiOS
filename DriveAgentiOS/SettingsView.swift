@@ -31,12 +31,20 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    @Published var showTopBar: Bool {
+        didSet {
+            UserDefaults.standard.set(showTopBar, forKey: "showTopBar")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
         
-        let savedStyle = UserDefaults.standard.string(forKey: "particleEffectStyle") ?? ParticleEffectStyle.orbit.rawValue
-        self.particleEffectStyle = ParticleEffectStyle(rawValue: savedStyle) ?? .orbit
+        let savedStyle = UserDefaults.standard.string(forKey: "particleEffectStyle") ?? ParticleEffectStyle.off.rawValue
+        self.particleEffectStyle = ParticleEffectStyle(rawValue: savedStyle) ?? .off
+        
+        self.showTopBar = UserDefaults.standard.object(forKey: "showTopBar") as? Bool ?? true
     }
 }
 
@@ -65,6 +73,8 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text(languageManager.localize("Appearance"))) {
+                    Toggle(languageManager.localize("Show Top Bar"), isOn: $themeManager.showTopBar)
+                    
                     Picker(languageManager.localize("Theme"), selection: $themeManager.currentTheme) {
                         ForEach(AppTheme.allCases) { theme in
                             Text(theme.rawValue).tag(theme)
@@ -201,16 +211,8 @@ struct SettingsView: View {
             return "No particle effects will be shown"
         case .orbit:
             return "Particles orbit around the speed display"
-        case .pulse:
-            return "Particles pulse in and out rhythmically"
-        case .spiral:
-            return "Particles move in a dynamic spiral pattern"
         case .linearGradient:
             return "A rotating gradient background"
-        case .grid:
-            return "A retro-style moving perspective grid"
-        case .waves:
-            return "Flowing sine waves"
         }
     }
 }

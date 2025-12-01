@@ -28,16 +28,28 @@ class AlertFeedbackManager: ObservableObject {
         }
     }
     
-    func startSpeedingAlert() {
-        guard !isPlayingAlert else { return }
+    func startSpeedingAlert(interval: TimeInterval = 1.0) {
+        // If already playing, check if we need to update the interval
+        if isPlayingAlert {
+            if let timer = feedbackTimer, abs(timer.timeInterval - interval) > 0.1 {
+                // Interval changed significantly, restart timer
+                feedbackTimer?.invalidate()
+                feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
+                    self?.playChime()
+                    self?.triggerHaptic()
+                }
+            }
+            return
+        }
+        
         isPlayingAlert = true
         
         // Play initial chime and haptic
         playChime()
         triggerHaptic()
         
-        // Set up repeating timer (every 4 seconds for less intrusive alerts)
-        feedbackTimer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { [weak self] _ in
+        // Set up repeating timer
+        feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             self?.playChime()
             self?.triggerHaptic()
         }

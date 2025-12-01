@@ -127,6 +127,7 @@ struct ContentView: View {
     @State private var isMapVisible = false
     @State private var showOnboarding = false
     @State private var alertGlowOpacity: Double = 1.0 // For ambient glow blinking
+    @State private var alertBackgroundOpacity: Double = 0.6 // For alert box breathing
     
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
@@ -197,8 +198,12 @@ struct ContentView: View {
                         // Stop Live Activity when app comes to foreground
                         liveActivityManager?.stop()
                         // Restart alert if still speeding
+                    case .active:
+                        // Check if speeding and start alert with appropriate interval
                         if speedTrapDetector.isSpeeding {
-                            alertFeedbackManager.startSpeedingAlert()
+                            let isSevere = speedTrapDetector.speedingAmount > 10
+                            let interval = isSevere ? 0.5 : 1.0
+                            alertFeedbackManager.startSpeedingAlert(interval: interval)
                         }
                         print("App moved to foreground - stopping Live Activity")
                     case .inactive:
@@ -218,7 +223,12 @@ struct ContentView: View {
                 
                 // Check for nearby speed traps
                 if let location {
-                    speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
+                    speedTrapDetector.checkForNearbyTraps(
+                        userLocation: location,
+                        currentSpeed: locationManager.currentSpeedMps,
+                        currentStreetName: locationManager.currentStreetName,
+                        currentCourse: locationManager.currentCourse
+                    )
                     distractionDetector.updateSpeed(speedMps: locationManager.currentSpeedMps)
                 }
             }
@@ -249,8 +259,11 @@ struct ContentView: View {
 
     private var mainContentView: some View {
         VStack {
-            TopBarView(systemInfoManager: systemInfoManager, locationManager: locationManager)
-                .padding(.top, 40)
+            if themeManager.showTopBar {
+                TopBarView(systemInfoManager: systemInfoManager, locationManager: locationManager)
+                    .padding(.top, 40)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
             
             Spacer()
             
@@ -334,42 +347,77 @@ struct ContentView: View {
             if let trap = speedTrapDetector.closestTrap, 
                speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity {
                 VStack(spacing: 8) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 16) {
                         Image(systemName: "camera.fill")
-                            .font(.title2)
-                            .foregroundColor(.red)
+                            .font(.system(size: 30))
+                            .foregroundColor(.white)
+                            .symbolEffect(.bounce, options: .repeating)
                         
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(languageManager.localize("Speed Camera Ahead!"))
-                                .font(.headline)
-                                .foregroundColor(.red)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(speedTrapDetector.speedingAmount > 10 ? languageManager.localize("Reduce speed immediately") : languageManager.localize("Speed Camera Ahead!"))
+                                .font(.title3.bold())
+                                .foregroundColor(.white)
                             
-                            Text("\(formatDistance(trap.distance)) • \(languageManager.localize("Limit")): \(trap.speedLimit.replacingOccurrences(of: ".0", with: "")) km/h")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
-                            Text(trap.address)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
+                            HStack(spacing: 8) {
+                                Text(formatDistance(trap.distance))
+                                    .font(.headline)
+                                    .foregroundColor(.white.opacity(0.9))
+                                
+                                Text("•")
+                                    .foregroundColor(.white.opacity(0.6))
+                                
+                                Text("\(languageManager.localize("Limit")): \(trap.speedLimit.replacingOccurrences(of: ".0", with: ""))")
+                                    .font(.headline)
+                                    .foregroundColor(speedTrapDetector.speedingAmount > 10 ? .red : .white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .stroke(speedTrapDetector.speedingAmount > 10 ? Color.red : Color.white, lineWidth: 1.5)
+                                    )
+                                    .background(speedTrapDetector.speedingAmount > 10 ? Color.white : Color.clear)
+                                    .cornerRadius(4)
+                            }
                         }
                         
                         Spacer()
                     }
                     .padding()
                     .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.red.opacity(0.5), lineWidth: 2)
+                        ZStack {
+                            // Breathing Gradient Background
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.red.opacity(alertBackgroundOpacity),
+                                    Color.red.opacity(alertBackgroundOpacity * 0.6)
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
                             )
+                            .blur(radius: 0)
+                            
+                            // Glass effect overlay
+                            Rectangle()
+                                .fill(.ultraThinMaterial)
+                                .opacity(0.3)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                        )
                     )
+                    .shadow(color: .red.opacity(0.4), radius: 10, x: 0, y: 5)
                 }
                 .padding(.horizontal, 20)
                 .transition(.opacity.combined(with: .scale))
                 .animation(.spring(), value: speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity)
                 .padding(.bottom, 10)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                        alertBackgroundOpacity = 0.9
+                    }
+                }
             }
             
             // Map View
@@ -461,15 +509,17 @@ struct ContentView: View {
             }
             .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
         )
-        .onChange(of: speedTrapDetector.isSpeeding) { newValue in
-            if newValue {
-                // Start fast breathing animation for glow
-                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                    alertGlowOpacity = 0.2
+        .onChange(of: speedTrapDetector.isSpeeding) { isSpeeding in
+            if isSpeeding {
+                // Trigger visual feedback (red glow)
+                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    alertGlowOpacity = 0.5
                 }
                 
-                // Start audio chime and haptic feedback
-                alertFeedbackManager.startSpeedingAlert()
+                // Start audio chime and haptic feedback with appropriate interval
+                let isSevere = speedTrapDetector.speedingAmount > 10
+                let interval = isSevere ? 0.5 : 1.0
+                alertFeedbackManager.startSpeedingAlert(interval: interval)
             } else {
                 // Reset glow opacity
                 withAnimation(.easeInOut(duration: 0.5)) {
@@ -478,6 +528,13 @@ struct ContentView: View {
                 
                 // Stop audio chime and haptic feedback
                 alertFeedbackManager.stopSpeedingAlert()
+            }
+        }
+        .onChange(of: speedTrapDetector.speedingAmount) { amount in
+            if speedTrapDetector.isSpeeding {
+                let isSevere = amount > 10
+                let interval = isSevere ? 0.5 : 1.0
+                alertFeedbackManager.startSpeedingAlert(interval: interval)
             }
         }
 

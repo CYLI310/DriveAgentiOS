@@ -166,6 +166,24 @@ class LanguageManager: ObservableObject {
             .filipino: "Tema", .hindi: "थीम", .arabic: "السمة", .spanish: "Tema",
             .german: "Design", .french: "Thème", .italian: "Tema", .portuguese: "Tema", .russian: "Тема"
         ],
+        "System": [
+            .english: "System", .chineseTraditional: "系統預設", .chineseSimplified: "系统默认",
+            .korean: "시스템", .japanese: "システム", .vietnamese: "Hệ thống", .thai: "ระบบ",
+            .filipino: "Sistema", .hindi: "सिस्टम", .arabic: "النظام", .spanish: "Sistema",
+            .german: "System", .french: "Système", .italian: "Sistema", .portuguese: "Sistema", .russian: "Система"
+        ],
+        "Light": [
+            .english: "Light", .chineseTraditional: "淺色", .chineseSimplified: "浅色",
+            .korean: "라이트", .japanese: "ライト", .vietnamese: "Sáng", .thai: "สว่าง",
+            .filipino: "Maliwanag", .hindi: "लाइट", .arabic: "فاتح", .spanish: "Claro",
+            .german: "Hell", .french: "Clair", .italian: "Chiaro", .portuguese: "Claro", .russian: "Светлая"
+        ],
+        "Dark": [
+            .english: "Dark", .chineseTraditional: "深色", .chineseSimplified: "深色",
+            .korean: "다크", .japanese: "ダーク", .vietnamese: "Tối", .thai: "มืด",
+            .filipino: "Madilim", .hindi: "डार्क", .arabic: "داكن", .spanish: "Oscuro",
+            .german: "Dunkel", .french: "Sombre", .italian: "Scuro", .portuguese: "Escuro", .russian: "Темная"
+        ],
         "Particle Effects": [
             .english: "Particle Effects", .chineseTraditional: "粒子特效", .chineseSimplified: "粒子特效",
             .korean: "입자 효과", .japanese: "パーティクル効果", .vietnamese: "Hiệu ứng hạt", .thai: "เอฟเฟกต์อนุภาค",
@@ -177,6 +195,24 @@ class LanguageManager: ObservableObject {
             .korean: "효과 스타일", .japanese: "効果スタイル", .vietnamese: "Kiểu hiệu ứng", .thai: "รูปแบบเอฟเฟกต์",
             .filipino: "Estilo ng Epekto", .hindi: "प्रभाव शैली", .arabic: "نمط التأثير", .spanish: "Estilo de efecto",
             .german: "Effektstil", .french: "Style d'effet", .italian: "Stile effetto", .portuguese: "Estilo de efeito", .russian: "Стиль эффекта"
+        ],
+        "Off": [
+            .english: "Off", .chineseTraditional: "關閉", .chineseSimplified: "关闭",
+            .korean: "끄기", .japanese: "オフ", .vietnamese: "Tắt", .thai: "ปิด",
+            .filipino: "Naka-off", .hindi: "बंद", .arabic: "إيقاف", .spanish: "Apagado",
+            .german: "Aus", .french: "Désactivé", .italian: "Spento", .portuguese: "Desligado", .russian: "Выкл"
+        ],
+        "Orbit": [
+            .english: "Orbit", .chineseTraditional: "軌道", .chineseSimplified: "轨道",
+            .korean: "궤도", .japanese: "軌道", .vietnamese: "Quỹ đạo", .thai: "วงโคจร",
+            .filipino: "Orbit", .hindi: "कक्षा", .arabic: "مدار", .spanish: "Órbita",
+            .german: "Orbit", .french: "Orbite", .italian: "Orbita", .portuguese: "Órbita", .russian: "Орбита"
+        ],
+        "Gradient": [
+            .english: "Gradient", .chineseTraditional: "漸層", .chineseSimplified: "渐变",
+            .korean: "그라디언트", .japanese: "グラデーション", .vietnamese: "Gradient", .thai: "ไล่ระดับสี",
+            .filipino: "Gradient", .hindi: "ग्रेडिएंट", .arabic: "تدرج", .spanish: "Degradado",
+            .german: "Verlauf", .french: "Dégradé", .italian: "Sfumatura", .portuguese: "Gradiente", .russian: "Градиент"
         ],
         "Units": [
             .english: "Units", .chineseTraditional: "單位", .chineseSimplified: "单位",
@@ -279,6 +315,60 @@ class LanguageManager: ObservableObject {
             .italian: "Verrai avvisato quando sarai entro questa distanza da un autovelox",
             .portuguese: "Você será alertado quando estiver dentro desta distância de um radar",
             .russian: "Вы получите оповещение, когда окажетесь на этом расстоянии от камеры"
+        ],
+        "Alert Sound": [
+            .english: "Alert Sound", .chineseTraditional: "警示音效", .chineseSimplified: "警示音效",
+            .korean: "알림 소리", .japanese: "アラート音", .vietnamese: "Âm thanh cảnh báo", .thai: "เสียงแจ้งเตือน",
+            .filipino: "Tunog ng Alerto", .hindi: "चेतावनी ध्वनि", .arabic: "صوت التنبيه", .spanish: "Sonido de alerta",
+            .german: "Warnton", .french: "Son d'alerte", .italian: "Suono avviso", .portuguese: "Som de alerta", .russian: "Звук оповещения"
+        ],
+        "Soft Chime": [
+            .english: "Soft Chime", .chineseTraditional: "柔和鐘聲", .chineseSimplified: "柔和钟声",
+            .korean: "부드러운 차임", .japanese: "ソフトチャイム", .vietnamese: "Chuông nhẹ", .thai: "เสียงระฆังเบาๆ",
+            .filipino: "Malambot na Chime", .hindi: "सॉफ्ट चाइम", .arabic: "رنين ناعم", .spanish: "Campanilla suave",
+            .german: "Sanfter Gong", .french: "Carillon doux", .italian: "Rintocco dolce", .portuguese: "Carrilhão suave", .russian: "Мягкий звон"
+        ],
+        "Modern": [
+            .english: "Modern", .chineseTraditional: "現代", .chineseSimplified: "现代",
+            .korean: "모던", .japanese: "モダン", .vietnamese: "Hiện đại", .thai: "ทันสมัย",
+            .filipino: "Moderno", .hindi: "आधुनिक", .arabic: "حديث", .spanish: "Moderno",
+            .german: "Modern", .french: "Moderne", .italian: "Moderno", .portuguese: "Moderno", .russian: "Современный"
+        ],
+        "Bloom": [
+            .english: "Bloom", .chineseTraditional: "綻放", .chineseSimplified: "绽放",
+            .korean: "블룸", .japanese: "ブルーム", .vietnamese: "Nở hoa", .thai: "บานสะพรั่ง",
+            .filipino: "Bloom", .hindi: "ब्लूम", .arabic: "إزهار", .spanish: "Florecer",
+            .german: "Blüte", .french: "Éclosion", .italian: "Fioritura", .portuguese: "Florescer", .russian: "Цветение"
+        ],
+        "Chord": [
+            .english: "Chord", .chineseTraditional: "和弦", .chineseSimplified: "和弦",
+            .korean: "코드", .japanese: "コード", .vietnamese: "Hợp âm", .thai: "คอร์ด",
+            .filipino: "Chord", .hindi: "जीवा", .arabic: "وتر", .spanish: "Acorde",
+            .german: "Akkord", .french: "Accord", .italian: "Accordo", .portuguese: "Acorde", .russian: "Аккорд"
+        ],
+        "Pop (Mac-like)": [
+            .english: "Pop (Mac-like)", .chineseTraditional: "波普 (Mac 風格)", .chineseSimplified: "波普 (Mac 风格)",
+            .korean: "팝 (Mac 스타일)", .japanese: "ポップ (Mac風)", .vietnamese: "Pop (Kiểu Mac)", .thai: "ป๊อป (สไตล์ Mac)",
+            .filipino: "Pop (Mac-like)", .hindi: "पॉप (Mac जैसा)", .arabic: "بوب (نمط Mac)", .spanish: "Pop (estilo Mac)",
+            .german: "Pop (Mac-Stil)", .french: "Pop (Style Mac)", .italian: "Pop (stile Mac)", .portuguese: "Pop (estilo Mac)", .russian: "Поп (в стиле Mac)"
+        ],
+        "Subtle Click": [
+            .english: "Subtle Click", .chineseTraditional: "微妙點擊", .chineseSimplified: "微妙点击",
+            .korean: "미묘한 클릭", .japanese: "微妙なクリック", .vietnamese: "Nhấp chuột tinh tế", .thai: "คลิกเบาๆ",
+            .filipino: "Subtle Click", .hindi: "हल्का क्लिक", .arabic: "نقر خفيف", .spanish: "Clic sutil",
+            .german: "Dezenter Klick", .french: "Clic subtil", .italian: "Clic sottile", .portuguese: "Clique sutil", .russian: "Тонкий щелчок"
+        ],
+        "News Flash": [
+            .english: "News Flash", .chineseTraditional: "新聞快訊", .chineseSimplified: "新闻快讯",
+            .korean: "뉴스 속보", .japanese: "ニュース速報", .vietnamese: "Tin nhanh", .thai: "ข่าวด่วน",
+            .filipino: "News Flash", .hindi: "समाचार फ़्लैश", .arabic: "خبر عاجل", .spanish: "Noticia de última hora",
+            .german: "Eilmeldung", .french: "Flash info", .italian: "Notizie flash", .portuguese: "Notícias de última hora", .russian: "Срочные новости"
+        ],
+        "Positive": [
+            .english: "Positive", .chineseTraditional: "積極", .chineseSimplified: "积极",
+            .korean: "긍정적", .japanese: "ポジティブ", .vietnamese: "Tích cực", .thai: "เชิงบวก",
+            .filipino: "Positibo", .hindi: "सकारात्मक", .arabic: "إيجابي", .spanish: "Positivo",
+            .german: "Positiv", .french: "Positif", .italian: "Positivo", .portuguese: "Positivo", .russian: "Позитивный"
         ],
         "Other Settings": [
             .english: "Other Settings", .chineseTraditional: "其他設定", .chineseSimplified: "其他设置",
@@ -473,6 +563,12 @@ class LanguageManager: ObservableObject {
             .korean: "주의 산만 경고", .japanese: "わき見運転アラート", .vietnamese: "Cảnh báo mất tập trung", .thai: "แจ้งเตือนการเสียสมาธิ",
             .filipino: "Alerto sa Pagkakaabala", .hindi: "ध्यान भटकाने की चेतावनी", .arabic: "تنبيه تشتت الانتباه", .spanish: "Alerta de distracción",
             .german: "Ablenkungswarnung", .french: "Alerte de distraction", .italian: "Avviso distrazione", .portuguese: "Alerta de distração", .russian: "Предупреждение об отвлечении"
+        ],
+        "Face tracking is not supported on this device.": [
+            .english: "Face tracking is not supported on this device.", .chineseTraditional: "此裝置不支援臉部追蹤。", .chineseSimplified: "此设备不支持面部追踪。",
+            .korean: "이 기기에서는 얼굴 추적을 지원하지 않습니다.", .japanese: "このデバイスでは顔追跡がサポートされていません。", .vietnamese: "Theo dõi khuôn mặt không được hỗ trợ trên thiết bị này.", .thai: "อุปกรณ์นี้ไม่รองรับการติดตามใบหน้า",
+            .filipino: "Hindi suportado ang pagsubaybay sa mukha sa device na ito.", .hindi: "इस डिवाइस पर फेस ट्रैकिंग समर्थित नहीं है।", .arabic: "تتبع الوجه غير مدعوم على هذا الجهاز.", .spanish: "El seguimiento facial no es compatible con este dispositivo.",
+            .german: "Gesichtsverfolgung wird auf diesem Gerät nicht unterstützt.", .french: "Le suivi du visage n'est pas pris en charge sur cet appareil.", .italian: "Il rilevamento del volto non è supportato su questo dispositivo.", .portuguese: "O rastreamento facial não é suportado neste dispositivo.", .russian: "Отслеживание лица не поддерживается на этом устройстве."
         ],
         "Warns you if you look at the screen while driving fast.": [
             .english: "Warns you if you look at the screen while driving fast.",

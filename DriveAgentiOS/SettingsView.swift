@@ -77,7 +77,7 @@ struct SettingsView: View {
                     
                     Picker(languageManager.localize("Theme"), selection: $themeManager.currentTheme) {
                         ForEach(AppTheme.allCases) { theme in
-                            Text(theme.rawValue).tag(theme)
+                            Text(languageManager.localize(theme.rawValue)).tag(theme)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -86,7 +86,7 @@ struct SettingsView: View {
                 Section(header: Text(languageManager.localize("Particle Effects"))) {
                     Picker(languageManager.localize("Effect Style"), selection: $themeManager.particleEffectStyle) {
                         ForEach(ParticleEffectStyle.allCases) { style in
-                            Text(style.rawValue).tag(style)
+                            Text(languageManager.localize(style.rawValue)).tag(style)
                         }
                     }
                     .pickerStyle(.menu)
@@ -149,7 +149,7 @@ struct SettingsView: View {
                     
                     Picker(languageManager.localize("Alert Sound"), selection: $selectedSoundID) {
                         ForEach(AlertFeedbackManager.AlertSound.allCases) { sound in
-                            Text(sound.name).tag(sound.rawValue)
+                            Text(languageManager.localize(sound.name)).tag(sound.rawValue)
                         }
                     }
                     .onChange(of: selectedSoundID) { newValue in
@@ -166,7 +166,7 @@ struct SettingsView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                     } else {
-                        Text("Face tracking is not supported on this device.")
+                        Text(languageManager.localize("Face tracking is not supported on this device."))
                             .foregroundColor(.secondary)
                     }
                 }

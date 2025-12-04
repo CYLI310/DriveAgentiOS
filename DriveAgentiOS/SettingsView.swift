@@ -58,7 +58,6 @@ struct SettingsView: View {
     @ObservedObject var distractionDetector: DistractionDetector
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
-    @State private var selectedSoundID: Int = UserDefaults.standard.integer(forKey: "selectedAlertSound") != 0 ? UserDefaults.standard.integer(forKey: "selectedAlertSound") : AlertFeedbackManager.AlertSound.pop.rawValue
 
     var body: some View {
         NavigationStack {
@@ -144,19 +143,6 @@ struct SettingsView: View {
                     Text(languageManager.localize("Alert Distance Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                        
-                    Divider()
-                    
-                    Picker(languageManager.localize("Alert Sound"), selection: $selectedSoundID) {
-                        ForEach(AlertFeedbackManager.AlertSound.allCases) { sound in
-                            Text(languageManager.localize(sound.name)).tag(sound.rawValue)
-                        }
-                    }
-                    .onChange(of: selectedSoundID) { newValue in
-                        // Save selection and preview sound
-                        UserDefaults.standard.set(newValue, forKey: "selectedAlertSound")
-                        AudioServicesPlaySystemSound(SystemSoundID(newValue))
-                    }
                 }
                 
                 Section(header: Text(languageManager.localize("Distraction Alert"))) {

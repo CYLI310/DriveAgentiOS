@@ -322,6 +322,12 @@ class LanguageManager: ObservableObject {
             .filipino: "Tunog ng Alerto", .hindi: "चेतावनी ध्वनि", .arabic: "صوت التنبيه", .spanish: "Sonido de alerta",
             .german: "Warnton", .french: "Son d'alerte", .italian: "Suono avviso", .portuguese: "Som de alerta", .russian: "Звук оповещения"
         ],
+        "Navigation Pop": [
+            .english: "Navigation Pop", .chineseTraditional: "導航提示音", .chineseSimplified: "导航提示音",
+            .korean: "내비게이션 팝", .japanese: "ナビゲーションポップ", .vietnamese: "Tiếng pop điều hướng", .thai: "เสียงป๊อปนำทาง",
+            .filipino: "Navigation Pop", .hindi: "नेविगेशन पॉप", .arabic: "نقرة التنقل", .spanish: "Pop de navegación",
+            .german: "Navigations-Pop", .french: "Pop de navigation", .italian: "Pop navigazione", .portuguese: "Pop de navegação", .russian: "Навигационный поп"
+        ],
         "Soft Chime": [
             .english: "Soft Chime", .chineseTraditional: "柔和鐘聲", .chineseSimplified: "柔和钟声",
             .korean: "부드러운 차임", .japanese: "ソフトチャイム", .vietnamese: "Chuông nhẹ", .thai: "เสียงระฆังเบาๆ",

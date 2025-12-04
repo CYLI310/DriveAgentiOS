@@ -21,14 +21,15 @@ class AlertFeedbackManager: ObservableObject {
     private func configureAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+            // Use .duckOthers to temporarily lower other audio, making alert more audible
+            try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers])
             try audioSession.setActive(true)
         } catch {
             print("Failed to configure audio session: \(error)")
         }
     }
     
-    func startSpeedingAlert(interval: TimeInterval = 1.0) {
+    func startSpeedingAlert(interval: TimeInterval = 4.0) {
         // If already playing, check if we need to update the interval
         if isPlayingAlert {
             if let timer = feedbackTimer, abs(timer.timeInterval - interval) > 0.1 {
@@ -68,57 +69,34 @@ class AlertFeedbackManager: ObservableObject {
         audioPlayer = nil
     }
     
-    // Define available alert sounds
+    // Navigation Pop is the only alert sound
     enum AlertSound: Int, CaseIterable, Identifiable {
-        case softChime = 1013
-        case modern = 1057
-        case bloom = 1073
-        case chord = 1103
-        case pop = 1004
-        case subtle = 1104
-        case news = 1028
-        case positive = 1012
+        case navigationPop = 0  // Custom sound file
         
         var id: Int { rawValue }
         
         var name: String {
-            switch self {
-            case .softChime: return "Soft Chime"
-            case .modern: return "Modern"
-            case .bloom: return "Bloom"
-            case .chord: return "Chord"
-            case .pop: return "Pop (Mac-like)"
-            case .subtle: return "Subtle Click"
-            case .news: return "News Flash"
-            case .positive: return "Positive"
-            }
+            return "Navigation Pop"
         }
     }
 
     private func playChime() {
-        // Check for custom file first (override)
-        if let soundURL = Bundle.main.url(forResource: "alert_sound", withExtension: "mp3") ?? 
-                          Bundle.main.url(forResource: "alert_sound", withExtension: "wav") ??
-                          Bundle.main.url(forResource: "alert_sound", withExtension: "m4a") {
-             // ... (existing custom file logic) ...
-             do {
+        // Play Navigation Pop MP3 file
+        if let soundURL = Bundle.main.url(forResource: "navigation_pop", withExtension: "mp3") {
+            do {
                 if audioPlayer == nil || audioPlayer?.url != soundURL {
                     audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+                    audioPlayer?.volume = 1.0  // Set to maximum volume
                     audioPlayer?.prepareToPlay()
                 }
                 audioPlayer?.currentTime = 0
                 audioPlayer?.play()
-                return
             } catch {
-                print("Failed to play custom sound: \(error)")
+                print("Failed to play navigation_pop.mp3: \(error)")
             }
+        } else {
+            print("navigation_pop.mp3 not found in bundle")
         }
-        
-        // Load selected sound from settings (default to Pop/1004)
-        let savedSoundID = UserDefaults.standard.integer(forKey: "selectedAlertSound")
-        let soundID = savedSoundID != 0 ? savedSoundID : AlertSound.pop.rawValue
-        
-        AudioServicesPlaySystemSound(SystemSoundID(soundID))
     }
     
     private func triggerHaptic() {

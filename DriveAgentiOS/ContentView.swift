@@ -202,7 +202,7 @@ struct ContentView: View {
                         // Check if speeding and start alert with appropriate interval
                         if speedTrapDetector.isSpeeding {
                             let isSevere = speedTrapDetector.speedingAmount > 10
-                            let interval = isSevere ? 0.5 : 1.0
+                            let interval = isSevere ? 2.0 : 4.0
                             alertFeedbackManager.startSpeedingAlert(interval: interval)
                         }
                         print("App moved to foreground - stopping Live Activity")
@@ -420,7 +420,8 @@ struct ContentView: View {
                 }
             }
             
-            // Map View
+            
+            // Map View or Speed Trap List View (mutually exclusive)
             if isMapVisible {
                 ZStack(alignment: .topTrailing) {
                     Map(coordinateRegion: $region, showsUserLocation: true)
@@ -442,10 +443,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal, 20)
                 .transition(.opacity.combined(with: .scale(scale: 0.8)))
-            }
-            
-            // Speed Trap List View
-            if showingSpeedTrapList {
+            } else if showingSpeedTrapList {
                 SpeedTrapListView(
                     speedTrapDetector: speedTrapDetector,
                     locationManager: locationManager,
@@ -462,6 +460,7 @@ struct ContentView: View {
             HStack(spacing: 40) {
                 Button {
                     withAnimation(.spring()) {
+                        isMapVisible = false  // Close map if open
                         showingSpeedTrapList = true
                     }
                 } label: {
@@ -471,6 +470,7 @@ struct ContentView: View {
                 
                 Button {
                     withAnimation(.spring()) {
+                        showingSpeedTrapList = false  // Close speed trap list if open
                         isMapVisible.toggle()
                     }
                 } label: {
@@ -518,7 +518,7 @@ struct ContentView: View {
                 
                 // Start audio chime and haptic feedback with appropriate interval
                 let isSevere = speedTrapDetector.speedingAmount > 10
-                let interval = isSevere ? 0.5 : 1.0
+                let interval = isSevere ? 2.0 : 4.0
                 alertFeedbackManager.startSpeedingAlert(interval: interval)
             } else {
                 // Reset glow opacity
@@ -533,7 +533,7 @@ struct ContentView: View {
         .onChange(of: speedTrapDetector.speedingAmount) { amount in
             if speedTrapDetector.isSpeeding {
                 let isSevere = amount > 10
-                let interval = isSevere ? 0.5 : 1.0
+                let interval = isSevere ? 2.0 : 4.0
                 alertFeedbackManager.startSpeedingAlert(interval: interval)
             }
         }

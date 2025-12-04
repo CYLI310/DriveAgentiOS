@@ -1,6 +1,6 @@
 # DriveAgentiOS
 
-DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhance your driving experience. It provides real-time speed and location tracking, a sleek "liquid glass" user interface, and customizable widgets to keep you informed on the go.
+DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhance your driving experience. It provides real-time speed and location tracking, a sleek liquid glass user interface, and customizable widgets to keep you informed on the go.
 
 ## Features
 

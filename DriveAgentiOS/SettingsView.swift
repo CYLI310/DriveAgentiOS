@@ -2,6 +2,14 @@ import SwiftUI
 import Combine
 import AudioToolbox
 
+enum SpeedDisplayMode: String, CaseIterable, Identifiable {
+    case digital = "Digital"
+    case analog = "Analog"
+    case retroDigital = "Retro Digital"
+    
+    var id: String { self.rawValue }
+}
+
 enum AppTheme: String, CaseIterable, Identifiable {
     case system = "System"
     case light = "Light"
@@ -37,6 +45,12 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    @Published var speedDisplayMode: SpeedDisplayMode {
+        didSet {
+            UserDefaults.standard.set(speedDisplayMode.rawValue, forKey: "speedDisplayMode")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
@@ -45,6 +59,9 @@ class ThemeManager: ObservableObject {
         self.particleEffectStyle = ParticleEffectStyle(rawValue: savedStyle) ?? .off
         
         self.showTopBar = UserDefaults.standard.object(forKey: "showTopBar") as? Bool ?? true
+        
+        let savedMode = UserDefaults.standard.string(forKey: "speedDisplayMode") ?? SpeedDisplayMode.digital.rawValue
+        self.speedDisplayMode = SpeedDisplayMode(rawValue: savedMode) ?? .digital
     }
 }
 
@@ -80,6 +97,19 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                }
+                
+                Section(header: Text(languageManager.localize("Speed Display"))) {
+                    Picker(languageManager.localize("Speed Display Mode"), selection: $themeManager.speedDisplayMode) {
+                        ForEach(SpeedDisplayMode.allCases) { mode in
+                            Text(languageManager.localize(mode.rawValue)).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    
+                    Text(languageManager.localize("Choose how your current speed is visualized on the main screen."))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
                 
                 Section(header: Text(languageManager.localize("Particle Effects"))) {

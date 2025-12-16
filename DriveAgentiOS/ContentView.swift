@@ -3,6 +3,200 @@ import CoreLocation
 import MapKit
 import Combine
 
+// MARK: - Speed Display Styles
+
+struct AnalogSpeedView: View {
+    let speedMps: Double
+    let useMetric: Bool
+    
+    private var maxSpeed: Double {
+        // Reasonable upper bounds for typical driving
+        useMetric ? 200 : 140
+    }
+    
+    private var currentSpeed: Double {
+        let value = useMetric ? speedMps * 3.6 : speedMps * 2.23694
+        return max(0, min(value, maxSpeed))
+    }
+    
+    private var unitText: String {
+        useMetric ? "km/h" : "mph"
+    }
+    
+    private var needleAngle: Angle {
+        // Gauge spans -120° to +120°
+        let fraction = currentSpeed / maxSpeed
+        let clamped = max(0, min(fraction, 1))
+        return Angle(degrees: -120 + 240 * clamped)
+    }
+    
+    var body: some View {
+        ZStack {
+            // Outer minimal tick ring (following app's clean design)
+            ForEach(0..<12) { index in
+                let angle = Angle(degrees: Double(index) / 12.0 * 360.0)
+                Capsule()
+                    .fill(Color.white.opacity(index.isMultiple(of: 3) ? 0.9 : 0.5))
+                    .frame(width: index.isMultiple(of: 3) ? 3 : 2,
+                           height: index.isMultiple(of: 3) ? 20 : 12)
+                    .offset(y: -120)
+                    .rotationEffect(angle)
+            }
+            
+            // Bezel + inner dial
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.7), Color.gray.opacity(0.3)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 10
+                )
+                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 8)
+            
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.black, Color(red: 0.05, green: 0.05, blue: 0.08)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            
+            // Inner arc ticks (only on gauge arc)
+            ForEach(0..<9) { index in
+                let fraction = Double(index) / 8.0
+                let angle = Angle(degrees: -120 + 240 * fraction)
+                Capsule()
+                    .fill(Color.white.opacity(index.isMultiple(of: 2) ? 0.9 : 0.5))
+                    .frame(width: 2, height: index.isMultiple(of: 2) ? 14 : 8)
+                    .offset(y: -80)
+                    .rotationEffect(angle)
+            }
+            
+            // Numeric labels on the right side like a real cluster
+            let labelValues: [Int] = [0, Int(maxSpeed * 0.5), Int(maxSpeed * 0.75), Int(maxSpeed)]
+            ForEach(labelValues, id: \.self) { value in
+                let fraction = Double(value) / maxSpeed
+                let angle = Angle(degrees: -120 + 240 * fraction)
+                
+                Text("\(value)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .rotationEffect(-angle)
+                    .offset(x: CGFloat(cos(angle.radians)) * 70,
+                            y: CGFloat(sin(angle.radians)) * 70)
+            }
+            
+            // Needle
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.red, Color.orange],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 3, height: 90)
+                .offset(y: -45)
+                .rotationEffect(needleAngle)
+                .shadow(color: .red.opacity(0.7), radius: 6, x: 0, y: 3)
+            
+            // Needle hub
+            Circle()
+                .fill(Color.white)
+                .frame(width: 18, height: 18)
+                .shadow(radius: 3)
+            
+            // Current value in center
+            VStack(spacing: 4) {
+                Text(String(format: "%.0f", currentSpeed))
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                Text(unitText)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .frame(width: 220, height: 220)
+    }
+}
+
+struct RetroDigitalSpeedView: View {
+    let speedText: String
+    
+    private var valuePart: String {
+        let components = speedText.split(separator: " ")
+        return components.first.map(String.init) ?? speedText
+    }
+    
+    private var unitPart: String {
+        let components = speedText.split(separator: " ")
+        return components.dropFirst().joined(separator: " ")
+    }
+    
+    var body: some View {
+        ZStack {
+            // Circular bezel to match analog mode
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.7), Color.gray.opacity(0.3)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 10
+                )
+                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 8)
+            
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.black, Color(red: 0.05, green: 0.05, blue: 0.08)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            
+            // 90s LCD inset
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.13, green: 0.12, blue: 0.08),
+                            Color(red: 0.18, green: 0.17, blue: 0.12)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black.opacity(0.7), lineWidth: 1)
+                )
+                .frame(width: 180, height: 80)
+                .shadow(color: .black.opacity(0.6), radius: 6, x: 0, y: 4)
+            
+            VStack(spacing: 6) {
+                // Amber segmented‑style digits
+                Text(valuePart)
+                    .font(.system(size: 60, weight: .medium, design: .monospaced))
+                    .foregroundColor(Color(red: 1.0, green: 0.85, blue: 0.45))
+                    .shadow(color: Color(red: 1.0, green: 0.8, blue: 0.3).opacity(0.8),
+                            radius: 5, x: 0, y: 0)
+                
+                if !unitPart.isEmpty {
+                    Text(unitPart.uppercased())
+                        .font(.caption2)
+                        .foregroundColor(Color(red: 1.0, green: 0.85, blue: 0.45).opacity(0.8))
+                        .tracking(4)
+                }
+            }
+        }
+        .frame(width: 220, height: 220)
+    }
+}
+
 // A custom button style for the "liquid glass" effect.
 struct GlassButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -278,10 +472,9 @@ struct ContentView: View {
                 .frame(width: 400, height: 400)
                 
                 VStack(spacing: 8) {
-                    Text(locationManager.currentSpeed)
-                        .font(.system(size: 80, weight: .bold, design: .rounded))
+                    speedDisplayView()
                     
-                    if locationManager.currentSpeed == "0 km/h" && !isMapVisible {
+                    if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible {
                         // Show additional info when stopped
                         VStack(spacing: 4) {
                             Text(locationManager.currentStreetName)
@@ -572,6 +765,24 @@ struct ContentView: View {
             }
             .animation(.spring(), value: distractionDetector.isDistracted)
         )
+    }
+    
+    // MARK: - Helpers
+    
+    @ViewBuilder
+    private func speedDisplayView() -> some View {
+        switch themeManager.speedDisplayMode {
+        case .digital:
+            Text(locationManager.currentSpeed)
+                .font(.system(size: 80, weight: .bold, design: .rounded))
+        case .analog:
+            AnalogSpeedView(
+                speedMps: locationManager.currentSpeedMps,
+                useMetric: locationManager.useMetric
+            )
+        case .retroDigital:
+            RetroDigitalSpeedView(speedText: locationManager.currentSpeed)
+        }
     }
     
     // Helper function to format distance

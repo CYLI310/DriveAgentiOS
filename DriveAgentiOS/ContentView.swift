@@ -8,10 +8,11 @@ import Combine
 struct AnalogSpeedView: View {
     let speedMps: Double
     let useMetric: Bool
+    let isSpeeding: Bool
+    let accelerationState: LocationManager.AccelerationState
     
     private var maxSpeed: Double {
-        // Reasonable upper bounds for typical driving
-        useMetric ? 200 : 140
+        useMetric ? 240 : 160
     }
     
     private var currentSpeed: Double {
@@ -20,182 +21,265 @@ struct AnalogSpeedView: View {
     }
     
     private var unitText: String {
-        useMetric ? "km/h" : "mph"
+        useMetric ? "KM/H" : "MPH"
     }
     
     private var needleAngle: Angle {
-        // Gauge spans -120° to +120°
+        // Gauge spans -135° to +135° (270 degrees sweep)
         let fraction = currentSpeed / maxSpeed
-        let clamped = max(0, min(fraction, 1))
-        return Angle(degrees: -120 + 240 * clamped)
+        return Angle(degrees: -135 + 270 * fraction)
+    }
+    
+    private var themeColor: Color {
+        if isSpeeding { return .red }
+        switch accelerationState {
+        case .accelerating: return .blue
+        case .decelerating: return .green
+        case .steady: return .teal
+        case .stopped: return .gray
+        }
     }
     
     var body: some View {
         ZStack {
-            // Outer minimal tick ring (following app's clean design)
-            ForEach(0..<12) { index in
-                let angle = Angle(degrees: Double(index) / 12.0 * 360.0)
-                Capsule()
-                    .fill(Color.white.opacity(index.isMultiple(of: 3) ? 0.9 : 0.5))
-                    .frame(width: index.isMultiple(of: 3) ? 3 : 2,
-                           height: index.isMultiple(of: 3) ? 20 : 12)
-                    .offset(y: -120)
-                    .rotationEffect(angle)
-            }
-            
-            // Bezel + inner dial
+            // Main Glass Plate
             Circle()
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.7), Color.gray.opacity(0.3)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: 10
+                .fill(.ultraThinMaterial)
+                .overlay(
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [.white.opacity(0.3), .clear, .white.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 2
+                        )
                 )
-                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 8)
+                .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 15)
             
+            // Inner Dark Dial
             Circle()
                 .fill(
-                    LinearGradient(
-                        colors: [Color.black, Color(red: 0.05, green: 0.05, blue: 0.08)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
+                    RadialGradient(
+                        gradient: Gradient(colors: [Color(white: 0.12), .black]),
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 120
                     )
                 )
+                .padding(15)
             
-            // Inner arc ticks (only on gauge arc)
-            ForEach(0..<9) { index in
-                let fraction = Double(index) / 8.0
-                let angle = Angle(degrees: -120 + 240 * fraction)
+            // Ticks
+            ForEach(0...Int(maxSpeed / 10), id: \.self) { i in
+                let value = Double(i * 10)
+                let fraction = value / maxSpeed
+                let angle = Angle(degrees: -135 + 270 * fraction)
+                let isMajor = i % 2 == 0
+                
                 Capsule()
-                    .fill(Color.white.opacity(index.isMultiple(of: 2) ? 0.9 : 0.5))
-                    .frame(width: 2, height: index.isMultiple(of: 2) ? 14 : 8)
-                    .offset(y: -80)
+                    .fill(isMajor ? Color.white.opacity(0.8) : Color.white.opacity(0.3))
+                    .frame(width: isMajor ? 3 : 1.5, height: isMajor ? 18 : 10)
+                    .offset(y: -105) // Radius of ticks
                     .rotationEffect(angle)
             }
             
-            // Numeric labels on the right side like a real cluster
-            let labelValues: [Int] = [0, Int(maxSpeed * 0.5), Int(maxSpeed * 0.75), Int(maxSpeed)]
-            ForEach(labelValues, id: \.self) { value in
-                let fraction = Double(value) / maxSpeed
-                let angle = Angle(degrees: -120 + 240 * fraction)
+            // Labels (Outside the ring)
+            ForEach(0...Int(maxSpeed / 40), id: \.self) { i in
+                let value = Double(i * 40)
+                let fraction = value / maxSpeed
+                let angle = Angle(degrees: -135 + 270 * fraction)
                 
-                Text("\(value)")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                    .rotationEffect(-angle)
-                    .offset(x: CGFloat(cos(angle.radians)) * 70,
-                            y: CGFloat(sin(angle.radians)) * 70)
+                // Position labels with trigonometry to keep them upright
+                let radius: CGFloat = 132
+                let x = radius * cos(CGFloat(angle.radians - .pi / 2))
+                let y = radius * sin(CGFloat(angle.radians - .pi / 2))
+                
+                Text("\(Int(value))")
+                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .foregroundColor(.white.opacity(0.7))
+                    .position(x: 140 + x, y: 140 + y) // Center is (140, 140) for a 280 frame
             }
+            
+            // Speeding Alert Arc (Subtle)
+            if isSpeeding {
+                Circle()
+                    .trim(from: 0.375, to: 1.0) 
+                    .stroke(
+                        AngularGradient(
+                            gradient: Gradient(colors: [.clear, .red.opacity(0.4), .red]),
+                            center: .center,
+                            angle: .degrees(90)
+                        ),
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .frame(width: 210, height: 210)
+                    .rotationEffect(.degrees(90))
+                    .blur(radius: 2)
+            }
+            
+            // Central Info
+            VStack(spacing: 0) {
+                Text(String(format: "%.0f", currentSpeed))
+                    .font(.system(size: 64, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
+                    .shadow(color: themeColor.opacity(0.3), radius: 10)
+                Text(unitText)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(themeColor)
+                    .tracking(3)
+            }
+            .offset(y: 10)
             
             // Needle
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [Color.red, Color.orange],
-                        startPoint: .top,
-                        endPoint: .bottom
+            ZStack(alignment: .bottom) {
+                // Needle Glow
+                Capsule()
+                    .fill(themeColor.opacity(0.4))
+                    .frame(width: 10, height: 110)
+                    .blur(radius: 8)
+                    .offset(y: -55)
+                
+                // Needle Main
+                Capsule()
+                    .fill(
+                        LinearGradient(
+                            colors: [.white, themeColor],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
-                )
-                .frame(width: 3, height: 90)
-                .offset(y: -45)
-                .rotationEffect(needleAngle)
-                .shadow(color: .red.opacity(0.7), radius: 6, x: 0, y: 3)
-            
-            // Needle hub
-            Circle()
-                .fill(Color.white)
-                .frame(width: 18, height: 18)
-                .shadow(radius: 3)
-            
-            // Current value in center
-            VStack(spacing: 4) {
-                Text(String(format: "%.0f", currentSpeed))
-                    .font(.system(size: 44, weight: .bold, design: .rounded))
-                Text(unitText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .frame(width: 4, height: 105)
+                    .offset(y: -52.5)
             }
+            .rotationEffect(needleAngle)
+            .animation(.spring(response: 0.6, dampingFraction: 0.82), value: currentSpeed)
+            
+            // Hub
+            Circle()
+                .fill(Color.black)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [.white.opacity(0.5), .clear],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+                .shadow(radius: 5)
         }
-        .frame(width: 220, height: 220)
+        .frame(width: 280, height: 280)
     }
 }
 
 struct RetroDigitalSpeedView: View {
-    let speedText: String
+    let speedMps: Double
+    let useMetric: Bool
+    let isSpeeding: Bool
     
-    private var valuePart: String {
-        let components = speedText.split(separator: " ")
-        return components.first.map(String.init) ?? speedText
+    private var currentSpeed: Double {
+        useMetric ? speedMps * 3.6 : speedMps * 2.23694
     }
     
-    private var unitPart: String {
-        let components = speedText.split(separator: " ")
-        return components.dropFirst().joined(separator: " ")
+    private var unitText: String {
+        useMetric ? "KM/H" : "MPH"
     }
-    
+
     var body: some View {
         ZStack {
-            // Circular bezel to match analog mode
-            Circle()
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [Color.white.opacity(0.7), Color.gray.opacity(0.3)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: 10
-                )
-                .shadow(color: .black.opacity(0.5), radius: 10, x: 0, y: 8)
-            
-            Circle()
+            // Main Plate - Industrial Look
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color.black, Color(red: 0.05, green: 0.05, blue: 0.08)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-            
-            // 90s LCD inset
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.13, green: 0.12, blue: 0.08),
-                            Color(red: 0.18, green: 0.17, blue: 0.12)
-                        ],
+                        colors: [Color(white: 0.15), Color(white: 0.02)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.black.opacity(0.7), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(Color.white.opacity(0.12), lineWidth: 1.5)
                 )
-                .frame(width: 180, height: 80)
-                .shadow(color: .black.opacity(0.6), radius: 6, x: 0, y: 4)
+                .shadow(color: .black.opacity(0.6), radius: 20, x: 0, y: 12)
             
-            VStack(spacing: 6) {
-                // Amber segmented‑style digits
-                Text(valuePart)
-                    .font(.system(size: 60, weight: .medium, design: .monospaced))
-                    .foregroundColor(Color(red: 1.0, green: 0.85, blue: 0.45))
-                    .shadow(color: Color(red: 1.0, green: 0.8, blue: 0.3).opacity(0.8),
-                            radius: 5, x: 0, y: 0)
-                
-                if !unitPart.isEmpty {
-                    Text(unitPart.uppercased())
-                        .font(.caption2)
-                        .foregroundColor(Color(red: 1.0, green: 0.85, blue: 0.45).opacity(0.8))
-                        .tracking(4)
+            // Grid Background
+            Path { path in
+                let step: CGFloat = 12
+                for i in 0...22 {
+                    let pos = CGFloat(i) * step
+                    path.move(to: CGPoint(x: pos, y: 0))
+                    path.addLine(to: CGPoint(x: pos, y: 140))
+                    path.move(to: CGPoint(x: 0, y: pos))
+                    path.addLine(to: CGPoint(x: 220, y: pos))
                 }
             }
+            .stroke(Color(red: 0.4, green: 1.0, blue: 0.6).opacity(0.08), lineWidth: 0.6)
+            .frame(width: 220, height: 140)
+            .clipped()
+            
+            // Scanlines Effect
+            GeometryReader { geo in
+                VStack(spacing: 1.5) {
+                    ForEach(0..<Int(geo.size.height / 2.5), id: \.self) { _ in
+                        Rectangle()
+                            .fill(Color.black.opacity(0.15))
+                            .frame(height: 0.8)
+                    }
+                }
+            }
+            .frame(width: 220, height: 140)
+            .allowsHitTesting(false)
+            
+            VStack(spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // Segmented Digits Look
+                    Text(String(format: "%02d", Int(currentSpeed)))
+                        .font(.system(size: 84, weight: .black, design: .monospaced))
+                        .foregroundColor(isSpeeding ? Color(red: 1.0, green: 0.2, blue: 0.2) : Color(red: 0.3, green: 1.0, blue: 0.5))
+                        .shadow(color: (isSpeeding ? Color.red : Color.green).opacity(0.6), radius: 12)
+                    
+                    Text(unitText)
+                        .font(.system(size: 22, weight: .heavy, design: .monospaced))
+                        .foregroundColor((isSpeeding ? Color.red : Color.green).opacity(0.5))
+                        .tracking(1)
+                }
+                
+                // Speed Bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.05))
+                        
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(
+                                LinearGradient(
+                                    colors: [isSpeeding ? .red : Color(red: 0.0, green: 0.8, blue: 0.4), .yellow],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geo.size.width * CGFloat(min(currentSpeed / (useMetric ? 120 : 80), 1.0)))
+                            .shadow(color: (isSpeeding ? Color.red : Color.green).opacity(0.5), radius: 4)
+                    }
+                }
+                .frame(height: 12)
+                .padding(.horizontal, 24)
+                
+                Text(isSpeeding ? "OVER LIMIT" : "SYSTEM STABLE")
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
+                    .foregroundColor((isSpeeding ? Color.red : Color.green).opacity(0.9))
+                    .tracking(4)
+                    .opacity(0.7)
+            }
         }
-        .frame(width: 220, height: 220)
+        .frame(width: 270, height: 190)
     }
 }
+
 
 // A custom button style for the "liquid glass" effect.
 struct GlassButtonStyle: ButtonStyle {
@@ -778,10 +862,16 @@ struct ContentView: View {
         case .analog:
             AnalogSpeedView(
                 speedMps: locationManager.currentSpeedMps,
-                useMetric: locationManager.useMetric
+                useMetric: locationManager.useMetric,
+                isSpeeding: speedTrapDetector.isSpeeding,
+                accelerationState: locationManager.accelerationState
             )
         case .retroDigital:
-            RetroDigitalSpeedView(speedText: locationManager.currentSpeed)
+            RetroDigitalSpeedView(
+                speedMps: locationManager.currentSpeedMps,
+                useMetric: locationManager.useMetric,
+                isSpeeding: speedTrapDetector.isSpeeding
+            )
         }
     }
     

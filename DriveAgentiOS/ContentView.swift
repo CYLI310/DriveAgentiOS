@@ -145,7 +145,7 @@ struct ContentView: View {
 
                 switch locationManager.authorizationStatus {
                 case .denied, .restricted:
-                    PermissionDeniedView(languageManager: languageManager)
+                    PermissionDeniedView(languageManager: languageManager, themeManager: themeManager)
                 case .notDetermined:
                     // Show a loading screen while waiting for authorization
                     VStack {
@@ -175,7 +175,7 @@ struct ContentView: View {
                 )
             }
             .fullScreenCover(isPresented: $showOnboarding) {
-                OnboardingView(isPresented: $showOnboarding, languageManager: languageManager)
+                OnboardingView(isPresented: $showOnboarding, languageManager: languageManager, themeManager: themeManager)
             }
             .onAppear {
                 // Check if this is the first launch
@@ -433,6 +433,7 @@ struct ContentView: View {
                     
                     // Exit button
                     Button {
+                        themeManager.triggerHaptic()
                         withAnimation(.spring()) {
                             isMapVisible = false
                         }
@@ -451,6 +452,7 @@ struct ContentView: View {
                     speedTrapDetector: speedTrapDetector,
                     locationManager: locationManager,
                     languageManager: languageManager,
+                    themeManager: themeManager,
                     isPresented: $showingSpeedTrapList
                 )
             }
@@ -462,6 +464,7 @@ struct ContentView: View {
             // Buttons
             HStack(spacing: 40) {
                 Button {
+                    themeManager.triggerHaptic()
                     withAnimation(.spring()) {
                         isMapVisible = false  // Close map if open
                         showingSpeedTrapList = true
@@ -472,6 +475,7 @@ struct ContentView: View {
                 .buttonStyle(GlassButtonStyle())
                 
                 Button {
+                    themeManager.triggerHaptic()
                     withAnimation(.spring()) {
                         showingSpeedTrapList = false  // Close speed trap list if open
                         isMapVisible.toggle()
@@ -483,6 +487,7 @@ struct ContentView: View {
                 .scaleEffect(1.2) // Magnify the center button
 
                 Button {
+                    themeManager.triggerHaptic()
                     showingSettings = true
                 } label: {
                     Image(systemName: "gearshape")
@@ -614,7 +619,8 @@ struct ContentView: View {
 }
 
 struct PermissionDeniedView: View {
-    @ObservedObject var languageManager: LanguageManager
+    @ObservedObject var languageManager: LocationManager
+    @ObservedObject var themeManager: ThemeManager
     
     var body: some View {
         VStack(spacing: 12) {
@@ -630,6 +636,7 @@ struct PermissionDeniedView: View {
                 .padding(.horizontal)
 
             Button(languageManager.localize("Open Settings")) {
+                themeManager.triggerHaptic()
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
@@ -638,9 +645,4 @@ struct PermissionDeniedView: View {
             .padding(.top)
         }
     }
-}
-
-
-#Preview {
-    ContentView()
 }

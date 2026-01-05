@@ -5,6 +5,7 @@ struct SpeedTrapListView: View {
     @ObservedObject var speedTrapDetector: SpeedTrapDetector
     @ObservedObject var locationManager: LocationManager
     @ObservedObject var languageManager: LanguageManager
+    @ObservedObject var themeManager: ThemeManager
     @Binding var isPresented: Bool
     
     @State private var nearestTraps: [SpeedTrapInfo] = []
@@ -69,6 +70,7 @@ struct SpeedTrapListView: View {
             
             // Exit button (matching map view style)
             Button {
+                themeManager.triggerHaptic()
                 withAnimation(.spring()) {
                     isPresented = false
                 }
@@ -174,13 +176,4 @@ struct SpeedTrapRow: View {
             return String(format: "%.1f km", meters / 1000)
         }
     }
-}
-
-#Preview {
-    SpeedTrapListView(
-        speedTrapDetector: SpeedTrapDetector(),
-        locationManager: LocationManager(),
-        languageManager: LanguageManager(),
-        isPresented: .constant(true)
-    )
 }

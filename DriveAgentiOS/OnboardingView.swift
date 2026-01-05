@@ -3,6 +3,7 @@ import SwiftUI
 struct OnboardingView: View {
     @Binding var isPresented: Bool
     @ObservedObject var languageManager: LanguageManager
+    @ObservedObject var themeManager: ThemeManager
     @State private var currentPage = 0
     
     let pages = [
@@ -61,11 +62,15 @@ struct OnboardingView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                .onChange(of: currentPage) { _ in
+                    themeManager.triggerHaptic()
+                }
                 
                 // Navigation buttons
                 HStack {
                     if currentPage > 0 {
                         Button(languageManager.localize("Back")) {
+                            themeManager.triggerHaptic()
                             withAnimation {
                                 currentPage -= 1
                             }
@@ -77,6 +82,7 @@ struct OnboardingView: View {
                     
                     if currentPage < pages.count - 1 {
                         Button(languageManager.localize("Next")) {
+                            themeManager.triggerHaptic()
                             withAnimation {
                                 currentPage += 1
                             }
@@ -86,6 +92,7 @@ struct OnboardingView: View {
                         .transition(.opacity)
                     } else {
                         Button(languageManager.localize("Get Started")) {
+                            themeManager.triggerHaptic(.medium)
                             isPresented = false
                             UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
                         }
@@ -152,8 +159,4 @@ struct OnboardingPage {
     let title: String
     let description: String
     let color: Color
-}
-
-#Preview {
-    OnboardingView(isPresented: .constant(true), languageManager: LanguageManager())
 }

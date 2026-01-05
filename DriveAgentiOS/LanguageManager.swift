@@ -148,6 +148,36 @@ class LanguageManager: ObservableObject {
             .filipino: "Hitsura", .hindi: "दिखावट", .arabic: "المظهر", .spanish: "Apariencia",
             .german: "Erscheinungsbild", .french: "Apparence", .italian: "Aspetto", .portuguese: "Aparência", .russian: "Внешний вид"
         ],
+        "Haptics": [
+            .english: "Haptics", .chineseTraditional: "觸覺回饋", .chineseSimplified: "触觉回馈",
+            .korean: "햅틱", .japanese: "触覚", .vietnamese: "Xúc giác", .thai: "การตอบสนองแบบสั่น",
+            .filipino: "Haptics", .hindi: "हैप्टिक्स", .arabic: "اللمسات", .spanish: "Háptica",
+            .german: "Haptik", .french: "Haptique", .italian: "Feedback aptico", .portuguese: "Háptica", .russian: "Тактильный отклик"
+        ],
+        "Haptic Feedback": [
+            .english: "Haptic Feedback", .chineseTraditional: "按鈕觸覺回饋", .chineseSimplified: "按钮触觉回馈",
+            .korean: "햅틱 피드백", .japanese: "触覚フィードバック", .vietnamese: "Phản hồi xúc giác", .thai: "การตอบสนองแบบสั่น",
+            .filipino: "Haptic Feedback", .hindi: "हैप्टिक फीडबैक", .arabic: "ردود الفعل اللمسية", .spanish: "Vibración háptica",
+            .german: "Haptisches Feedback", .french: "Retour haptique", .italian: "Feedback aptico", .portuguese: "Feedback háptico", .russian: "Тактильная обратная связь"
+        ],
+        "Haptic Feedback Description": [
+            .english: "Provides physical feedback when interacting with buttons and settings.",
+            .chineseTraditional: "在操作按鈕與設定時提供實體震動回饋。",
+            .chineseSimplified: "在操作按钮与设置时提供实体震动回馈。",
+            .korean: "버튼 및 설정과 상호 작용할 때 물리적 피드백을 제공합니다.",
+            .japanese: "ボタンや設定を操作するときに物理的なフィードバックを提供します。",
+            .vietnamese: "Cung cấp phản hồi vật lý khi tương tác với các nút và cài đặt.",
+            .thai: "ให้การตอบสนองทางกายภาพเมื่อโต้ตอบกับปุ่มและการตั้งค่า",
+            .filipino: "Nagbibigay ng pisikal na feedback kapag nakikipag-ugnayan sa mga button at setting.",
+            .hindi: "बटन और सेटिंग्स के साथ बातचीत करते समय भौतिक प्रतिक्रिया प्रदान करता है।",
+            .arabic: "يوفر ردود فعل مادية عند التفاعل مع الأزرار والإعدادات.",
+            .spanish: "Proporciona retroalimentación física al interactuar con botones y ajustes.",
+            .german: "Bietet physisches Feedback bei der Interaktion mit Tasten und Einstellungen.",
+            .french: "Fournit un retour physique lors de l'interaction avec les boutons et les paramètres.",
+            .italian: "Fornisce un feedback fisico quando si interagisce con pulsanti e impostazioni.",
+            .portuguese: "Fornece feedback físico ao interagir com botões e configurações.",
+            .russian: "Обеспечивает физическую обратную связь при взаимодействии с кнопками и настройками."
+        ],
         "Show Top Bar": [
             .english: "Show Top Bar", .chineseTraditional: "顯示頂部資訊列", .chineseSimplified: "显示顶部信息栏",
             .korean: "상단 바 표시", .japanese: "トップバーを表示", .vietnamese: "Hiện thanh trên cùng", .thai: "แสดงแถบด้านบน",
@@ -216,7 +246,7 @@ class LanguageManager: ObservableObject {
         ],
         "Units": [
             .english: "Units", .chineseTraditional: "單位", .chineseSimplified: "单位",
-            .korean: "단위", .japanese: "単位", .vietnamese: "Đơn vị", .thai: "หน่วย",
+            .korean: "단위", .japanese: "單位", .vietnamese: "Đơn vị", .thai: "หน่วย",
             .filipino: "Mga Yunit", .hindi: "इकाइयाँ", .arabic: "الوحدات", .spanish: "Unidades",
             .german: "Einheiten", .french: "Unités", .italian: "Unità", .portuguese: "Unidades", .russian: "Единицы"
         ],
@@ -224,7 +254,7 @@ class LanguageManager: ObservableObject {
             .english: "Use Metric (km/h, km)", .chineseTraditional: "使用公制 (km/h, km)", .chineseSimplified: "使用公制 (km/h, km)",
             .korean: "미터법 사용 (km/h, km)", .japanese: "メートル法を使用 (km/h, km)", .vietnamese: "Dùng hệ mét (km/h, km)", .thai: "ใช้ระบบเมตริก (km/h, km)",
             .filipino: "Gamitin ang Metric (km/h, km)", .hindi: "मीट्रिक का उपयोग करें (km/h, km)", .arabic: "استخدام النظام المتري (كم/س، كم)", .spanish: "Usar métrico (km/h, km)",
-            .german: "Metrisch verwenden (km/h, km)", .french: "Utiliser le système métrique", .italian: "Usa metrico (km/h, km)", .portuguese: "Usar métrico (km/h, km)", .russian: "Использовать метрическую (км/ч, км)"
+            .german: "Metrisch verwenden (km/h, km)", .french: "Utiliser le sistema métrique", .italian: "Usa metrico (km/h, km)", .portuguese: "Usar métrico (km/h, km)", .russian: "Использовать метрическую (км/ч, км)"
         ],
         "Metric Description": [
             .english: "Speed in km/h, distance in km/m", .chineseTraditional: "速度顯示 km/h，距離顯示 km/m", .chineseSimplified: "速度显示 km/h，距离显示 km/m",
@@ -384,7 +414,7 @@ class LanguageManager: ObservableObject {
         ],
         "Show Tutorial": [
             .english: "Show Tutorial", .chineseTraditional: "顯示教學", .chineseSimplified: "显示教程",
-            .korean: "튜토리얼 보기", .japanese: "チュートリアルを表示", .vietnamese: "Hiện hướng dẫn", .thai: "แสดงบทช่วยสอน",
+            .korean: "튜토리얼 보기", .japanese: "チュートリアルを表示", .vietnamese: "Hiện hướng dẫn", .thai: "顯示教程",
             .filipino: "Ipakita ang Tutorial", .hindi: "ट्यूटोरियल दिखाएं", .arabic: "عرض البرنامج التعليمي", .spanish: "Mostrar tutorial",
             .german: "Tutorial anzeigen", .french: "Afficher le tutoriel", .italian: "Mostra tutorial", .portuguese: "Mostrar tutorial", .russian: "Показать обучение"
         ],
@@ -398,9 +428,9 @@ class LanguageManager: ObservableObject {
         ],
         "Particles orbit around the speed display": [
             .english: "Particles orbit around the speed display", .chineseTraditional: "粒子環繞速度顯示", .chineseSimplified: "粒子环绕速度显示",
-            .korean: "입자가 속도 표시 주위를 궤도처럼 돕니다", .japanese: "パーティクルが速度表示の周りを周回します", .vietnamese: "Các hạt quay quanh màn hình tốc độ", .thai: "อนุภาคโคจรรอบการแสดงความเร็ว",
+            .korean: "입자가 속도 표시 주위를 궤도처럼 돕니다", .japanese: "パーティクルが速度表示の周りを周回します", .vietnamese: "Các hạt quay quanh màn hình tốc độ", .thai: "อนุภาคโคจรรอบการ顯示速度",
             .filipino: "Ang mga particle ay umiikot sa display ng bilis", .hindi: "कण गति प्रदर्शन के चारों ओर परिक्रमा करते हैं", .arabic: "تدور الجسيمات حول عرض السرعة", .spanish: "Las partículas orbitan alrededor de la pantalla de velocidad",
-            .german: "Partikel umkreisen die Geschwindigkeitsanzeige", .french: "Les particules orbitent autour de l'affichage de la vitesse", .italian: "Le particelle orbitano attorno al display della velocità", .portuguese: "Partículas orbitam ao redor do mostrador de velocidade", .russian: "Частицы вращаются вокруг индикатора скорости"
+            .german: "Partikel umkreisen die Geschwindigkeitsanzeige", .french: "Les particules orbitent autour de l'affichage de la vitesse", .italian: "Le particelle orbitano attorno al display della velocità", .portuguese: "Partículas orbitam ao redor do mostrador de velocità", .russian: "Частицы вращаются вокруг индикатора скорости"
         ],
         "Particles pulse in and out rhythmically": [
             .english: "Particles pulse in and out rhythmically", .chineseTraditional: "粒子有節奏地脈動", .chineseSimplified: "粒子有节奏地脉动",
@@ -411,14 +441,14 @@ class LanguageManager: ObservableObject {
         "Particles move in a dynamic spiral pattern": [
             .english: "Particles move in a dynamic spiral pattern", .chineseTraditional: "粒子以動態螺旋方式移動", .chineseSimplified: "粒子以动态螺旋方式移动",
             .korean: "입자가 역동적인 나선형 패턴으로 움직입니다", .japanese: "パーティクルが動的なスパイラルパターンで移動します", .vietnamese: "Các hạt di chuyển theo mô hình xoắn ốc động", .thai: "อนุภาคเคลื่อนที่ในรูปแบบเกลียวไดนามิก",
-            .filipino: "Ang mga particle ay gumagalaw sa isang dynamic na spiral pattern", .hindi: "कण एक गतिशील सर्पिल पैटर्न में चलते हैं", .arabic: "تتحرك الجسيمات في نمط حلزوني ديناميكي", .spanish: "Las partículas se mueven en un patrón espiral dinámico",
+            .filipino: "Ang mga particle ay gumagalaw sa isang dynamic na spiral pattern", .hindi: "कण एक गतिशील सर्पिल पैटर्न में चलते हैं", .arabic: "تتحرك الجسيمات في نمط حلزوني ديناميكي", .spanish: "Las partículas se muévelen en un patrón espiral dinámico",
             .german: "Partikel bewegen sich in einem dynamischen Spiralmuster", .french: "Les particules se déplacent dans un motif en spirale dynamique", .italian: "Le particelle si muovono in un modello a spirale dinamico", .portuguese: "Partículas movem-se num padrão espiral dinâmico", .russian: "Частицы движутся по динамической спирали"
         ],
         "A rotating gradient background": [
             .english: "A rotating gradient background", .chineseTraditional: "旋轉漸層背景", .chineseSimplified: "旋转渐变背景",
             .korean: "회전하는 그라디언트 배경", .japanese: "回転するグラデーション背景", .vietnamese: "Nền chuyển màu xoay", .thai: "พื้นหลังไล่ระดับสีแบบหมุน",
             .filipino: "Isang umiikot na gradient background", .hindi: "एक घूर्णन ढाल पृष्ठभूमि", .arabic: "خلفية متدرجة دوارة", .spanish: "Un fondo degradado giratorio",
-            .german: "Ein rotierender Farbverlaufshintergrund", .french: "Un fond dégradé rotatif", .italian: "Uno sfondo sfumato rotante", .portuguese: "Um fundo gradiente rotativo", .russian: "Вращающийся градиентный фон"
+            .german: "Ein rotierender Farbverlaufshintergrund", .french: "Un fond dégradé rotatif", .italian: "Uno sfondo sfumato rotante", .portuguese: "Um fondo gradiente rotativo", .russian: "Вращающийся градиентный фон"
         ],
         "A retro-style moving perspective grid": [
             .english: "A retro-style moving perspective grid", .chineseTraditional: "復古風格移動透視網格", .chineseSimplified: "复古风格移动透视网格",
@@ -437,7 +467,7 @@ class LanguageManager: ObservableObject {
         "Nearest Speed Cameras": [
             .english: "Nearest Speed Cameras", .chineseTraditional: "附近測速照相", .chineseSimplified: "附近测速照相",
             .korean: "가장 가까운 과속 단속 카메라", .japanese: "最寄りのスピードカメラ", .vietnamese: "Camera tốc độ gần nhất", .thai: "กล้องตรวจจับความเร็วที่ใกล้ที่สุด",
-            .filipino: "Pinakamalapit na Speed Cameras", .hindi: "निकटतम स्पीड कैमरे", .arabic: "أقرب كاميرات السرعة", .spanish: "Cámaras de velocidad más cercanas",
+            .filipino: "Pinakamalapit na Speed Cameras", .hindi: "निकटतम स्पीड कैमरे", .arabic: "أقرب كاميرات السرعة", .spanish: "Cámaras de velocità más cercanas",
             .german: "Nächste Blitzer", .french: "Radars les plus proches", .italian: "Autovelox più vicini", .portuguese: "Radares mais próximos", .russian: "Ближайшие камеры"
         ],
         
@@ -446,7 +476,7 @@ class LanguageManager: ObservableObject {
             .english: "Track Your Speed", .chineseTraditional: "追蹤速度", .chineseSimplified: "追踪速度",
             .korean: "속도 추적", .japanese: "速度を追跡", .vietnamese: "Theo dõi tốc độ của bạn", .thai: "ติดตามความเร็วของคุณ",
             .filipino: "Subaybayan ang Iyong Bilis", .hindi: "अपनी गति ट्रैक करें", .arabic: "تتبع سرعتك", .spanish: "Rastrea tu velocidad",
-            .german: "Verfolgen Sie Ihre Geschwindigkeit", .french: "Suivez votre vitesse", .italian: "Traccia la tua velocità", .portuguese: "Rastreie sua velocidade", .russian: "Отслеживайте скорость"
+            .german: "Verfolgen Sie Ihre Geschwindigkeit", .french: "Suivez votre velocità", .italian: "Traccia la tua velocità", .portuguese: "Rastreie sua velocità", .russian: "Отслеживайте скорость"
         ],
         "Track Speed Desc": [
             .english: "See your current speed in real-time with dynamic particle effects that change color based on acceleration",
@@ -461,9 +491,9 @@ class LanguageManager: ObservableObject {
             .arabic: "شاهد سرعتك الحالية في الوقت الفعلي مع تأثيرات الجسيمات الديناميكية التي تغير اللون بناءً على التسارع",
             .spanish: "Vea su velocidad actual en tiempo real con efectos de partículas dinámicos que cambian de color según la aceleración",
             .german: "Sehen Sie Ihre aktuelle Geschwindigkeit in Echtzeit mit dynamischen Partikeleffekten, die je nach Beschleunigung die Farbe ändern",
-            .french: "Voyez votre vitesse actuelle en temps réel avec des effets de particules dynamiques qui changent de couleur en fonction de l'accélération",
+            .french: "Voyez votre velocità actuelle en temps réel avec des effets de particules dynamiques qui changent de couleur en fonction de l'accélération",
             .italian: "Vedi la tua velocità attuale in tempo reale con effetti particellari dinamici che cambiano colore in base all'accelerazione",
-            .portuguese: "Veja sua velocidade atual em tempo real com efeitos de partículas dinâmicos que mudam de cor com base na aceleração",
+            .portuguese: "Veja sua velocità atual em tempo real com efeitos de partículas dinâmicos que mudam de cor com base na aceleração",
             .russian: "Смотрите текущую скорость в реальном времени с динамическими эффектами частиц, меняющими цвет при ускорении"
         ],
         "View Your Route": [
@@ -493,7 +523,7 @@ class LanguageManager: ObservableObject {
         "Speed Cameras": [
             .english: "Speed Cameras", .chineseTraditional: "測速照相", .chineseSimplified: "测速照相",
             .korean: "과속 단속 카메라", .japanese: "スピードカメラ", .vietnamese: "Camera tốc độ", .thai: "กล้องตรวจจับความเร็ว",
-            .filipino: "Mga Speed Camera", .hindi: "स्पीड कैमरे", .arabic: "كاميرات السرعة", .spanish: "Cámaras de velocidad",
+            .filipino: "Mga Speed Camera", .hindi: "स्पीड कैमरे", .arabic: "كاميرات السرعة", .spanish: "Cámaras de velocità",
             .german: "Blitzer", .french: "Radars", .italian: "Autovelox", .portuguese: "Radares", .russian: "Камеры скорости"
         ],
         "Speed Cameras Desc": [
@@ -506,7 +536,7 @@ class LanguageManager: ObservableObject {
             .thai: "แตะปุ่มกล้องเพื่อดูรายการกล้องตรวจจับความเร็วที่ใกล้ที่สุดและระยะทาง",
             .filipino: "I-tap ang pindutan ng camera upang makita ang isang listahan ng pinakamalapit na mga speed camera at ang kanilang mga distansya",
             .hindi: "निकटतम स्पीड कैमरों और उनकी दूरी की सूची देखने के लिए कैमरा बटन पर टैप करें",
-            .arabic: "اضغط على زر الكاميرا لرؤية قائمة بأقرب كاميرات السرعة ومسافاتها",
+            .arabic: "اضغط على زر الكاميرا לרؤية قائمة بأقرب كاميرات السرعة ومسافاتها",
             .spanish: "Toque el botón de la cámara para ver una lista de las cámaras de velocidad más cercanas y sus distancias",
             .german: "Tippen Sie auf die Kameraschaltfläche, um eine Liste der nächsten Blitzer und deren Entfernungen anzuzeigen",
             .french: "Appuyez sur le bouton de la caméra pour voir une liste des radars les plus proches et leurs distances",
@@ -555,11 +585,11 @@ class LanguageManager: ObservableObject {
             .filipino: "Kapag huminto, makikita mo ang iyong kasalukuyang kalye, distansya ng biyahe, pinakamabilis, at antas ng baterya",
             .hindi: "रुकने पर, आप अपनी वर्तमान सड़क, यात्रा की दूरी, अधिकतम गति और बैटरी स्तर देखेंगे",
             .arabic: "عند التوقف، سترى شارعك الحالي، ومسافة الرحلة، والسرعة القصوى، ومستوى البطارية",
-            .spanish: "Cuando se detenga, verá su calle actual, la distancia del viaje, la velocidad máxima y el nivel de la batería",
+            .spanish: "Cuando se detenga, verá su calle actual, la distanza del viaje, la velocità máxima y el nivel de la batería",
             .german: "Im Stand sehen Sie Ihre aktuelle Straße, Reisedistanz, Höchstgeschwindigkeit und Batteriestand",
-            .french: "À l'arrêt, vous verrez votre rue actuelle, la distance du trajet, la vitesse maximale et le niveau de la batterie",
+            .french: "À l'arrêt, vous verrez votre rue actuelle, la distance du trajet, la velocità maximale et le niveau de la batterie",
             .italian: "Quando sei fermo, vedrai la tua strada attuale, la distanza del viaggio, la velocità massima e il livello della batteria",
-            .portuguese: "Quando parado, você verá sua rua atual, distância da viagem, velocidade máxima e nível da bateria",
+            .portuguese: "Quando parado, você verá sua rua atual, distanza da viagem, velocità máxima e nível da batteria",
             .russian: "При остановке вы увидите текущую улицу, расстояние, макс. скорость и уровень заряда"
         ],
         

@@ -1,0 +1,1052 @@
+{
+  "displayFieldName": "ROADNAME",
+  "fieldAliases": {
+    "ID": "Identifier",
+    "ROADNAME": "Road Name",
+    "ROADDIR": "Road Direction",
+    "LATITUDE": "Latitude",
+    "LONGITUDE": "Longitude",
+    "SPEED": "Speed",
+    "GIS_ID": "GIS Identifier",
+    "SE_ANNO_CAD_DATA": "SE_ANNO_CAD_DATA",
+    "GLOBALID": "GLOBALID",
+    "CREATED": "CREATED",
+    "EDITED": "EDITED",
+    "OBJECTID": "OBJECTID"
+  },
+  "geometryType": "esriGeometryPoint",
+  "spatialReference": {
+    "wkid": 4326,
+    "latestWkid": 4326
+  },
+  "fields": [
+    {
+      "name": "ID",
+      "type": "esriFieldTypeInteger",
+      "alias": "Identifier"
+    },
+    {
+      "name": "ROADNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Road Name",
+      "length": 254
+    },
+    {
+      "name": "ROADDIR",
+      "type": "esriFieldTypeString",
+      "alias": "Road Direction",
+      "length": 254
+    },
+    {
+      "name": "LATITUDE",
+      "type": "esriFieldTypeDouble",
+      "alias": "Latitude"
+    },
+    {
+      "name": "LONGITUDE",
+      "type": "esriFieldTypeDouble",
+      "alias": "Longitude"
+    },
+    {
+      "name": "SPEED",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Speed"
+    },
+    {
+      "name": "GIS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "GIS Identifier",
+      "length": 50
+    },
+    {
+      "name": "SE_ANNO_CAD_DATA",
+      "type": "esriFieldTypeBlob",
+      "alias": "SE_ANNO_CAD_DATA"
+    },
+    {
+      "name": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GLOBALID",
+      "length": 38
+    },
+    {
+      "name": "CREATED",
+      "type": "esriFieldTypeDate",
+      "alias": "CREATED",
+      "length": 8
+    },
+    {
+      "name": "EDITED",
+      "type": "esriFieldTypeDate",
+      "alias": "EDITED",
+      "length": 8
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID"
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "ID": 8084,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.965833,
+        "LONGITUDE": -77.075833,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_1",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{EED030CA-651E-41F5-91C0-4430998F8934}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 1
+      },
+      "geometry": {
+        "x": -77.0760322894009,
+        "y": 38.9658392064136
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8085,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.965833,
+        "LONGITUDE": -77.075833,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_2",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{BFE0D8A1-B758-44C2-BA7A-088190D42F1B}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 2
+      },
+      "geometry": {
+        "x": -77.0760300580991,
+        "y": 38.9658351721679
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8091,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.959444,
+        "LONGITUDE": -77.072222,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_3",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{5752C55F-0082-437A-8006-DBF18FB69D4E}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 3
+      },
+      "geometry": {
+        "x": -77.0723404947206,
+        "y": 38.9594530191769
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8090,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.959444,
+        "LONGITUDE": -77.072222,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_4",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{EE149ECE-6D1C-4855-A3DC-74C947009747}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 4
+      },
+      "geometry": {
+        "x": -77.0723378258939,
+        "y": 38.959449480581
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8044,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.955556,
+        "LONGITUDE": -77.07,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_5",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{00C08C5D-1F3F-4859-BC6F-2F8FFCCC5F75}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 5
+      },
+      "geometry": {
+        "x": -77.0701018825069,
+        "y": 38.9555358233025
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8045,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.955556,
+        "LONGITUDE": -77.07,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_6",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{533C4F16-2556-44B4-9B7C-D511805A1028}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 6
+      },
+      "geometry": {
+        "x": -77.0700933747582,
+        "y": 38.9555191631056
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8086,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.942778,
+        "LONGITUDE": -77.0625,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_7",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{3898B4CC-B8A3-4BDB-9361-096B27A53A0A}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 7
+      },
+      "geometry": {
+        "x": -77.0626209319372,
+        "y": 38.9427578881271
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8087,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.942778,
+        "LONGITUDE": -77.0625,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_8",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{BE129510-F919-47B6-8BB4-19F521975586}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 8
+      },
+      "geometry": {
+        "x": -77.0626167620509,
+        "y": 38.9427513863749
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8081,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.937778,
+        "LONGITUDE": -77.059722,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_9",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{AB53100B-EF82-43DA-941B-E862FB17CE95}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 9
+      },
+      "geometry": {
+        "x": -77.059790505984,
+        "y": 38.9377954392954
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8080,
+        "ROADNAME": " Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.937778,
+        "LONGITUDE": -77.059722,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_10",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{40437559-41B1-4B76-8123-6662674F20CC}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 10
+      },
+      "geometry": {
+        "x": -77.0597857941561,
+        "y": 38.9377884872986
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8082,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.935,
+        "LONGITUDE": -76.963611,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_11",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{3B484A76-5A36-4726-AF14-EABDF178A13C}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 11
+      },
+      "geometry": {
+        "x": -76.9636274572842,
+        "y": 38.9350528580803
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8083,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.935,
+        "LONGITUDE": -76.963611,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_12",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{BB9E00CC-F243-4BEA-8990-4A7DA531557A}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 12
+      },
+      "geometry": {
+        "x": -76.9636354064672,
+        "y": 38.9350482483025
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8075,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.931111,
+        "LONGITUDE": -76.971111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_13",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{B7B1DDBF-2533-4128-B116-093AEE53DBFC}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 13
+      },
+      "geometry": {
+        "x": -76.9710053514562,
+        "y": 38.9312690093792
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8074,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.931111,
+        "LONGITUDE": -76.971111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_14",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{753233DF-F060-4DB6-A1F7-23E104C150A9}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 14
+      },
+      "geometry": {
+        "x": -76.9710445969082,
+        "y": 38.9312460299034
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8057,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.92556,
+        "LONGITUDE": -76.9825,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_15",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{ABFA9EF9-85DB-4E9C-8FEE-8E8BD2F5BF43}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 15
+      },
+      "geometry": {
+        "x": -76.9825562431553,
+        "y": 38.9256326222094
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8056,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.925556,
+        "LONGITUDE": -76.9825,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_16",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{D5A843AC-A394-4CEC-8BB4-BBCFC69012B6}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 16
+      },
+      "geometry": {
+        "x": -76.9825621601856,
+        "y": 38.9256287765405
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8076,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.923056,
+        "LONGITUDE": -77.051111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_17",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{E74931B7-8137-4203-805A-7C084A38A22F}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 17
+      },
+      "geometry": {
+        "x": -77.0511503564658,
+        "y": 38.9230762116475
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8077,
+        "ROADNAME": " Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.923056,
+        "LONGITUDE": -77.051111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_18",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{62034E3F-7F70-4802-9C31-DD6833A38906}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 18
+      },
+      "geometry": {
+        "x": -77.0511479067291,
+        "y": 38.9230692853188
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8059,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.919722,
+        "LONGITUDE": -77,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_19",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{208B00C7-D274-4C83-9F9A-8CFE3268A421}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 19
+      },
+      "geometry": {
+        "x": -77.0000660880314,
+        "y": 38.9198750290364
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8058,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.919722,
+        "LONGITUDE": -77,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_20",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{23D07941-98EF-409D-8C34-22D65FFEE195}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 20
+      },
+      "geometry": {
+        "x": -77.0001103340127,
+        "y": 38.9198552737396
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8069,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.916667,
+        "LONGITUDE": -77.009444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_21",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{3AE22463-56A0-4BDE-9455-EEB02079BB3E}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 21
+      },
+      "geometry": {
+        "x": -77.0094028045161,
+        "y": 38.9167318963693
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8068,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.916667,
+        "LONGITUDE": -77.009444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_22",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{917F4AD9-AB54-472C-89FB-5031B19F37EC}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 22
+      },
+      "geometry": {
+        "x": -77.0094113368945,
+        "y": 38.9167282022657
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8096,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.914722,
+        "LONGITUDE": -77.046111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_23",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{8BBFF93E-B873-40D4-B3B7-C07ADC2FD344}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 23
+      },
+      "geometry": {
+        "x": -77.0461339629653,
+        "y": 38.9147441977952
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8095,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.914722,
+        "LONGITUDE": -77.046111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_24",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{13C14C65-D6C1-46CB-862F-1E352BB8F111}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 24
+      },
+      "geometry": {
+        "x": -77.0461328622985,
+        "y": 38.9147360637011
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8078,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.914167,
+        "LONGITUDE": -77.015833,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_25",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{2953FA81-DD93-4FEC-9EBF-21A7002E63B1}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 25
+      },
+      "geometry": {
+        "x": -77.0159527322581,
+        "y": 38.914291809559
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8079,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.914167,
+        "LONGITUDE": -77.015833,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_26",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{5B81577B-0D39-47BD-9702-AF33C53ACE0F}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 26
+      },
+      "geometry": {
+        "x": -77.0159584853835,
+        "y": 38.9142891423056
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8055,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.9125,
+        "LONGITUDE": -77.021667,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_27",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{01C4EE5A-ADA8-4DF5-AA40-AFDDD3F9FB5F}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 27
+      },
+      "geometry": {
+        "x": -77.0216369592987,
+        "y": 38.9124267816013
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8054,
+        "ROADNAME": "Rhode-Island-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.9125,
+        "LONGITUDE": -77.021667,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_28",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{55AB84F6-658F-4289-93F4-D7939D9CDFCE}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 28
+      },
+      "geometry": {
+        "x": -77.0216407981403,
+        "y": 38.9124244207052
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8050,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.911944,
+        "LONGITUDE": -77.045,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_29",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{2A1DF13B-972A-49CB-BFB5-3860B8799928}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 29
+      },
+      "geometry": {
+        "x": -77.0448826978061,
+        "y": 38.9120856305158
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8051,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.911944,
+        "LONGITUDE": -77.045,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_30",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{058D0D1D-5024-4B03-83E7-F6DC2A5AC694}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 30
+      },
+      "geometry": {
+        "x": -77.0448765693688,
+        "y": 38.9120762101444
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8097,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.905833,
+        "LONGITUDE": -77.041111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_31",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{98028EBA-94C0-4921-B4EC-F907918EBAEB}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 31
+      },
+      "geometry": {
+        "x": -77.0411095888558,
+        "y": 38.9057546827713
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8098,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.905833,
+        "LONGITUDE": -77.041111,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_32",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{390A2335-1E2A-4B58-B9CE-5E7336DC38A2}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 32
+      },
+      "geometry": {
+        "x": -77.0411076843386,
+        "y": 38.9057508458836
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8049,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "N",
+        "LATITUDE": 38.902222,
+        "LONGITUDE": -77.039444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_33",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{DC5FF96D-21F3-423D-8EA8-7DB28F2566EF}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 33
+      },
+      "geometry": {
+        "x": -77.0394535731029,
+        "y": 38.9022202943078
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8048,
+        "ROADNAME": "Connecticut-Avenue",
+        "ROADDIR": "S",
+        "LATITUDE": 38.902222,
+        "LONGITUDE": -77.039444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_34",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{856F8E35-DB68-4F2E-8782-5CB99256D297}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 34
+      },
+      "geometry": {
+        "x": -77.0394527627958,
+        "y": 38.9022143130321
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8067,
+        "ROADNAME": "Pennsylvania-Anenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.893611,
+        "LONGITUDE": -77.022778,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_35",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{C64E337B-AB4D-4462-93AC-4291BF9BA5D7}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 35
+      },
+      "geometry": {
+        "x": -77.0228973190873,
+        "y": 38.8935877185019
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8066,
+        "ROADNAME": "Pennsylvania-Anenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.893611,
+        "LONGITUDE": -77.022778,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_36",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{7EFDB587-C80D-4D02-A6F5-306E22832503}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 36
+      },
+      "geometry": {
+        "x": -77.022887208642,
+        "y": 38.8935842072188
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8065,
+        "ROADNAME": "Pennsylvania-Avenue",
+        "ROADDIR": "W",
+        "LATITUDE": 38.891667,
+        "LONGITUDE": -77.016389,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_37",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{57840EA9-394D-415D-9344-C13713053637}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 37
+      },
+      "geometry": {
+        "x": -77.0164054150854,
+        "y": 38.8917665431682
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8064,
+        "ROADNAME": "Pennsylvania-Avenue",
+        "ROADDIR": "E",
+        "LATITUDE": 38.891667,
+        "LONGITUDE": -77.016389,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_38",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{A2CC3806-330C-4C92-8319-5B7D82E4D74C}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 38
+      },
+      "geometry": {
+        "x": -77.0163627061388,
+        "y": 38.8917582074054
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8041,
+        "ROADNAME": "South-Capitol-St",
+        "ROADDIR": "N",
+        "LATITUDE": 0,
+        "LONGITUDE": 0,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_39",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{6A32CBDF-C1EC-441D-B4EA-9C017DB288DC}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 39
+      },
+      "geometry": {
+        "x": -77.0090693539049,
+        "y": 38.8727643279225
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8040,
+        "ROADNAME": "South-Capitol-St",
+        "ROADDIR": "S",
+        "LATITUDE": 0,
+        "LONGITUDE": 0,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_40",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{07906A46-5948-4474-8DAA-2CFE80D66BD4}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 40
+      },
+      "geometry": {
+        "x": -77.009069767566,
+        "y": 38.8727549231173
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8072,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "N",
+        "LATITUDE": 38.862222,
+        "LONGITUDE": -76.996944,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_41",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{DD90EB32-3E71-436E-AD0E-BA7B396E8D64}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 41
+      },
+      "geometry": {
+        "x": -76.9970820349937,
+        "y": 38.8620936670961
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8073,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "W",
+        "LATITUDE": 38.862222,
+        "LONGITUDE": -76.996944,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_42",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{E6683F4B-29DD-4ED9-9393-4EEA1FBC9494}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 42
+      },
+      "geometry": {
+        "x": -76.9970753868649,
+        "y": 38.8620910544883
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8088,
+        "ROADNAME": "South-Capitol-St",
+        "ROADDIR": "N",
+        "LATITUDE": 38.859167,
+        "LONGITUDE": -77.004167,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_43",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{319F8E37-99A6-4607-9204-0D91AB7569E9}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 43
+      },
+      "geometry": {
+        "x": -77.0042601933384,
+        "y": 38.8591886259219
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8062,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "S",
+        "LATITUDE": 38.852778,
+        "LONGITUDE": -76.983889,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_45",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{39DCDBF6-DB21-4820-900D-06AFD7D3D2C1}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 45
+      },
+      "geometry": {
+        "x": -76.9838939679754,
+        "y": 38.8528792697595
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8063,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "N",
+        "LATITUDE": 38.852778,
+        "LONGITUDE": -76.983889,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_46",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{D6FA8616-CC7A-4D72-8DEB-AEAD8CE4522F}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 46
+      },
+      "geometry": {
+        "x": -76.9839118375578,
+        "y": 38.8528741464244
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8061,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "N",
+        "LATITUDE": 38.851389,
+        "LONGITUDE": -76.959444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_47",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{9C457DC8-A097-41AE-8118-231E8B734AE2}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 47
+      },
+      "geometry": {
+        "x": -76.9594485356235,
+        "y": 38.8514483210864
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8089,
+        "ROADNAME": "South-Capitol-St",
+        "ROADDIR": "S",
+        "LATITUDE": 38.859167,
+        "LONGITUDE": -77.004167,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_44",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{14F3F5D3-8423-4681-8510-312A758F7C28}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 44
+      },
+      "geometry": {
+        "x": -77.0042625894024,
+        "y": 38.8591814371121
+      }
+    },
+    {
+      "attributes": {
+        "ID": 8060,
+        "ROADNAME": "Suitland Pky",
+        "ROADDIR": "S",
+        "LATITUDE": 38.851389,
+        "LONGITUDE": -76.959444,
+        "SPEED": 0,
+        "GIS_ID": "SpeedDetector_48",
+        "SE_ANNO_CAD_DATA": null,
+        "GLOBALID": "{33A5EF50-6841-49A4-9FC3-C74AE805C3BD}",
+        "CREATED": null,
+        "EDITED": null,
+        "OBJECTID": 48
+      },
+      "geometry": {
+        "x": -76.9594900051855,
+        "y": 38.8514345705923
+      }
+    }
+  ]
+}

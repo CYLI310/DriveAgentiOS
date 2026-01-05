@@ -5,280 +5,7 @@ import Combine
 
 // MARK: - Speed Display Styles
 
-struct AnalogSpeedView: View {
-    let speedMps: Double
-    let useMetric: Bool
-    let isSpeeding: Bool
-    let accelerationState: LocationManager.AccelerationState
-    
-    private var maxSpeed: Double {
-        useMetric ? 240 : 160
-    }
-    
-    private var currentSpeed: Double {
-        let value = useMetric ? speedMps * 3.6 : speedMps * 2.23694
-        return max(0, min(value, maxSpeed))
-    }
-    
-    private var unitText: String {
-        useMetric ? "KM/H" : "MPH"
-    }
-    
-    private var needleAngle: Angle {
-        // Gauge spans -135° to +135° (270 degrees sweep)
-        let fraction = currentSpeed / maxSpeed
-        return Angle(degrees: -135 + 270 * fraction)
-    }
-    
-    private var themeColor: Color {
-        if isSpeeding { return .red }
-        switch accelerationState {
-        case .accelerating: return .blue
-        case .decelerating: return .green
-        case .steady: return .teal
-        case .stopped: return .gray
-        }
-    }
-    
-    var body: some View {
-        ZStack {
-            // Main Glass Plate
-            Circle()
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    Circle()
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.3), .clear, .white.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2
-                        )
-                )
-                .shadow(color: .black.opacity(0.4), radius: 20, x: 0, y: 15)
-            
-            // Inner Dark Dial
-            Circle()
-                .fill(
-                    RadialGradient(
-                        gradient: Gradient(colors: [Color(white: 0.12), .black]),
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: 120
-                    )
-                )
-                .padding(15)
-            
-            // Ticks
-            ForEach(0...Int(maxSpeed / 10), id: \.self) { i in
-                let value = Double(i * 10)
-                let fraction = value / maxSpeed
-                let angle = Angle(degrees: -135 + 270 * fraction)
-                let isMajor = i % 2 == 0
-                
-                Capsule()
-                    .fill(isMajor ? Color.white.opacity(0.8) : Color.white.opacity(0.3))
-                    .frame(width: isMajor ? 3 : 1.5, height: isMajor ? 18 : 10)
-                    .offset(y: -105) // Radius of ticks
-                    .rotationEffect(angle)
-            }
-            
-            // Labels (Outside the ring)
-            ForEach(0...Int(maxSpeed / 40), id: \.self) { i in
-                let value = Double(i * 40)
-                let fraction = value / maxSpeed
-                let angle = Angle(degrees: -135 + 270 * fraction)
-                
-                // Position labels with trigonometry to keep them upright
-                let radius: CGFloat = 132
-                let x = radius * cos(CGFloat(angle.radians - .pi / 2))
-                let y = radius * sin(CGFloat(angle.radians - .pi / 2))
-                
-                Text("\(Int(value))")
-                    .font(.system(size: 14, weight: .black, design: .rounded))
-                    .foregroundColor(.white.opacity(0.7))
-                    .position(x: 140 + x, y: 140 + y) // Center is (140, 140) for a 280 frame
-            }
-            
-            // Speeding Alert Arc (Subtle)
-            if isSpeeding {
-                Circle()
-                    .trim(from: 0.375, to: 1.0) 
-                    .stroke(
-                        AngularGradient(
-                            gradient: Gradient(colors: [.clear, .red.opacity(0.4), .red]),
-                            center: .center,
-                            angle: .degrees(90)
-                        ),
-                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                    )
-                    .frame(width: 210, height: 210)
-                    .rotationEffect(.degrees(90))
-                    .blur(radius: 2)
-            }
-            
-            // Central Info
-            VStack(spacing: 0) {
-                Text(String(format: "%.0f", currentSpeed))
-                    .font(.system(size: 64, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .shadow(color: themeColor.opacity(0.3), radius: 10)
-                Text(unitText)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(themeColor)
-                    .tracking(3)
-            }
-            .offset(y: 10)
-            
-            // Needle
-            ZStack(alignment: .bottom) {
-                // Needle Glow
-                Capsule()
-                    .fill(themeColor.opacity(0.4))
-                    .frame(width: 10, height: 110)
-                    .blur(radius: 8)
-                    .offset(y: -55)
-                
-                // Needle Main
-                Capsule()
-                    .fill(
-                        LinearGradient(
-                            colors: [.white, themeColor],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(width: 4, height: 105)
-                    .offset(y: -52.5)
-            }
-            .rotationEffect(needleAngle)
-            .animation(.spring(response: 0.6, dampingFraction: 0.82), value: currentSpeed)
-            
-            // Hub
-            Circle()
-                .fill(Color.black)
-                .frame(width: 24, height: 24)
-                .overlay(
-                    Circle()
-                        .stroke(
-                            LinearGradient(
-                                colors: [.white.opacity(0.5), .clear],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
-                .shadow(radius: 5)
-        }
-        .frame(width: 280, height: 280)
-    }
-}
-
-struct RetroDigitalSpeedView: View {
-    let speedMps: Double
-    let useMetric: Bool
-    let isSpeeding: Bool
-    
-    private var currentSpeed: Double {
-        useMetric ? speedMps * 3.6 : speedMps * 2.23694
-    }
-    
-    private var unitText: String {
-        useMetric ? "KM/H" : "MPH"
-    }
-
-    var body: some View {
-        ZStack {
-            // Main Plate - Industrial Look
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(
-                    LinearGradient(
-                        colors: [Color(white: 0.15), Color(white: 0.02)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.white.opacity(0.12), lineWidth: 1.5)
-                )
-                .shadow(color: .black.opacity(0.6), radius: 20, x: 0, y: 12)
-            
-            // Grid Background
-            Path { path in
-                let step: CGFloat = 12
-                for i in 0...22 {
-                    let pos = CGFloat(i) * step
-                    path.move(to: CGPoint(x: pos, y: 0))
-                    path.addLine(to: CGPoint(x: pos, y: 140))
-                    path.move(to: CGPoint(x: 0, y: pos))
-                    path.addLine(to: CGPoint(x: 220, y: pos))
-                }
-            }
-            .stroke(Color(red: 0.4, green: 1.0, blue: 0.6).opacity(0.08), lineWidth: 0.6)
-            .frame(width: 220, height: 140)
-            .clipped()
-            
-            // Scanlines Effect
-            GeometryReader { geo in
-                VStack(spacing: 1.5) {
-                    ForEach(0..<Int(geo.size.height / 2.5), id: \.self) { _ in
-                        Rectangle()
-                            .fill(Color.black.opacity(0.15))
-                            .frame(height: 0.8)
-                    }
-                }
-            }
-            .frame(width: 220, height: 140)
-            .allowsHitTesting(false)
-            
-            VStack(spacing: 8) {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    // Segmented Digits Look
-                    Text(String(format: "%02d", Int(currentSpeed)))
-                        .font(.system(size: 84, weight: .black, design: .monospaced))
-                        .foregroundColor(isSpeeding ? Color(red: 1.0, green: 0.2, blue: 0.2) : Color(red: 0.3, green: 1.0, blue: 0.5))
-                        .shadow(color: (isSpeeding ? Color.red : Color.green).opacity(0.6), radius: 12)
-                    
-                    Text(unitText)
-                        .font(.system(size: 22, weight: .heavy, design: .monospaced))
-                        .foregroundColor((isSpeeding ? Color.red : Color.green).opacity(0.5))
-                        .tracking(1)
-                }
-                
-                // Speed Bar
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color.white.opacity(0.05))
-                        
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(
-                                LinearGradient(
-                                    colors: [isSpeeding ? .red : Color(red: 0.0, green: 0.8, blue: 0.4), .yellow],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .frame(width: geo.size.width * CGFloat(min(currentSpeed / (useMetric ? 120 : 80), 1.0)))
-                            .shadow(color: (isSpeeding ? Color.red : Color.green).opacity(0.5), radius: 4)
-                    }
-                }
-                .frame(height: 12)
-                .padding(.horizontal, 24)
-                
-                Text(isSpeeding ? "OVER LIMIT" : "SYSTEM STABLE")
-                    .font(.system(size: 11, weight: .black, design: .monospaced))
-                    .foregroundColor((isSpeeding ? Color.red : Color.green).opacity(0.9))
-                    .tracking(4)
-                    .opacity(0.7)
-            }
-        }
-        .frame(width: 270, height: 190)
-    }
-}
+// MARK: - Speed Display Styles (Moved to separate files)
 
 
 // A custom button style for the "liquid glass" effect.
@@ -475,8 +202,7 @@ struct ContentView: View {
                     case .active:
                         // Stop Live Activity when app comes to foreground
                         liveActivityManager?.stop()
-                        // Restart alert if still speeding
-                    case .active:
+                        
                         // Check if speeding and start alert with appropriate interval
                         if speedTrapDetector.isSpeeding {
                             let isSevere = speedTrapDetector.speedingAmount > 10
@@ -510,7 +236,7 @@ struct ContentView: View {
                     distractionDetector.updateSpeed(speedMps: locationManager.currentSpeedMps)
                 }
             }
-            .onChange(of: speedTrapDetector.infiniteProximity) { newValue in
+            .onChange(of: speedTrapDetector.infiniteProximity) { _, newValue in
                 // Force a check when the setting is toggled
                 if let location = locationManager.currentLocation {
                     speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
@@ -786,7 +512,7 @@ struct ContentView: View {
             }
             .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
         )
-        .onChange(of: speedTrapDetector.isSpeeding) { isSpeeding in
+        .onChange(of: speedTrapDetector.isSpeeding) { _, isSpeeding in
             if isSpeeding {
                 // Trigger visual feedback (red glow)
                 withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
@@ -807,7 +533,7 @@ struct ContentView: View {
                 alertFeedbackManager.stopSpeedingAlert()
             }
         }
-        .onChange(of: speedTrapDetector.speedingAmount) { amount in
+        .onChange(of: speedTrapDetector.speedingAmount) { _, amount in
             if speedTrapDetector.isSpeeding {
                 let isSevere = amount > 10
                 let interval = isSevere ? 2.0 : 4.0
@@ -857,8 +583,10 @@ struct ContentView: View {
     private func speedDisplayView() -> some View {
         switch themeManager.speedDisplayMode {
         case .digital:
-            Text(locationManager.currentSpeed)
-                .font(.system(size: 80, weight: .bold, design: .rounded))
+            DigitalSpeedView(
+                speed: locationManager.currentSpeed,
+                isSpeeding: speedTrapDetector.isSpeeding
+            )
         case .analog:
             AnalogSpeedView(
                 speedMps: locationManager.currentSpeedMps,

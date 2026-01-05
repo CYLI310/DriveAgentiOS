@@ -10,7 +10,7 @@ struct SpeedTrapInfo {
     let distance: Double
 }
 
-// Minimal decodable structure for efficient parsing
+// Minimal decodable structure for efficient parsing (Taiwan GeoJSON)
 private struct MinimalFeature: Decodable {
     let geometry: Geometry
     let properties: Properties
@@ -30,6 +30,31 @@ private struct MinimalFeatureCollection: Decodable {
     let features: [MinimalFeature]
 }
 
+// Minimal decodable structure for efficient parsing (US JSON)
+private struct USMinimalFeature: Decodable {
+    let attributes: Attributes
+    
+    struct Attributes: Decodable {
+        let ROADNAME: String
+        let ROADDIR: String?
+        let LATITUDE: Double
+        let LONGITUDE: Double
+        let SPEED: Int
+    }
+}
+
+private struct USMinimalFeatureCollection: Decodable {
+    let features: [USMinimalFeature]
+}
+
+struct UnifiedTrap {
+    let coordinate: CLLocationCoordinate2D
+    let speedLimitValue: Double // Always in km/h for comparison
+    let speedLimitDisplay: String // For UI display
+    let address: String
+    let direction: String
+}
+
 @MainActor
 class SpeedTrapDetector: ObservableObject {
     @Published var closestTrap: SpeedTrapInfo?
@@ -41,6 +66,61 @@ class SpeedTrapDetector: ObservableObject {
     
     private var lastCheckLocation: CLLocation?
     private var isChecking = false
+    private var cachedTraps: [UnifiedTrap]?
+    
+    private func loadAllTraps() -> [UnifiedTrap] {
+        if let cached = cachedTraps { return cached }
+        
+        var traps: [UnifiedTrap] = []
+        let decoder = JSONDecoder()
+        
+        // 1. Load Taiwan Traps
+        if let url = Bundle.main.url(forResource: "speedtraps", withExtension: "geojson") {
+            do {
+                let data = try Data(contentsOf: url)
+                let collection = try decoder.decode(MinimalFeatureCollection.self, from: data)
+                for feature in collection.features {
+                    guard feature.geometry.coordinates.count >= 2 else { continue }
+                    let speedLimit = Double(feature.properties.name.replacingOccurrences(of: ".0", with: "")) ?? 0
+                    traps.append(UnifiedTrap(
+                        coordinate: CLLocationCoordinate2D(latitude: feature.geometry.coordinates[1], longitude: feature.geometry.coordinates[0]),
+                        speedLimitValue: speedLimit,
+                        speedLimitDisplay: feature.properties.name,
+                        address: feature.properties.設置地址,
+                        direction: feature.properties.拍攝方向 ?? ""
+                    ))
+                }
+            } catch {
+                print("Error loading Taiwan speed traps: \(error)")
+            }
+        }
+        
+        // 2. Load US Traps
+        if let url = Bundle.main.url(forResource: "usspeedtraps", withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: url)
+                let collection = try decoder.decode(USMinimalFeatureCollection.self, from: data)
+                for feature in collection.features {
+                    // Convert US speed (presumably MPH) to KMH for consistent internal comparison if it's non-zero
+                    let speedMph = Double(feature.attributes.SPEED)
+                    let speedLimitKmh = speedMph * 1.60934
+                    
+                    traps.append(UnifiedTrap(
+                        coordinate: CLLocationCoordinate2D(latitude: feature.attributes.LATITUDE, longitude: feature.attributes.LONGITUDE),
+                        speedLimitValue: speedLimitKmh,
+                        speedLimitDisplay: speedMph > 0 ? "\(Int(speedMph))" : "N/A",
+                        address: feature.attributes.ROADNAME,
+                        direction: feature.attributes.ROADDIR ?? ""
+                    ))
+                }
+            } catch {
+                print("Error loading US speed traps: \(error)")
+            }
+        }
+        
+        cachedTraps = traps
+        return traps
+    }
     
     func checkForNearbyTraps(userLocation: CLLocationCoordinate2D, currentSpeed: Double = 0, currentStreetName: String = "", currentCourse: Double = -1) {
         // Prevent concurrent checks
@@ -70,113 +150,82 @@ class SpeedTrapDetector: ObservableObject {
                 }
             }
             
-            guard let url = Bundle.main.url(forResource: "speedtraps", withExtension: "geojson") else {
-                print("Speed traps file not found")
-                return
-            }
+            let traps = await self.loadAllTraps()
             
             var closestDistance = Double.infinity
-            var closestTrapData: (coordinate: CLLocationCoordinate2D, speedLimit: String, address: String, direction: String)?
+            var closestTrapData: UnifiedTrap?
             
             // Keep track of the best candidate based on matching criteria
-            var bestCandidate: (coordinate: CLLocationCoordinate2D, speedLimit: String, address: String, direction: String)?
+            var bestCandidate: UnifiedTrap?
             var bestCandidateDistance = Double.infinity
             var bestCandidateScore = 0 // Higher is better
             
-            do {
-                let data = try Data(contentsOf: url)
-                let decoder = JSONDecoder()
+            // Find closest trap
+            for trap in traps {
+                let trapLocation = CLLocation(
+                    latitude: trap.coordinate.latitude,
+                    longitude: trap.coordinate.longitude
+                )
                 
-                // Decode the entire file (it's done efficiently by JSONDecoder)
-                let collection = try decoder.decode(MinimalFeatureCollection.self, from: data)
+                let distance = currentLocation.distance(from: trapLocation)
                 
-                // Find closest trap
-                for feature in collection.features {
-                    guard feature.geometry.coordinates.count >= 2 else { continue }
+                // Check distance based on infiniteProximity setting
+                let withinRange = useInfiniteProximity || distance < 2000
+                
+                if withinRange {
+                    let direction = trap.direction
+                    let address = trap.address
                     
-                    let trapLocation = CLLocation(
-                        latitude: feature.geometry.coordinates[1],
-                        longitude: feature.geometry.coordinates[0]
-                    )
+                    // Calculate Match Score
+                    var score = 0
                     
-                    let distance = currentLocation.distance(from: trapLocation)
+                    // 1. Road Name Match
+                    if !currentStreetName.isEmpty && currentStreetName != "Finding your location..." && currentStreetName != "Unknown Street" {
+                         if self.isRoadMatching(userStreet: currentStreetName, trapAddress: address) {
+                             score += 1000
+                         }
+                    }
                     
-                    // Check distance based on infiniteProximity setting
-                    let withinRange = useInfiniteProximity || distance < 2000
-                    
-                    if withinRange {
-                        let direction = feature.properties.拍攝方向 ?? ""
-                        let address = feature.properties.設置地址
-                        
-                        // Calculate Match Score
-                        var score = 0
-                        
-                        // 1. Road Name Match
-                        // Only check if we have a valid street name
-                        if !currentStreetName.isEmpty && currentStreetName != "Finding your location..." && currentStreetName != "Unknown Street" {
-                             if self.isRoadMatching(userStreet: currentStreetName, trapAddress: address) {
-                                 score += 1000
-                             }
+                    // 2. Direction Match
+                    if currentCourse >= 0 {
+                        if self.isDirectionMatching(userCourse: currentCourse, trapDirection: direction) {
+                            score += 500
                         }
-                        
-                        // 2. Direction Match
-                        // Only check if we have a valid course (speed > 0 usually implies valid course)
-                        if currentCourse >= 0 {
-                            if self.isDirectionMatching(userCourse: currentCourse, trapDirection: direction) {
-                                score += 500
-                            }
-                        }
-                        
-                        // 3. Distance Score (Closer is better, but secondary to road/direction match)
-                        // Invert distance so smaller distance adds more to score (but less than matches)
-                        // Max distance 2000m. 2000 - distance.
-                        if distance < 2000 {
-                            score += Int(2000 - distance) / 10
-                        }
-                        
-                        // Logic:
-                        // If we have a high score (road match), we prioritize it even if it's slightly further away than a non-match.
-                        // However, we still want the CLOSEST high-score trap.
-                        
-                        if score > bestCandidateScore {
-                            bestCandidateScore = score
+                    }
+                    
+                    // 3. Distance Score
+                    if distance < 2000 {
+                        score += Int(2000 - distance) / 10
+                    }
+                    
+                    if score > bestCandidateScore {
+                        bestCandidateScore = score
+                        bestCandidateDistance = distance
+                        bestCandidate = trap
+                    } else if score == bestCandidateScore {
+                        if distance < bestCandidateDistance {
                             bestCandidateDistance = distance
-                            bestCandidate = (
-                                coordinate: trapLocation.coordinate,
-                                speedLimit: feature.properties.name,
-                                address: address,
-                                direction: direction
-                            )
-                        } else if score == bestCandidateScore {
-                            // If scores are equal, pick the closer one
-                            if distance < bestCandidateDistance {
-                                bestCandidateDistance = distance
-                                bestCandidate = (
-                                    coordinate: trapLocation.coordinate,
-                                    speedLimit: feature.properties.name,
-                                    address: address,
-                                    direction: direction
-                                )
-                            }
+                            bestCandidate = trap
                         }
                     }
                 }
-                
-                // Use best candidate if found
-                if let candidate = bestCandidate {
-                    closestDistance = bestCandidateDistance
-                    closestTrapData = candidate
-                }
-                
-                let distanceText = closestDistance.isFinite ? "\(Int(closestDistance))m" : "N/A"
-                print("Checked \(collection.features.count) speed traps, closest: \(distanceText)")
+            }
+            
+            // Use best candidate if found
+            if let candidate = bestCandidate {
+                closestDistance = bestCandidateDistance
+                closestTrapData = candidate
+            }
+            
+            let distanceText = closestDistance.isFinite ? "\(Int(closestDistance))m" : "N/A"
+            print("Checked \(traps.count) speed traps, closest: \(distanceText)")
                 
                 // Update on main thread
                 await MainActor.run {
                     if let trapData = closestTrapData {
                         self.closestTrap = SpeedTrapInfo(
                             coordinate: trapData.coordinate,
-                            speedLimit: trapData.speedLimit,
+                            speedLimit: trapData.speedLimitDisplay,
                             address: trapData.address,
                             direction: trapData.direction,
                             distance: closestDistance
@@ -184,9 +233,9 @@ class SpeedTrapDetector: ObservableObject {
                         self.isWithinRange = closestDistance <= self.alertDistance
                         
                         // Check if speeding (compare current speed in km/h with speed limit)
-                        if let speedLimitValue = Double(trapData.speedLimit.replacingOccurrences(of: ".0", with: "")) {
+                        if trapData.speedLimitValue > 0 {
                             let currentSpeedKmh = currentSpeed * 3.6 // Convert m/s to km/h
-                            self.speedingAmount = currentSpeedKmh - speedLimitValue
+                            self.speedingAmount = currentSpeedKmh - trapData.speedLimitValue
                             self.isSpeeding = (self.isWithinRange || self.infiniteProximity) && self.speedingAmount > 0
                         } else {
                             self.isSpeeding = false
@@ -199,10 +248,6 @@ class SpeedTrapDetector: ObservableObject {
                         self.speedingAmount = 0.0
                     }
                 }
-                
-            } catch {
-                print("Error reading speed traps: \(error)")
-            }
         }
     }
     
@@ -264,56 +309,38 @@ class SpeedTrapDetector: ObservableObject {
     
     func getNearestSpeedTraps(userLocation: CLLocationCoordinate2D, count: Int = 10) async -> [SpeedTrapInfo] {
         let currentLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        let traps = self.loadAllTraps()
         
-        guard let url = Bundle.main.url(forResource: "speedtraps", withExtension: "geojson") else {
-            print("Speed traps file not found")
-            return []
+        // Calculate distances for all traps
+        var trapsWithDistance: [(trap: SpeedTrapInfo, distance: Double)] = []
+        
+        for trap in traps {
+            let trapLocation = CLLocation(
+                latitude: trap.coordinate.latitude,
+                longitude: trap.coordinate.longitude
+            )
+            
+            let distance = currentLocation.distance(from: trapLocation)
+            
+            let trapInfo = SpeedTrapInfo(
+                coordinate: trap.coordinate,
+                speedLimit: trap.speedLimitDisplay,
+                address: trap.address,
+                direction: trap.direction,
+                distance: distance
+            )
+            
+            trapsWithDistance.append((trap: trapInfo, distance: distance))
         }
         
-        do {
-            let data = try Data(contentsOf: url)
-            let decoder = JSONDecoder()
-            let collection = try decoder.decode(MinimalFeatureCollection.self, from: data)
-            
-            // Calculate distances for all traps
-            var trapsWithDistance: [(trap: SpeedTrapInfo, distance: Double)] = []
-            
-            for feature in collection.features {
-                guard feature.geometry.coordinates.count >= 2 else { continue }
-                
-                let trapLocation = CLLocation(
-                    latitude: feature.geometry.coordinates[1],
-                    longitude: feature.geometry.coordinates[0]
-                )
-                
-                let distance = currentLocation.distance(from: trapLocation)
-                
-                let trapInfo = SpeedTrapInfo(
-                    coordinate: CLLocationCoordinate2D(
-                        latitude: feature.geometry.coordinates[1],
-                        longitude: feature.geometry.coordinates[0]
-                    ),
-                    speedLimit: feature.properties.name,
-                    address: feature.properties.設置地址,
-                    direction: feature.properties.拍攝方向 ?? "",
-                    distance: distance
-                )
-                
-                trapsWithDistance.append((trap: trapInfo, distance: distance))
-            }
-            
-            // Sort by distance and take the nearest 'count' traps
-            let nearestTraps = trapsWithDistance
-                .sorted { $0.distance < $1.distance }
-                .prefix(count)
-                .map { $0.trap }
-            
-            return Array(nearestTraps)
-            
-        } catch {
-            print("Error reading speed traps: \(error)")
-            return []
-        }
+        // Sort by distance and take the nearest 'count' traps
+        let nearestTraps = trapsWithDistance
+            .sorted { $0.distance < $1.distance }
+            .prefix(count)
+            .map { $0.trap }
+        
+        return Array(nearestTraps)
     }
 }
+
 

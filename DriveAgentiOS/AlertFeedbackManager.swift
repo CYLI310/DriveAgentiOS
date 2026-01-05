@@ -36,8 +36,10 @@ class AlertFeedbackManager: ObservableObject {
                 // Interval changed significantly, restart timer
                 feedbackTimer?.invalidate()
                 feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-                    self?.playChime()
-                    self?.triggerHaptic()
+                    Task { @MainActor in
+                        self?.playChime()
+                        self?.triggerHaptic()
+                    }
                 }
             }
             return
@@ -51,8 +53,10 @@ class AlertFeedbackManager: ObservableObject {
         
         // Set up repeating timer
         feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
-            self?.playChime()
-            self?.triggerHaptic()
+            Task { @MainActor in
+                self?.playChime()
+                self?.triggerHaptic()
+            }
         }
     }
     

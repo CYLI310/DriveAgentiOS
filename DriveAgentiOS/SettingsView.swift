@@ -6,7 +6,6 @@ import UIKit
 enum SpeedDisplayMode: String, CaseIterable, Identifiable {
     case digital = "Digital"
     case analog = "Analog"
-    case retroDigital = "Retro Digital"
     
     var id: String { self.rawValue }
 }

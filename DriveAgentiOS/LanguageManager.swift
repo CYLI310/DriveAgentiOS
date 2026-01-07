@@ -450,12 +450,6 @@ class LanguageManager: ObservableObject {
             .filipino: "Isang umiikot na gradient background", .hindi: "एक घूर्णन ढाल पृष्ठभूमि", .arabic: "خلفية متدرجة دوارة", .spanish: "Un fondo degradado giratorio",
             .german: "Ein rotierender Farbverlaufshintergrund", .french: "Un fond dégradé rotatif", .italian: "Uno sfondo sfumato rotante", .portuguese: "Um fondo gradiente rotativo", .russian: "Вращающийся градиентный фон"
         ],
-        "A retro-style moving perspective grid": [
-            .english: "A retro-style moving perspective grid", .chineseTraditional: "復古風格移動透視網格", .chineseSimplified: "复古风格移动透视网格",
-            .korean: "레트로 스타일의 움직이는 원근 그리드", .japanese: "レトロスタイルの動く透視グリッド", .vietnamese: "Lưới phối cảnh chuyển động kiểu cổ điển", .thai: "ตารางมุมมองเคลื่อนที่สไตล์ย้อนยุค",
-            .filipino: "Isang retro-style na gumagalaw na perspective grid", .hindi: "एक रेट्रो-शैली चलती परिप्रेक्ष्य ग्रिड", .arabic: "شبكة منظور متحركة بأسلوب قديم", .spanish: "Una cuadrícula de perspectiva móvil de estilo retro",
-            .german: "Ein bewegliches Perspektivraster im Retro-Stil", .french: "Une grille de perspective mobile de style rétro", .italian: "Una griglia prospettica mobile in stile retrò", .portuguese: "Uma grade de perspectiva móvel estilo retrô", .russian: "Движущаяся перспективная сетка в ретро-стиле"
-        ],
         "Flowing sine waves": [
             .english: "Flowing sine waves", .chineseTraditional: "流動的正弦波", .chineseSimplified: "流动的正弦波",
             .korean: "흐르는 사인파", .japanese: "流れる正弦波", .vietnamese: "Sóng sin chảy", .thai: "คลื่นไซน์ที่ไหล",

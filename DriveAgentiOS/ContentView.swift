@@ -599,12 +599,6 @@ struct ContentView: View {
                 isSpeeding: speedTrapDetector.isSpeeding,
                 accelerationState: locationManager.accelerationState
             )
-        case .retroDigital:
-            RetroDigitalSpeedView(
-                speedMps: locationManager.currentSpeedMps,
-                useMetric: locationManager.useMetric,
-                isSpeeding: speedTrapDetector.isSpeeding
-            )
         }
     }
     
@@ -619,7 +613,7 @@ struct ContentView: View {
 }
 
 struct PermissionDeniedView: View {
-    @ObservedObject var languageManager: LocationManager
+    @ObservedObject var languageManager: LanguageManager
     @ObservedObject var themeManager: ThemeManager
     
     var body: some View {

@@ -112,6 +112,7 @@ struct TopBarView: View {
 
 
 struct ContentView: View {
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var locationManager = LocationManager()
     @StateObject private var systemInfoManager = SystemInfoManager()
@@ -161,7 +162,33 @@ struct ContentView: View {
                         locationManager.requestPermission()
                     }
                 default: // Handles .authorizedWhenInUse, .authorizedAlways
-                    mainContentView
+                    ZStack {
+                        if verticalSizeClass == .compact {
+                            horizontalMainView
+                        } else {
+                            mainContentView
+                        }
+                    }
+                    .background(
+                        // Modern ambient glow effect when speeding - Shared across views
+                        ZStack {
+                            if speedTrapDetector.isSpeeding {
+                                RadialGradient(
+                                    gradient: Gradient(colors: [
+                                        Color.red.opacity(alertGlowOpacity * 0.5),
+                                        Color.red.opacity(alertGlowOpacity * 0.2),
+                                        Color.clear
+                                    ]),
+                                    center: .center,
+                                    startRadius: 50,
+                                    endRadius: 600
+                                )
+                                .ignoresSafeArea()
+                                .transition(.opacity)
+                            }
+                        }
+                        .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
+                    )
                 }
             }
             .foregroundColor(.primary)
@@ -259,6 +286,13 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(themeManager.currentTheme.colorScheme)
+        .overlay {
+            if distractionDetector.isDistracted {
+                DistractionOverlay(languageManager: languageManager)
+                    .transition(.opacity)
+            }
+        }
+        .animation(.spring(), value: distractionDetector.isDistracted)
     }
 
     private var mainContentView: some View {
@@ -271,75 +305,64 @@ struct ContentView: View {
             
             Spacer()
             
-            // Speed and Location Display with Particle Effect
-            ZStack {
-                ParticleEffectView(
-                    accelerationState: locationManager.accelerationState,
-                    accelerationMagnitude: locationManager.accelerationMagnitude,
-                    style: themeManager.particleEffectStyle,
-                    isSpeeding: speedTrapDetector.isSpeeding
-                )
-                .frame(width: 400, height: 400)
+            VStack(spacing: 8) {
+                speedDisplayView()
                 
-                VStack(spacing: 8) {
-                    speedDisplayView()
-                    
-                    if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible {
-                        // Show additional info when stopped
-                        VStack(spacing: 4) {
-                            Text(locationManager.currentStreetName)
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                            
-                            if let location = locationManager.currentLocation {
-                                Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                                    .font(.caption)
+                if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible {
+                    // Show additional info when stopped
+                    VStack(spacing: 4) {
+                        Text(locationManager.currentStreetName)
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        if let location = locationManager.currentLocation {
+                            Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Divider()
+                            .padding(.vertical, 4)
+                        
+                        HStack(spacing: 20) {
+                            VStack(spacing: 2) {
+                                Text(languageManager.localize("Trip Distance"))
+                                    .font(.caption2)
                                     .foregroundColor(.secondary)
+                                Text(locationManager.getFormattedDistance())
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
                             }
                             
-                            Divider()
-                                .padding(.vertical, 4)
-                            
-                            HStack(spacing: 20) {
-                                VStack(spacing: 2) {
-                                    Text(languageManager.localize("Trip Distance"))
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    Text(locationManager.getFormattedDistance())
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                }
-                                
-                                VStack(spacing: 2) {
-                                    Text(languageManager.localize("Max Speed"))
-                                        .font(.caption2)
-                                        .foregroundColor(.secondary)
-                                    Text(locationManager.getFormattedMaxSpeed())
-                                        .font(.caption)
-                                        .fontWeight(.semibold)
-                                }
-                            }
-                            
-                            if systemInfoManager.batteryLevel >= 0 {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "battery.100percent")
-                                        .foregroundColor(.green)
-                                    Text("\(Int(systemInfoManager.batteryLevel * 100))%")
-                                        .font(.caption)
-                                }
-                                .padding(.top, 4)
+                            VStack(spacing: 2) {
+                                Text(languageManager.localize("Max Speed"))
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text(locationManager.getFormattedMaxSpeed())
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
                             }
                         }
-                        .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                    } else if let location = locationManager.currentLocation {
-                        Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    } else {
-                        Text(languageManager.localize("Searching for location..."))
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        
+                        if systemInfoManager.batteryLevel >= 0 {
+                            HStack(spacing: 4) {
+                                Image(systemName: "battery.100percent")
+                                    .foregroundColor(.green)
+                                Text("\(Int(systemInfoManager.batteryLevel * 100))%")
+                                    .font(.caption)
+                            }
+                            .padding(.top, 4)
+                        }
                     }
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                } else if let location = locationManager.currentLocation {
+                    Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                } else {
+                    Text(languageManager.localize("Searching for location..."))
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.vertical, 20)
@@ -459,8 +482,6 @@ struct ContentView: View {
             
             Spacer()
             
-
-
             // Buttons
             HStack(spacing: 40) {
                 Button {
@@ -497,6 +518,7 @@ struct ContentView: View {
             .padding(.vertical, 30)
             .padding(.bottom, 40)
         }
+        .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
         .background(
             // Modern ambient glow effect when speeding
             ZStack {
@@ -515,7 +537,6 @@ struct ContentView: View {
                     .transition(.opacity)
                 }
             }
-            .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
         )
         .onChange(of: speedTrapDetector.isSpeeding) { _, isSpeeding in
             if isSpeeding {
@@ -545,41 +566,6 @@ struct ContentView: View {
                 alertFeedbackManager.startSpeedingAlert(interval: interval)
             }
         }
-
-    
-        .overlay(
-            ZStack {
-                if distractionDetector.isDistracted {
-                    Color.black.opacity(0.8)
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 20) {
-                        Image(systemName: "eye.trianglebadge.exclamationmark.fill")
-                            .font(.system(size: 80))
-                            .foregroundColor(.yellow)
-                            .symbolEffect(.bounce, options: .repeating)
-                        
-                        Text(languageManager.localize("Eyes on the road!"))
-                            .font(.largeTitle)
-                            .fontWeight(.heavy)
-                            .foregroundColor(.white)
-                        
-                        Text(languageManager.localize("Focus on driving"))
-                            .font(.title2)
-                            .foregroundColor(.white.opacity(0.9))
-                    }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 20)
-                            .fill(Color.red.opacity(0.3))
-                            .background(.ultraThinMaterial)
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                    )
-                    .transition(.scale.combined(with: .opacity))
-                }
-            }
-            .animation(.spring(), value: distractionDetector.isDistracted)
-        )
     }
     
     // MARK: - Helpers
@@ -599,7 +585,45 @@ struct ContentView: View {
                 isSpeeding: speedTrapDetector.isSpeeding,
                 accelerationState: locationManager.accelerationState
             )
+        case .landscape:
+            HorizontalDashboardView(
+                speed: locationManager.currentSpeed,
+                speedMps: locationManager.currentSpeedMps,
+                useMetric: locationManager.useMetric,
+                isSpeeding: speedTrapDetector.isSpeeding,
+                streetName: locationManager.currentStreetName,
+                closestTrap: speedTrapDetector.closestTrap,
+                tripDistance: locationManager.getFormattedDistance(),
+                maxSpeed: locationManager.getFormattedMaxSpeed(),
+                accelerationState: locationManager.accelerationState,
+                accelerationMagnitude: locationManager.accelerationMagnitude,
+                languageManager: languageManager,
+                isMapVisible: $isMapVisible,
+                showingSettings: $showingSettings,
+                alertGlowOpacity: alertGlowOpacity,
+                alertBackgroundOpacity: alertBackgroundOpacity
+            )
         }
+    }
+    
+    private var horizontalMainView: some View {
+        HorizontalDashboardView(
+            speed: locationManager.currentSpeed,
+            speedMps: locationManager.currentSpeedMps,
+            useMetric: locationManager.useMetric,
+            isSpeeding: speedTrapDetector.isSpeeding,
+            streetName: locationManager.currentStreetName,
+            closestTrap: speedTrapDetector.closestTrap,
+            tripDistance: locationManager.getFormattedDistance(),
+            maxSpeed: locationManager.getFormattedMaxSpeed(),
+            accelerationState: locationManager.accelerationState,
+            accelerationMagnitude: locationManager.accelerationMagnitude,
+            languageManager: languageManager,
+            isMapVisible: $isMapVisible,
+            showingSettings: $showingSettings,
+            alertGlowOpacity: alertGlowOpacity,
+            alertBackgroundOpacity: alertBackgroundOpacity
+        )
     }
     
     // Helper function to format distance
@@ -611,6 +635,7 @@ struct ContentView: View {
         }
     }
 }
+
 
 struct PermissionDeniedView: View {
     @ObservedObject var languageManager: LanguageManager

@@ -142,6 +142,12 @@ class LanguageManager: ObservableObject {
             .filipino: "Wika", .hindi: "भाषा", .arabic: "اللغة", .spanish: "Idioma",
             .german: "Sprache", .french: "Langue", .italian: "Lingua", .portuguese: "Idioma", .russian: "Язык"
         ],
+        "Landscape": [
+            .english: "Landscape", .chineseTraditional: "橫向儀表板", .chineseSimplified: "横向仪表板",
+            .korean: "가로 모드", .japanese: "横向きモード", .vietnamese: "Chế độ ngang", .thai: "โหมดแนวนอน",
+            .filipino: "Landscape Mode", .hindi: "लैंडस्केप मोड", .arabic: "الوضع الأفقي", .spanish: "Modo horizontal",
+            .german: "Querformat", .french: "Mode paysage", .italian: "Modalità orizzontale", .portuguese: "Modo paisagem", .russian: "Ландшафтный режим"
+        ],
         "Appearance": [
             .english: "Appearance", .chineseTraditional: "外觀", .chineseSimplified: "外观",
             .korean: "화면", .japanese: "外観", .vietnamese: "Giao diện", .thai: "รูปลักษณ์",
@@ -419,42 +425,23 @@ class LanguageManager: ObservableObject {
             .german: "Tutorial anzeigen", .french: "Afficher le tutoriel", .italian: "Mostra tutorial", .portuguese: "Mostrar tutorial", .russian: "Показать обучение"
         ],
         
-        // Particle Styles
-        "No particle effects will be shown": [
-            .english: "No particle effects will be shown", .chineseTraditional: "不顯示粒子特效", .chineseSimplified: "不显示粒子特效",
-            .korean: "입자 효과가 표시되지 않습니다", .japanese: "パーティクル効果は表示されません", .vietnamese: "Không hiển thị hiệu ứng hạt", .thai: "จะไม่แสดงเอฟเฟกต์อนุภาค",
-            .filipino: "Walang ipapakitang epekto ng particle", .hindi: "कोई कण प्रभाव नहीं दिखाया जाएगा", .arabic: "لن يتم عرض أي تأثيرات للجسيمات", .spanish: "No se mostrarán efectos de partículas",
-            .german: "Keine Partikeleffekte werden angezeigt", .french: "Aucun effet de particules ne sera affiché", .italian: "Nessun effetto particellare verrà mostrato", .portuguese: "Nenhum efeito de partículas será mostrado", .russian: "Эффекты частиц не будут показаны"
-        ],
-        "Particles orbit around the speed display": [
-            .english: "Particles orbit around the speed display", .chineseTraditional: "粒子環繞速度顯示", .chineseSimplified: "粒子环绕速度显示",
-            .korean: "입자가 속도 표시 주위를 궤도처럼 돕니다", .japanese: "パーティクルが速度表示の周りを周回します", .vietnamese: "Các hạt quay quanh màn hình tốc độ", .thai: "อนุภาคโคจรรอบการ顯示速度",
-            .filipino: "Ang mga particle ay umiikot sa display ng bilis", .hindi: "कण गति प्रदर्शन के चारों ओर परिक्रमा करते हैं", .arabic: "تدور الجسيمات حول عرض السرعة", .spanish: "Las partículas orbitan alrededor de la pantalla de velocidad",
-            .german: "Partikel umkreisen die Geschwindigkeitsanzeige", .french: "Les particules orbitent autour de l'affichage de la vitesse", .italian: "Le particelle orbitano attorno al display della velocità", .portuguese: "Partículas orbitam ao redor do mostrador de velocità", .russian: "Частицы вращаются вокруг индикатора скорости"
-        ],
-        "Particles pulse in and out rhythmically": [
-            .english: "Particles pulse in and out rhythmically", .chineseTraditional: "粒子有節奏地脈動", .chineseSimplified: "粒子有节奏地脉动",
-            .korean: "입자가 리드미컬하게 펄스합니다", .japanese: "パーティクルがリズミカルに脈動します", .vietnamese: "Các hạt đập nhịp nhàng vào và ra", .thai: "อนุภาคเต้นเป็นจังหวะเข้าและออก",
-            .filipino: "Ang mga particle ay tumitibok nang may ritmo", .hindi: "कण लयबद्ध रूप से अंदर और बाहर धड़कते हैं", .arabic: "تنبض الجسيمات للداخل والخارج بشكل إيقاعي", .spanish: "Las partículas pulsan rítmicamente",
-            .german: "Partikel pulsieren rhythmisch ein und aus", .french: "Les particules pulsent de manière rythmique", .italian: "Le particelle pulsano ritmicamente", .portuguese: "Partículas pulsam ritmicamente", .russian: "Частицы ритмично пульсируют"
-        ],
-        "Particles move in a dynamic spiral pattern": [
-            .english: "Particles move in a dynamic spiral pattern", .chineseTraditional: "粒子以動態螺旋方式移動", .chineseSimplified: "粒子以动态螺旋方式移动",
-            .korean: "입자가 역동적인 나선형 패턴으로 움직입니다", .japanese: "パーティクルが動的なスパイラルパターンで移動します", .vietnamese: "Các hạt di chuyển theo mô hình xoắn ốc động", .thai: "อนุภาคเคลื่อนที่ในรูปแบบเกลียวไดนามิก",
-            .filipino: "Ang mga particle ay gumagalaw sa isang dynamic na spiral pattern", .hindi: "कण एक गतिशील सर्पिल पैटर्न में चलते हैं", .arabic: "تتحرك الجسيمات في نمط حلزوني ديناميكي", .spanish: "Las partículas se muévelen en un patrón espiral dinámico",
-            .german: "Partikel bewegen sich in einem dynamischen Spiralmuster", .french: "Les particules se déplacent dans un motif en spirale dynamique", .italian: "Le particelle si muovono in un modello a spirale dinamico", .portuguese: "Partículas movem-se num padrão espiral dinâmico", .russian: "Частицы движутся по динамической спирали"
-        ],
-        "A rotating gradient background": [
-            .english: "A rotating gradient background", .chineseTraditional: "旋轉漸層背景", .chineseSimplified: "旋转渐变背景",
-            .korean: "회전하는 그라디언트 배경", .japanese: "回転するグラデーション背景", .vietnamese: "Nền chuyển màu xoay", .thai: "พื้นหลังไล่ระดับสีแบบหมุน",
-            .filipino: "Isang umiikot na gradient background", .hindi: "एक घूर्णन ढाल पृष्ठभूमि", .arabic: "خلفية متدرجة دوارة", .spanish: "Un fondo degradado giratorio",
-            .german: "Ein rotierender Farbverlaufshintergrund", .french: "Un fond dégradé rotatif", .italian: "Uno sfondo sfumato rotante", .portuguese: "Um fondo gradiente rotativo", .russian: "Вращающийся градиентный фон"
-        ],
-        "Flowing sine waves": [
-            .english: "Flowing sine waves", .chineseTraditional: "流動的正弦波", .chineseSimplified: "流动的正弦波",
-            .korean: "흐르는 사인파", .japanese: "流れる正弦波", .vietnamese: "Sóng sin chảy", .thai: "คลื่นไซน์ที่ไหล",
-            .filipino: "Dumadaloy na sine waves", .hindi: "बहती हुई साइन तरंगें", .arabic: "موجات جيبية متدفقة", .spanish: "Ondas sinusoidales que fluyen",
-            .german: "Fließende Sinuswellen", .french: "Ondes sinusoïdales fluides", .italian: "Onde sinusoidali fluenti", .portuguese: "Ondas senoidais fluindo", .russian: "Текущие синусоидальные волны"
+        "Track Speed Desc": [
+            .english: "See your current speed in real-time with dynamic color effects that change color based on acceleration",
+            .chineseTraditional: "即時查看當前速度，搭配隨加速度變色的動態特效",
+            .chineseSimplified: "实时查看当前速度，搭配随加速度变色的动态特效",
+            .korean: "가속도에 따라 색상이 변하는 동적 효과로 현재 속도를 실시간으로 확인하세요",
+            .japanese: "加速度に基づいて色が変化する動的な効果で、現在の速度をリアルタイムで確認できます",
+            .vietnamese: "Xem tốc độ hiện tại của bạn trong thời gian thực với các hiệu ứng động thay đổi màu sắc dựa trên gia tốc",
+            .thai: "ดูความเร็วปัจจุบันของคุณแบบเรียลไทม์ด้วยเอฟเฟกต์ไดนามิกที่เปลี่ยนสีตามความเร่ง",
+            .filipino: "Tingnan ang iyong kasalukuyang bilis sa real-time na may mga dynamic na epekto na nagbabago ng kulay batay sa acceleration",
+            .hindi: "त्वरण के आधार पर रंग बदलने वाले गतिशील प्रभावों के साथ वास्तविक समय में अपनी वर्तमान गति देखें",
+            .arabic: "شاهد سرعتك الحالية في الوقت الفعلي مع تأثيرات الديناميكية التي تغير اللون بناءً على التسارع",
+            .spanish: "Vea su velocidad actual en tiempo real con efectos dinámicos que cambian de color según la aceleración",
+            .german: "Sehen Sie Ihre aktuelle Geschwindigkeit in Echtzeit mit dynamischen Effekten, die je nach Beschleunigung die Farbe ändern",
+            .french: "Voyez votre velocità actuelle en temps réel avec des effets dynamiques qui changent de couleur en fonction de l'accélération",
+            .italian: "Vedi la tua velocità attuale in tempo reale con effetti dinamici che cambiano colore in base all'accelerazione",
+            .portuguese: "Veja sua velocità atual em tempo real com efeitos dinâmicos que mudam de cor com base na aceleração",
+            .russian: "Смотрите текущую скорость в реальном времени с динамическими эффектами, меняющими цвет при ускорении"
         ],
         
         // SpeedTrapListView
@@ -471,24 +458,6 @@ class LanguageManager: ObservableObject {
             .korean: "속도 추적", .japanese: "速度を追跡", .vietnamese: "Theo dõi tốc độ của bạn", .thai: "ติดตามความเร็วของคุณ",
             .filipino: "Subaybayan ang Iyong Bilis", .hindi: "अपनी गति ट्रैक करें", .arabic: "تتبع سرعتك", .spanish: "Rastrea tu velocidad",
             .german: "Verfolgen Sie Ihre Geschwindigkeit", .french: "Suivez votre velocità", .italian: "Traccia la tua velocità", .portuguese: "Rastreie sua velocità", .russian: "Отслеживайте скорость"
-        ],
-        "Track Speed Desc": [
-            .english: "See your current speed in real-time with dynamic particle effects that change color based on acceleration",
-            .chineseTraditional: "即時查看當前速度，搭配隨加速度變色的動態粒子特效",
-            .chineseSimplified: "实时查看当前速度，搭配随加速度变色的动态粒子特效",
-            .korean: "가속도에 따라 색상이 변하는 동적 입자 효과로 현재 속도를 실시간으로 확인하세요",
-            .japanese: "加速度に基づいて色が変化する動的なパーティクル効果で、現在の速度をリアルタイムで確認できます",
-            .vietnamese: "Xem tốc độ hiện tại của bạn trong thời gian thực với các hiệu ứng hạt động thay đổi màu sắc dựa trên gia tốc",
-            .thai: "ดูความเร็วปัจจุบันของคุณแบบเรียลไทม์ด้วยเอฟเฟกต์อนุภาคไดนามิกที่เปลี่ยนสีตามความเร่ง",
-            .filipino: "Tingnan ang iyong kasalukuyang bilis sa real-time na may mga dynamic na epekto ng particle na nagbabago ng kulay batay sa acceleration",
-            .hindi: "त्वरण के आधार पर रंग बदलने वाले गतिशील कण प्रभावों के साथ वास्तविक समय में अपनी वर्तमान गति देखें",
-            .arabic: "شاهد سرعتك الحالية في الوقت الفعلي مع تأثيرات الجسيمات الديناميكية التي تغير اللون بناءً على التسارع",
-            .spanish: "Vea su velocidad actual en tiempo real con efectos de partículas dinámicos que cambian de color según la aceleración",
-            .german: "Sehen Sie Ihre aktuelle Geschwindigkeit in Echtzeit mit dynamischen Partikeleffekten, die je nach Beschleunigung die Farbe ändern",
-            .french: "Voyez votre velocità actuelle en temps réel avec des effets de particules dynamiques qui changent de couleur en fonction de l'accélération",
-            .italian: "Vedi la tua velocità attuale in tempo reale con effetti particellari dinamici che cambiano colore in base all'accelerazione",
-            .portuguese: "Veja sua velocità atual em tempo real com efeitos de partículas dinâmicos que mudam de cor com base na aceleração",
-            .russian: "Смотрите текущую скорость в реальном времени с динамическими эффектами частиц, меняющими цвет при ускорении"
         ],
         "View Your Route": [
             .english: "View Your Route", .chineseTraditional: "查看路線", .chineseSimplified: "查看路线",

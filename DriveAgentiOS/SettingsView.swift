@@ -6,6 +6,7 @@ import UIKit
 enum SpeedDisplayMode: String, CaseIterable, Identifiable {
     case digital = "Digital"
     case analog = "Analog"
+    case landscape = "Landscape"
     
     var id: String { self.rawValue }
 }
@@ -34,12 +35,6 @@ class ThemeManager: ObservableObject {
         }
     }
     
-    @Published var particleEffectStyle: ParticleEffectStyle {
-        didSet {
-            UserDefaults.standard.set(particleEffectStyle.rawValue, forKey: "particleEffectStyle")
-        }
-    }
-    
     @Published var showTopBar: Bool {
         didSet {
             UserDefaults.standard.set(showTopBar, forKey: "showTopBar")
@@ -61,9 +56,6 @@ class ThemeManager: ObservableObject {
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
-        
-        let savedStyle = UserDefaults.standard.string(forKey: "particleEffectStyle") ?? ParticleEffectStyle.off.rawValue
-        self.particleEffectStyle = ParticleEffectStyle(rawValue: savedStyle) ?? .off
         
         self.showTopBar = UserDefaults.standard.object(forKey: "showTopBar") as? Bool ?? true
         
@@ -142,21 +134,6 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                
-                Section(header: Text(languageManager.localize("Particle Effects"))) {
-                    Picker(languageManager.localize("Effect Style"), selection: $themeManager.particleEffectStyle) {
-                        ForEach(ParticleEffectStyle.allCases) { style in
-                            Text(languageManager.localize(style.rawValue)).tag(style)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: themeManager.particleEffectStyle) { _ in themeManager.triggerHaptic() }
-                    
-                    Text(languageManager.localize(effectDescription))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
                 Section(header: Text(languageManager.localize("Units"))) {
                     Toggle(languageManager.localize("Use Metric"), isOn: $locationManager.useMetric)
                         .onChange(of: locationManager.useMetric) { _ in themeManager.triggerHaptic() }
@@ -257,17 +234,6 @@ struct SettingsView: View {
         }
         .fullScreenCover(isPresented: $showTutorial) {
             OnboardingView(isPresented: $showTutorial, languageManager: languageManager, themeManager: themeManager)
-        }
-    }
-    
-    private var effectDescription: String {
-        switch themeManager.particleEffectStyle {
-        case .off:
-            return "No particle effects will be shown"
-        case .orbit:
-            return "Particles orbit around the speed display"
-        case .linearGradient:
-            return "A rotating gradient background"
         }
     }
 }

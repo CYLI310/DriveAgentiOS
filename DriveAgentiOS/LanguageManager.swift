@@ -220,6 +220,18 @@ class LanguageManager: ObservableObject {
             .filipino: "Madilim", .hindi: "डार्क", .arabic: "داكن", .spanish: "Oscuro",
             .german: "Dunkel", .french: "Sombre", .italian: "Scuro", .portuguese: "Escuro", .russian: "Темная"
         ],
+        "Digital": [
+            .english: "Digital", .chineseTraditional: "數位儀表板", .chineseSimplified: "数位仪表板",
+            .korean: "디지털 모드", .japanese: "デジタルモード", .vietnamese: "Chế độ kỹ thuật số", .thai: "โหมดดิจิตอล",
+            .filipino: "Digital Mode", .hindi: "डिजिटल मोड", .arabic: "الوضع الرقمي", .spanish: "Modo digital",
+            .german: "Digitalmodus", .french: "Mode numérique", .italian: "Modalità digitale", .portuguese: "Modo digital", .russian: "Цифровой режим"
+        ],
+        "Analog": [
+            .english: "Analog", .chineseTraditional: "指針儀表板", .chineseSimplified: "指针仪表板",
+            .korean: "아날로그 모드", .japanese: "アナログモード", .vietnamese: "Chế độ tương tự", .thai: "โหมดอนาล็อก",
+            .filipino: "Analog Mode", .hindi: "एनालॉग मोड", .arabic: "الوضع التناظري", .spanish: "Modo analógico",
+            .german: "Analogmodus", .french: "Mode analogique", .italian: "Modalità analogica", .portuguese: "Modo analógico", .russian: "Аналоговый режим"
+        ],
         "Particle Effects": [
             .english: "Particle Effects", .chineseTraditional: "粒子特效", .chineseSimplified: "粒子特效",
             .korean: "입자 효과", .japanese: "パーティクル効果", .vietnamese: "Hiệu ứng hạt", .thai: "เอฟเฟกต์อนุภาค",
@@ -291,6 +303,24 @@ class LanguageManager: ObservableObject {
             .korean: "여행 초기화", .japanese: "トリップをリセット", .vietnamese: "Đặt lại chuyến đi", .thai: "รีเซ็ตการเดินทาง",
             .filipino: "I-reset ang Biyahe", .hindi: "यात्रा रीसेट करें", .arabic: "إعادة تعيين الرحلة", .spanish: "Reiniciar viaje",
             .german: "Fahrt zurücksetzen", .french: "Réinitialiser le trajet", .italian: "Reimposta viaggio", .portuguese: "Reiniciar viagem", .russian: "Сбросить поездку"
+        ],
+        "Choose how your current speed is visualized on the main screen.": [
+            .english: "Choose how your current speed is visualized on the main screen.",
+            .chineseTraditional: "選擇如何在主畫面上顯示您的當前速度。",
+            .chineseSimplified: "选择如何在主屏幕上显示您的当前速度。",
+            .korean: "메인 화면에서 현재 속도가 어떻게 시각화되는지 선택하세요.",
+            .japanese: "メイン画面で現在の速度がどのように表示されるかを選択してください。",
+            .vietnamese: "Chọn cách hiển thị tốc độ hiện tại của bạn",
+            .thai: "เลือกวิธีการแสดงความเร็วปัจจุบันของคุณบนหน้าจอหลัก",
+            .filipino: "Piliin kung paano ipinapakita ang iyong kasalukuyang bilis sa pangunahing screen.",
+            .hindi: "मुख्य स्क्रीन पर आपकी वर्तमान गति कैसे प्रदर्शित होती है, यह चुनें।",
+            .arabic: "اختر كيفية عرض سرعتك الحالية على الشاشة الرئيسية.",
+            .spanish: "Elija cómo se visualiza su velocidad actual en la pantalla principal.",
+            .german: "Wählen Sie, wie Ihre aktuelle Geschwindigkeit auf dem Hauptbildschirm visualisiert wird.",
+            .french: "Choisissez comment votre vitesse actuelle est visualisée sur l'écran principal.",
+            .italian: "Scegli come viene visualizzata la tua velocità attuale sulla schermata principale.",
+            .portuguese: "Escolha como sua velocidade atual é visualizada na tela principal.",
+            .russian: "Выберите, как ваша текущая скорость отображается на главном экране."
         ],
         "Speed Camera Alerts": [
             .english: "Speed Camera Alerts", .chineseTraditional: "測速照相警示", .chineseSimplified: "测速照相警示",
@@ -442,6 +472,20 @@ class LanguageManager: ObservableObject {
             .italian: "Vedi la tua velocità attuale in tempo reale con effetti dinamici che cambiano colore in base all'accelerazione",
             .portuguese: "Veja sua velocità atual em tempo real com efeitos dinâmicos que mudam de cor com base na aceleração",
             .russian: "Смотрите текущую скорость в реальном времени с динамическими эффектами, меняющими цвет при ускорении"
+        ],
+
+        "Speed Display": [
+            .english: "Speed Display", .chineseTraditional: "速度顯示", .chineseSimplified: "速度显示",
+            .korean: "속도 표시", .japanese: "速度表示", .vietnamese: "Hiển thị tốc độ", .thai: "การแสดงความเร็ว",
+            .filipino: "Pagpapakita ng Bilis", .hindi: "गति प्रदर्शन", .arabic: "عرض السرعة", .spanish: "Pantalla de velocidad",
+            .german: "Geschwindigkeitsanzeige", .french: "Affichage de la velocità", .italian: "Display della velocità", .portuguese: "Exibição de velocidade", .russian: "Отображение скорости"
+        ],
+
+        "Speed Display Mode": [
+            .english: "Speed Display Mode", .chineseTraditional: "速度顯示模式", .chineseSimplified: "速度显示模式",
+            .korean: "속도 표시 모드", .japanese: "速度表示モード", .vietnamese: "Chế độ hiển thị tốc độ", .thai: "โหมดการแสดงความเร็ว",
+            .filipino: "Mode ng Pagpapakita ng Bilis", .hindi: "गति प्रदर्शन मोड", .arabic: "وضع عرض السرعة", .spanish: "Modo de pantalla de velocidad",
+            .german: "Geschwindigkeitsanzeigemodus", .french: "Mode d'affichage de la velocità", .italian: "Modalità di visualizzazione della velocità", .portuguese: "Modo de exibição de velocidade", .russian: "Режим отображения скорости"
         ],
         
         // SpeedTrapListView

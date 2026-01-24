@@ -169,40 +169,65 @@ class SpeedTrapDetector: ObservableObject {
                 
                 let distance = currentLocation.distance(from: trapLocation)
                 
-                // Check distance based on infiniteProximity setting
+                // Only consider traps within range
                 let withinRange = useInfiniteProximity || distance < 2000
                 
                 if withinRange {
                     let direction = trap.direction
                     let address = trap.address
                     
-                    // Calculate Match Score
-                    var score = 0
+                    // 1. Direction Match
+                    var directionScore = 0
+                    var isDirectionMatched = false
                     
-                    // 1. Road Name Match
-                    if !currentStreetName.isEmpty && currentStreetName != "Finding your location..." && currentStreetName != "Unknown Street" {
-                         if self.isRoadMatching(userStreet: currentStreetName, trapAddress: address) {
-                             score += 1000
-                         }
-                    }
-                    
-                    // 2. Direction Match
                     if currentCourse >= 0 {
                         if self.isDirectionMatching(userCourse: currentCourse, trapDirection: direction) {
-                            score += 500
+                            directionScore = 500
+                            isDirectionMatched = true
+                        } else if direction.isEmpty || direction == "N/A" {
+                            // If no direction info, don't penalize but don't reward
+                            directionScore = 0
+                        } else {
+                            // Direction known and doesn't match - heavy penalty
+                            directionScore = -1000
                         }
                     }
                     
-                    // 3. Distance Score
-                    if distance < 2000 {
-                        score += Int(2000 - distance) / 10
+                    // 2. Ahead Check
+                    let bearingToTrap = self.calculateBearing(from: userLocation, to: trap.coordinate)
+                    let bearingDiff = abs(currentCourse - bearingToTrap)
+                    let minBearingDiff = min(bearingDiff, 360 - bearingDiff)
+                    
+                    var aheadScore = 0
+                    let isAhead = minBearingDiff < 60 // Trap is in front of us
+                    let isPassed = minBearingDiff > 120 // Trap is behind us
+                    
+                    if isAhead {
+                        aheadScore = 400
+                    } else if isPassed && distance > 50 {
+                        // Already passed by more than 50m - heavy penalty
+                        aheadScore = -2000
                     }
                     
-                    if score > bestCandidateScore {
-                        bestCandidateScore = score
+                    // 3. Road Name Match
+                    var roadScore = 0
+                    if !currentStreetName.isEmpty && currentStreetName != "Finding your location..." && currentStreetName != "Unknown Street" {
+                         if self.isRoadMatching(userStreet: currentStreetName, trapAddress: address) {
+                             roadScore = 1200 // Strongest signal
+                         }
+                    }
+                    
+                    // 4. Distance Score
+                    let distanceScore = Int(max(0, 2000 - distance)) / 10
+                    
+                    // Final Match Score calculation
+                    let totalScore = roadScore + directionScore + aheadScore + distanceScore
+                    
+                    if totalScore > bestCandidateScore {
+                        bestCandidateScore = totalScore
                         bestCandidateDistance = distance
                         bestCandidate = trap
-                    } else if score == bestCandidateScore {
+                    } else if totalScore == bestCandidateScore {
                         if distance < bestCandidateDistance {
                             bestCandidateDistance = distance
                             bestCandidate = trap
@@ -253,58 +278,95 @@ class SpeedTrapDetector: ObservableObject {
     
     // Helper function to check if road names match
     nonisolated private func isRoadMatching(userStreet: String, trapAddress: String) -> Bool {
-        // Simple containment check
-        // "National Highway 1" vs "國道1號" is hard without mapping.
-        // But "Zhongshan Road" vs "中山路" might work if userStreet is localized.
-        // If userStreet is English, this will likely fail unless we have a mapping.
-        // However, if the user is in Taiwan using a Chinese locale, it works.
-        // Even in English, sometimes numbers match (e.g. "Route 1" vs "台1線").
-        
-        // Normalize: remove common suffixes/prefixes for better matching?
-        // For now, strict containment is safer than false positives.
-        
-        // If userStreet is very short (e.g. "Road"), ignore it to avoid false positives
         if userStreet.count < 2 { return false }
         
-        return trapAddress.contains(userStreet)
+        let normalizedUser = userStreet.lowercased()
+            .replacingOccurrences(of: "road", with: "rd")
+            .replacingOccurrences(of: "street", with: "st")
+            .replacingOccurrences(of: "highway", with: "hwy")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            
+        let normalizedTrap = trapAddress.lowercased()
+            .replacingOccurrences(of: "road", with: "rd")
+            .replacingOccurrences(of: "street", with: "st")
+            .replacingOccurrences(of: "highway", with: "hwy")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if normalizedTrap.contains(normalizedUser) || normalizedUser.contains(normalizedTrap) {
+            return true
+        }
+        
+        // Match numbers (e.g. "Route 1" and "台1線" or "Hwy 1")
+        let userNumbers = normalizedUser.filter { $0.isNumber }
+        let trapNumbers = normalizedTrap.filter { $0.isNumber }
+        
+        if !userNumbers.isEmpty && userNumbers == trapNumbers {
+            // If they have the same numbers and it's a short sequence (like a highway number), count it as a potential match
+            if userNumbers.count >= 1 && (normalizedUser.contains("hwy") || normalizedUser.contains("route") || normalizedUser.contains("國道") || normalizedUser.contains("台")) {
+                return true
+            }
+        }
+        
+        return false
     }
     
     // Helper function to check if direction matches
     nonisolated private func isDirectionMatching(userCourse: Double, trapDirection: String) -> Bool {
         // userCourse is 0-360, 0 is North, 90 East, etc.
+        let dir = trapDirection.uppercased()
         
-        // Parse trap direction
-        // Common formats: "南向北" (S->N), "北向南" (N->S), "東向西" (E->W), "西向東" (W->E)
-        // "東西雙向", "南北雙向" -> bidirectional
-        
-        if trapDirection.contains("雙向") {
+        if dir.contains("雙向") || dir.contains("BOTH") || dir.contains("BIDIRECTIONAL") {
             return true
         }
         
         var targetHeading: Double?
         
-        if trapDirection.contains("南向北") {
+        // Taiwan formats
+        if dir.contains("南向北") || dir.contains("由南往北") {
             targetHeading = 0 // North
-        } else if trapDirection.contains("北向南") {
+        } else if dir.contains("北向南") || dir.contains("由北往南") {
             targetHeading = 180 // South
-        } else if trapDirection.contains("西向東") {
+        } else if dir.contains("西向東") || dir.contains("由西往東") {
             targetHeading = 90 // East
-        } else if trapDirection.contains("東向西") {
+        } else if dir.contains("東向西") || dir.contains("由東往西") {
             targetHeading = 270 // West
+        }
+        // US / English formats
+        else if dir == "N" || dir == "NORTH" || dir.contains("NORTHBOUND") || dir == "NB" {
+            targetHeading = 0
+        } else if dir == "S" || dir == "SOUTH" || dir.contains("SOUTHBOUND") || dir == "SB" {
+            targetHeading = 180
+        } else if dir == "E" || dir == "EAST" || dir.contains("EASTBOUND") || dir == "EB" {
+            targetHeading = 90
+        } else if dir == "W" || dir == "WEST" || dir.contains("WESTBOUND") || dir == "WB" {
+            targetHeading = 270
         }
         
         guard let target = targetHeading else {
-            // If we can't parse direction, assume match (fail open) or mismatch?
-            // "順向" (Forward) usually means aligned with road. Without road geometry, hard to tell.
-            // Let's assume true for unknown directions to be safe.
+            // If we can't parse direction, assume match (fail open) for safety
+            // but the scoring logic will now use ahead-check to compensate.
             return true
         }
         
-        // Check if user course is within +/- 60 degrees of target
+        // Check if user course is within +/- 45 degrees of target (tighter than 60)
         let diff = abs(userCourse - target)
         let minDiff = min(diff, 360 - diff)
         
-        return minDiff < 60
+        return minDiff < 45
+    }
+    
+    nonisolated private func calculateBearing(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
+        let lat1 = from.latitude * .pi / 180
+        let lon1 = from.longitude * .pi / 180
+        let lat2 = to.latitude * .pi / 180
+        let lon2 = to.longitude * .pi / 180
+        
+        let dLon = lon2 - lon1
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radians = atan2(y, x)
+        let degrees = radians * 180 / .pi
+        return (degrees + 360).truncatingRemainder(dividingBy: 360)
     }
     
     func getNearestSpeedTraps(userLocation: CLLocationCoordinate2D, count: Int = 10) async -> [SpeedTrapInfo] {

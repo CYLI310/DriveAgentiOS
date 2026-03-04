@@ -11,10 +11,7 @@ class AlertFeedbackManager: ObservableObject {
     private var isPlayingAlert = false
     
     init() {
-        // Prepare haptic generator
         hapticGenerator.prepare()
-        
-        // Configure audio session for background playback
         configureAudioSession()
     }
     
@@ -86,7 +83,6 @@ class AlertFeedbackManager: ObservableObject {
     }
 
     private func playChime(isUrgent: Bool = false) {
-        // Play Navigation Pop MP3 file
         if let soundURL = Bundle.main.url(forResource: "navigation_pop", withExtension: "mp3") {
             do {
                 if audioPlayer == nil || audioPlayer?.url != soundURL {

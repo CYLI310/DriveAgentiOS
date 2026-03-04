@@ -583,7 +583,8 @@ struct ContentView: View {
                 speedMps: locationManager.currentSpeedMps,
                 useMetric: locationManager.useMetric,
                 isSpeeding: speedTrapDetector.isSpeeding,
-                accelerationState: locationManager.accelerationState
+                accelerationState: locationManager.accelerationState,
+                dashColor: themeManager.analogDashColor
             )
         case .landscape:
             HorizontalDashboardView(

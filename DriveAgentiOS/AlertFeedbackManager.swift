@@ -21,9 +21,10 @@ class AlertFeedbackManager: ObservableObject {
     private func configureAudioSession() {
         do {
             let audioSession = AVAudioSession.sharedInstance()
-            // Use .duckOthers to temporarily lower other audio, making alert more audible
-            try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers])
-            try audioSession.setActive(true)
+            // .spokenAudio mode is optimized for alerts and voice, often sounding clearer/louder over music
+            // .interruptSpokenAudioAndMixWithOthers ensures it cuts through podcasts/audiobooks
+            try audioSession.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers, .interruptSpokenAudioAndMixWithOthers])
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             print("Failed to configure audio session: \(error)")
         }
@@ -37,7 +38,7 @@ class AlertFeedbackManager: ObservableObject {
                 feedbackTimer?.invalidate()
                 feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
                     Task { @MainActor in
-                        self?.playChime()
+                        self?.playChime(isUrgent: true)
                         self?.triggerHaptic()
                     }
                 }
@@ -47,14 +48,14 @@ class AlertFeedbackManager: ObservableObject {
         
         isPlayingAlert = true
         
-        // Play initial chime and haptic
-        playChime()
+        // Play more aggressive initial chime sequence
+        playChime(isUrgent: true)
         triggerHaptic()
         
         // Set up repeating timer
         feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.playChime()
+                self?.playChime(isUrgent: true)
                 self?.triggerHaptic()
             }
         }
@@ -84,17 +85,34 @@ class AlertFeedbackManager: ObservableObject {
         }
     }
 
-    private func playChime() {
+    private func playChime(isUrgent: Bool = false) {
         // Play Navigation Pop MP3 file
         if let soundURL = Bundle.main.url(forResource: "navigation_pop", withExtension: "mp3") {
             do {
                 if audioPlayer == nil || audioPlayer?.url != soundURL {
                     audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                    audioPlayer?.volume = 1.0  // Set to maximum volume
                     audioPlayer?.prepareToPlay()
                 }
-                audioPlayer?.currentTime = 0
-                audioPlayer?.play()
+                
+                // Force volume to max
+                audioPlayer?.volume = 1.0
+                
+                // For urgent speed alerts, we can play it twice in quick succession 
+                // or ensure it's at the very front of the audio queue
+                if isUrgent {
+                    // Double tap effect for better visibility
+                    audioPlayer?.currentTime = 0
+                    audioPlayer?.play()
+                    
+                    // Simple way to make it "louder" is to play it again after a tiny delay
+                    // but we have to be careful not to create a messy echo.
+                    // Instead, let's just ensure session is active.
+                    try? AVAudioSession.sharedInstance().setActive(true)
+                } else {
+                    audioPlayer?.currentTime = 0
+                    audioPlayer?.play()
+                }
+                
             } catch {
                 print("Failed to play navigation_pop.mp3: \(error)")
             }

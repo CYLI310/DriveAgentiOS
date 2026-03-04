@@ -5,6 +5,7 @@ struct AnalogSpeedView: View {
     let useMetric: Bool
     let isSpeeding: Bool
     let accelerationState: LocationManager.AccelerationState
+    let dashColor: DashColor
     
     private var maxSpeed: Double {
         useMetric ? 240 : 160
@@ -35,6 +36,36 @@ struct AnalogSpeedView: View {
         }
     }
     
+    private var dialBackground: AnyShapeStyle {
+        if dashColor == .black {
+            return AnyShapeStyle(RadialGradient(
+                gradient: Gradient(colors: [Color(white: 0.12), .black]),
+                center: .center,
+                startRadius: 0,
+                endRadius: 160
+            ))
+        } else {
+            return AnyShapeStyle(RadialGradient(
+                gradient: Gradient(colors: [Color(white: 0.98), Color(white: 0.85)]),
+                center: .center,
+                startRadius: 0,
+                endRadius: 160
+            ))
+        }
+    }
+    
+    private var tickColor: Color {
+        dashColor == .black ? .white : .black
+    }
+    
+    private var labelColor: Color {
+        dashColor == .black ? .white.opacity(0.7) : .black.opacity(0.6)
+    }
+    
+    private var mainTextColor: Color {
+        dashColor == .black ? .white : .black
+    }
+
     var body: some View {
         ZStack {
             // Main Glass Plate
@@ -51,18 +82,11 @@ struct AnalogSpeedView: View {
                             lineWidth: 2
                         )
                 )
-                .shadow(color: .black.opacity(0.4), radius: 25, x: 0, y: 15)
+                .shadow(color: .black.opacity(dashColor == .black ? 0.4 : 0.2), radius: 25, x: 0, y: 15)
             
-            // Inner Dark Dial
+            // Inner Dial
             Circle()
-                .fill(
-                    RadialGradient(
-                        gradient: Gradient(colors: [Color(white: 0.12), .black]),
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: 160
-                    )
-                )
+                .fill(dialBackground)
                 .padding(15)
             
             // Ticks
@@ -73,7 +97,7 @@ struct AnalogSpeedView: View {
                 let isMajor = i % 2 == 0
                 
                 Capsule()
-                    .fill(isMajor ? Color.white.opacity(0.8) : Color.white.opacity(0.3))
+                    .fill(isMajor ? tickColor.opacity(0.8) : tickColor.opacity(0.3))
                     .frame(width: isMajor ? 3 : 1.5, height: isMajor ? 18 : 10)
                     .offset(y: -105) // Radius of ticks
                     .rotationEffect(angle)
@@ -92,7 +116,7 @@ struct AnalogSpeedView: View {
                 
                 Text("\(Int(value))")
                     .font(.system(size: 14, weight: .black, design: .rounded))
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(labelColor)
                     .position(x: 140 + x, y: 140 + y) // Center is (140, 140) for a 280 frame
             }
             
@@ -117,8 +141,8 @@ struct AnalogSpeedView: View {
             VStack(spacing: 0) {
                 Text(String(format: "%.0f", currentSpeed))
                     .font(.system(size: 32, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .shadow(color: themeColor.opacity(0.3), radius: 10)
+                    .foregroundColor(mainTextColor)
+                    .shadow(color: themeColor.opacity(dashColor == .black ? 0.3 : 0.1), radius: 10)
                 Text(unitText)
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(themeColor)
@@ -139,7 +163,7 @@ struct AnalogSpeedView: View {
                 Capsule()
                     .fill(
                         LinearGradient(
-                            colors: [.white, themeColor],
+                            colors: [dashColor == .black ? .white : .black.opacity(0.8), themeColor],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -152,13 +176,13 @@ struct AnalogSpeedView: View {
             
             // Hub
             Circle()
-                .fill(Color.black)
+                .fill(dashColor == .black ? Color.black : Color(white: 0.8))
                 .frame(width: 24, height: 24)
                 .overlay(
                     Circle()
                         .stroke(
                             LinearGradient(
-                                colors: [.white.opacity(0.5), .clear],
+                                colors: [dashColor == .black ? .white.opacity(0.5) : .black.opacity(0.2), .clear],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),

@@ -9,10 +9,14 @@ struct DistractionOverlay: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                Image(systemName: "eye.trianglebadge.exclamationmark.fill")
-                    .font(.system(size: 80))
-                    .foregroundColor(.yellow)
-                    .symbolEffect(.bounce, options: .repeating)
+                if #available(iOS 18.0, *) {
+                    Image(systemName: "eye.trianglebadge.exclamationmark.fill")
+                        .font(.system(size: 80))
+                        .foregroundColor(.yellow)
+                        .symbolEffect(.bounce, options: .repeating)
+                } else {
+                    // Fallback on earlier versions
+                }
                 
                 Text(languageManager.localize("Eyes on the road!"))
                     .font(.largeTitle)

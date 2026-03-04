@@ -11,6 +11,13 @@ enum SpeedDisplayMode: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+enum DashColor: String, CaseIterable, Identifiable {
+    case black = "Black"
+    case white = "White"
+    
+    var id: String { self.rawValue }
+}
+
 enum AppTheme: String, CaseIterable, Identifiable {
     case system = "System"
     case light = "Light"
@@ -53,6 +60,12 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    @Published var analogDashColor: DashColor {
+        didSet {
+            UserDefaults.standard.set(analogDashColor.rawValue, forKey: "analogDashColor")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
@@ -63,6 +76,9 @@ class ThemeManager: ObservableObject {
         self.speedDisplayMode = SpeedDisplayMode(rawValue: savedMode) ?? .digital
         
         self.hapticFeedbackEnabled = UserDefaults.standard.object(forKey: "hapticFeedbackEnabled") as? Bool ?? true
+        
+        let savedDash = UserDefaults.standard.string(forKey: "analogDashColor") ?? DashColor.black.rawValue
+        self.analogDashColor = DashColor(rawValue: savedDash) ?? .black
     }
     
     func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
@@ -129,6 +145,16 @@ struct SettingsView: View {
                     }
                     .pickerStyle(.menu)
                     .onChange(of: themeManager.speedDisplayMode) { _ in themeManager.triggerHaptic() }
+                    
+                    if themeManager.speedDisplayMode == .analog {
+                        Picker(languageManager.localize("Dash Color"), selection: $themeManager.analogDashColor) {
+                            ForEach(DashColor.allCases) { color in
+                                Text(languageManager.localize(color.rawValue)).tag(color)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .onChange(of: themeManager.analogDashColor) { _ in themeManager.triggerHaptic() }
+                    }
                     
                     Text(languageManager.localize("Choose how your current speed is visualized on the main screen."))
                         .font(.caption)

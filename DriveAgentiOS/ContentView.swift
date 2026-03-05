@@ -135,6 +135,17 @@ struct ContentView: View {
     @State private var alertGlowOpacity: Double = 1.0 // For ambient glow blinking
     @State private var alertBackgroundOpacity: Double = 0.6 // For alert box breathing
     
+    // Analog dash-aware text colors
+    private var dashTextColor: Color {
+        guard themeManager.speedDisplayMode == .analog else { return .primary }
+        return themeManager.analogDashColor == .black ? .white : .black
+    }
+    
+    private var dashSecondaryTextColor: Color {
+        guard themeManager.speedDisplayMode == .analog else { return .secondary }
+        return themeManager.analogDashColor == .black ? .white.opacity(0.6) : .black.opacity(0.5)
+    }
+    
     let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -313,12 +324,12 @@ struct ContentView: View {
                     VStack(spacing: 4) {
                         Text(locationManager.currentStreetName)
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(dashTextColor)
                         
                         if let location = locationManager.currentLocation {
                             Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(dashSecondaryTextColor)
                         }
                         
                         Divider()
@@ -328,19 +339,21 @@ struct ContentView: View {
                             VStack(spacing: 2) {
                                 Text(languageManager.localize("Trip Distance"))
                                     .font(.caption2)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(dashSecondaryTextColor)
                                 Text(locationManager.getFormattedDistance())
                                     .font(.caption)
                                     .fontWeight(.semibold)
+                                    .foregroundColor(dashTextColor)
                             }
                             
                             VStack(spacing: 2) {
                                 Text(languageManager.localize("Max Speed"))
                                     .font(.caption2)
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(dashSecondaryTextColor)
                                 Text(locationManager.getFormattedMaxSpeed())
                                     .font(.caption)
                                     .fontWeight(.semibold)
+                                    .foregroundColor(dashTextColor)
                             }
                         }
                         
@@ -358,11 +371,11 @@ struct ContentView: View {
                 } else if let location = locationManager.currentLocation {
                     Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(dashSecondaryTextColor)
                 } else {
                     Text(languageManager.localize("Searching for location..."))
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(dashSecondaryTextColor)
                 }
             }
             .padding(.vertical, 20)

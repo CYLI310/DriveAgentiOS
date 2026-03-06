@@ -599,24 +599,6 @@ struct ContentView: View {
                 accelerationState: locationManager.accelerationState,
                 dashColor: themeManager.analogDashColor
             )
-        case .landscape:
-            HorizontalDashboardView(
-                speed: locationManager.currentSpeed,
-                speedMps: locationManager.currentSpeedMps,
-                useMetric: locationManager.useMetric,
-                isSpeeding: speedTrapDetector.isSpeeding,
-                streetName: locationManager.currentStreetName,
-                closestTrap: speedTrapDetector.closestTrap,
-                tripDistance: locationManager.getFormattedDistance(),
-                maxSpeed: locationManager.getFormattedMaxSpeed(),
-                accelerationState: locationManager.accelerationState,
-                accelerationMagnitude: locationManager.accelerationMagnitude,
-                languageManager: languageManager,
-                isMapVisible: $isMapVisible,
-                showingSettings: $showingSettings,
-                alertGlowOpacity: alertGlowOpacity,
-                alertBackgroundOpacity: alertBackgroundOpacity
-            )
         }
     }
     

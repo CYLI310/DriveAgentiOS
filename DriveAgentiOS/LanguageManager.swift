@@ -596,8 +596,32 @@ class LanguageManager: ObservableObject {
             .german: "Im Stand sehen Sie Ihre aktuelle Straße, Reisedistanz, Höchstgeschwindigkeit und Batteriestand",
             .french: "À l'arrêt, vous verrez votre rue actuelle, la distance du trajet, la velocità maximale et le niveau de la batterie",
             .italian: "Quando sei fermo, vedrai la tua strada attuale, la distanza del viaggio, la velocità massima e il livello della batteria",
-            .portuguese: "Quando parado, você verá sua rua atual, distanza da viagem, velocità máxima e nível da batteria",
+            .portuguese: "Quando parado, você verá sua rua atual, distanza da viagem, velocità máxima e nível da bateria",
             .russian: "При остановке вы увидите текущую улицу, расстояние, макс. скорость и уровень заряда"
+        ],
+        "Horizontal Dashboard": [
+            .english: "Horizontal Dashboard", .chineseTraditional: "橫向儀表板", .chineseSimplified: "横向仪表板",
+            .korean: "가로 대시보드", .japanese: "横向きダッシュボード", .vietnamese: "Bảng điều khiển ngang", .thai: "แดชบอร์ดแนวนอน",
+            .filipino: "Horizontal na Dashboard", .hindi: "क्षैतिज डैशबोर्ड", .arabic: "لوحة القيادة الأفقية", .spanish: "Panel horizontal",
+            .german: "Horizontales Dashboard", .french: "Tableau de bord horizontal", .italian: "Dashboard orizzontale", .portuguese: "Painel horizontal", .russian: "Горизонтальная панель"
+        ],
+        "Horizontal Dash Desc": [
+            .english: "Rotate to landscape for a wide-screen view with speed, stats, and quick controls side by side",
+            .chineseTraditional: "旋轉為橫向模式，以寬螢幕顯示速度、統計數據與快速控制",
+            .chineseSimplified: "旋转至横向模式，以宽屏显示速度、统计数据和快速控制",
+            .korean: "가로 모드로 회전하면 속도, 통계 및 빠른 제어를 나란히 넓은 화면으로 볼 수 있습니다",
+            .japanese: "横向きに回転すると、速度・統計・クイックコントロールを横並びのワイドスクリーンで表示します",
+            .vietnamese: "Xoay sang chế độ ngang để xem màn hình rộng với tốc độ, số liệu thống kê và điều khiển nhanh",
+            .thai: "หมุนเป็นแนวนอนเพื่อดูหน้าจอกว้างพร้อมความเร็ว สถิติ และตัวควบคุมด่วนแบบเคียงข้าง",
+            .filipino: "I-rotate sa landscape para sa wide-screen view na may bilis, stats, at mabilis na mga kontrol nang magkatabi",
+            .hindi: "वाइड-स्क्रीन व्यू के लिए लैंडस्केप में घुमाएं जिसमें गति, आँकड़े और त्वरित नियंत्रण एक साथ दिखें",
+            .arabic: "أدر الشاشة أفقيًا للحصول على عرض واسع مع السرعة والإحصائيات والأدوات جنبًا إلى جنب",
+            .spanish: "Gire a horizontal para una vista panorámica con velocidad, estadísticas y controles rápidos juntos",
+            .german: "Drehen Sie ins Querformat für eine Weitwinkelansicht mit Geschwindigkeit, Statistiken und Schnellsteuerung",
+            .french: "Faites pivoter en paysage pour une vue large avec la vitesse, les stats et les commandes côte à côte",
+            .italian: "Ruota in orizzontale per una vista panoramica con velocità, statistiche e controlli rapidi affiancati",
+            .portuguese: "Gire para paisagem para uma visão ampla com velocidade, estatísticas e controles rápidos",
+            .russian: "Поверните в альбомный режим для широкоэкранного вида со скоростью, статистикой и быстрым управлением"
         ],
         
         // Distraction Alert

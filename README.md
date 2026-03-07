@@ -1,49 +1,52 @@
 # DriveAgentiOS
 
-DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhance your driving experience. It provides real-time speed and location tracking, a sleek liquid glass user interface, and customizable widgets to keep you informed on the go.
+DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhance your driving experience. It provides real-time speed and location tracking, a sleek liquid glass (glassmorphism) user interface, and intelligent safety alerts to keep you informed and safe on the road.
 
 ## Features
 
 ### Core Driving Tools
-- **Real-Time Speed & Location Tracking:** Get accurate, up-to-the-second information on your speed and GPS coordinates.
-- **Interactive Map View:** Visualize your current location on a dynamic map with smooth animations and user-friendly controls.
-- **Trip Statistics:** Track your trip distance and maximum speed with easy reset functionality.
+- **Analog & Digital Speedometers:** Choose between a classic high-precision analog gauge or a clean digital display to monitor your current speed.
+- **Horizontal Dashboard:** Automatically switches to a wide-screen dashboard layout when in landscape mode, placing speed, trip stats, and map controls side-by-side for optimal viewing.
+- **Real-Time Tracking:** Accurate, up-to-the-second speed and GPS coordinate tracking.
+- **Interactive Map View:** Integrated dynamic map with smooth animations and one-touch centering.
+- **Acceleration-Responsive UI:** The interface dynamically changes colors based on your driving behavior—accelerating (blue), decelerating (green), steady (teal), or stopped (gray).
 
-### Safety & Alerts
-- **Speed Camera Detection:** View the nearest speed cameras with distance and speed limit information. Infinite proximity mode allows you to always see the closest camera regardless of distance.
-- **Multi-Sensory Speed Limit Alerts:** When exceeding the speed limit near a camera, receive:
-  - **Visual Feedback:** Red blinking particle effects and glowing border
-  - **Audio Feedback:** Navigation Pop alert sound with adaptive intervals (4s normal, 2s severe)
-  - **Haptic Feedback:** Gentle warning vibrations synchronized with audio
-- **Distraction Detection:** Optional face-tracking feature that warns you if you look at the screen while driving fast (on supported devices).
+### Intelligent Safety & Alerts
+- **Global Speed Camera Detection:** Built-in support for regional speed trap data (currently featuring Taiwan and USA) with intelligent matching based on road name and driving direction.
+- **Smart Proximity Alerts:**
+  - **Infinite Proximity Mode:** Always shows the absolute closest camera regardless of distance.
+  - **Standard Mode:** Focused alerts for cameras within a 2km range.
+- **Multi-Sensory Speed Warnings:** Receive immediate feedback when exceeding the limit near a camera:
+  - **Visual:** Red pulsing "breathing" alerts, ambient screen glows, and blinking particle effects.
+  - **Audio:** High-quality "Navigation Pop" alert sound with adaptive intervals (4s for standard speeding, 2s for severe speeding >10 units over).
+  - **Haptic:** Synchronized physical vibrations for non-intrusive warnings.
+- **Distraction Detection:** Advanced ARKit-powered face tracking that warns you if your attention drifts from the road while driving at speed.
+
+### System & Trip Monitoring
+- **Glassmorphism Top Bar:** Sleek, translucent overlay showing real-time system status:
+  - **Battery Level:** Current percentage and status icon.
+  - **Network Status:** Real-time signal strength and connectivity monitoring.
+  - **Current Street:** Automatic reverse-geocoding to display the street name you are currently on.
+- **Detailed Trip Statistics:** Track total distance, maximum speed, and current coordinates.
 
 ### Customization
-- **Customizable Widgets:** Add widgets to your home screen to get quick access to your speed and other driving data.
-- **Customizable Particle Effects:** Choose from multiple stunning visual effects including Orbit and Gradient styles, or turn them off entirely.
-- **Dynamic Island & Live Activities:** Keep track of your trip's progress with Live Activities on your lock screen and Dynamic Island.
-- **Multi-Language Support:** Full support for 16 languages including English, Chinese (Traditional & Simplified), Korean, Japanese, Vietnamese, Thai, Filipino, Hindi, Arabic, Spanish, German, French, Italian, Portuguese, and Russian.
-- **Theme Customization:** Choose between System, Light, or Dark themes to match your preference.
-- **Permissions Handling:** A user-friendly permissions system that guides users to enable location services when necessary.
-
-## Widgets
-
-DriveAgentiOS comes with two powerful widgets:
-
-- **SpeedWidget:** A compact widget that displays your current speed in a clear, easy-to-read format.
-- **Widget:** A versatile widget that can be customized to show various driving-related data.
+- **Multi-Language Support:** Fully localized for 16 languages including English, Chinese (Traditional/Simplified), Korean, Japanese, Spanish, German, French, and more.
+- **Theme Engine:** Supports System, Light, and Dark modes with custom glass effects.
+- **Particle Styles:** Personalize your experience with Orbit, Gradient, or minimal particle effects that respond to your speed.
+- **Widgets & Live Activities:** Stay informed even when the app is in the background with Home Screen widgets and Lock Screen Live Activities (Dynamic Island support).
 
 ## Technologies Used
 
-DriveAgentiOS is built with SwiftUI and relies on the following Apple frameworks:
+DriveAgentiOS is built with modern Apple frameworks:
 
-- **SwiftUI:** For building the user interface.
-- **CoreLocation:** For accessing GPS data and tracking the user's location.
-- **MapKit:** For displaying the interactive map view.
-- **Combine:** For handling asynchronous events and data streams.
-- **WidgetKit:** For creating the home screen widgets and Live Activities.
-- **AVFoundation:** For playing alert sounds and audio feedback.
-- **ARKit:** For face tracking and distraction detection (on supported devices).
-- **UIKit:** For haptic feedback and system integrations.
+- **SwiftUI:** For the responsive and fluid "Liquid Glass" user interface.
+- **CoreLocation:** For high-precision GPS tracking and geocoding.
+- **MapKit:** For the interactive mapping experience.
+- **ARKit:** For driver distraction detection via face tracking.
+- **AVFoundation:** For the custom Navigation Pop audio alert system.
+- **Combine:** For reactive data streams and state management.
+- **WidgetKit:** For Home Screen widgets and Live Activities.
+- **UIKit:** For specialized haptic feedback and system integrations.
 
 ## Getting Started
 
@@ -70,18 +73,9 @@ To get started with DriveAgentiOS, you'll need Xcode 15 or later and a device ru
 
 - `DriveAgentiOS/`: Main application source code.
 - `SpeedWidget/`: Source code for the compact speed widget.
-- `Widget/`: Source code for the customizable widget.
-- `speedtraps.geojson`: Data file containing speed trap locations.
-
-## Contributing
-
-We welcome contributions from the community! If you'd like to contribute to DriveAgentiOS, please follow these steps:
-
-1. **Fork the repository.**
-2. **Create a new branch for your feature or bug fix.**
-3. **Make your changes and commit them with a descriptive message.**
-4. **Push your changes to your forked repository.**
-5. **Open a pull request with a detailed description of your changes.**
+- `Widget/`: Source code for the versatile dashboard widget.
+- `speedtraps.geojson`: Taiwan-region speed trap data.
+- `usspeedtraps.json`: USA-region speed trap data.
 
 ## License
 

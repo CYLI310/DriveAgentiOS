@@ -112,7 +112,7 @@ class LanguageManager: ObservableObject {
         ],
         "Location Permission Text": [
             .english: "To provide speed and location data, this app needs access to your location. Please enable it in Settings.",
-            .chineseTraditional: "為了提供速度和位置資訊，本應用程式需要存取您的位置。請在設定中啟用。",
+            .chineseTraditional: "為了提供速度和位置資訊，本應用程式需要存取您的位置。請在設定中開啟。",
             .chineseSimplified: "为了提供速度和位置数据，本应用需要存取您的位置。请在设置中启用。",
             .korean: "속도 및 위치 데이터를 제공하려면 이 앱에서 위치에 액세스해야 합니다. 설정에서 활성화해주세요.",
             .japanese: "速度と位置情報を提供するには、このアプリが位置情報にアクセスする必要があります。設定で有効にしてください。",
@@ -699,7 +699,7 @@ class LanguageManager: ObservableObject {
         ],
         "Live Activity Desc": [
             .english: "Your speed is displayed on your Lock Screen and in the Dynamic Island while the app runs in the background",
-            .chineseTraditional: "應用程式在背景執行時，速度會顯示在鎖定畫面和靈動島上",
+            .chineseTraditional: "應用程式在背景執行時，速度會顯示在鎖定畫面和動態島上",
             .chineseSimplified: "应用程序在后台运行时，速度将显示在锁定屏幕和灵动岛上",
             .korean: "앱이 백그라운드에서 실행되는 동안 잠금 화면과 Dynamic Island에 속도가 표시됩니다",
             .japanese: "アプリがバックグラウンドで動作中に、速度がロック画面とDynamic Islandに表示されます",
@@ -722,7 +722,7 @@ class LanguageManager: ObservableObject {
             .german: "Sperrbildschirm", .french: "Écran de verrouillage", .italian: "Schermata di blocco", .portuguese: "Tela de bloqueio", .russian: "Экран блокировки"
         ],
         "Dynamic Island": [
-            .english: "Dynamic Island", .chineseTraditional: "靈動島", .chineseSimplified: "灵动岛",
+            .english: "Dynamic Island", .chineseTraditional: "動態島", .chineseSimplified: "灵动岛",
             .korean: "Dynamic Island", .japanese: "Dynamic Island", .vietnamese: "Đảo Động", .thai: "ไดนามิกไอส์แลนด์",
             .filipino: "Dynamic Island", .hindi: "डायनामिक आइलैंड", .arabic: "الجزيرة الديناميكية", .spanish: "Isla Dinámica",
             .german: "Dynamic Island", .french: "Dynamic Island", .italian: "Dynamic Island", .portuguese: "Ilha Dinâmica", .russian: "Dynamic Island"

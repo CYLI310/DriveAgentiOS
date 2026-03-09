@@ -623,7 +623,129 @@ class LanguageManager: ObservableObject {
             .portuguese: "Gire para paisagem para uma visão ampla com velocidade, estatísticas e controles rápidos",
             .russian: "Поверните в альбомный режим для широкоэкранного вида со скоростью, статистикой и быстрым управлением"
         ],
-        
+
+        // New Onboarding Keys
+        "Speed Display Modes": [
+            .english: "Speed Display Modes", .chineseTraditional: "速度顯示模式", .chineseSimplified: "速度显示模式",
+            .korean: "속도 표시 모드", .japanese: "速度表示モード", .vietnamese: "Chế độ hiển thị tốc độ", .thai: "โหมดแสดงความเร็ว",
+            .filipino: "Mga Mode ng Pagpapakita ng Bilis", .hindi: "गति प्रदर्शन मोड", .arabic: "أوضاع عرض السرعة", .spanish: "Modos de pantalla de velocidad",
+            .german: "Geschwindigkeitsmodi", .french: "Modes d'affichage", .italian: "Modalità velocità", .portuguese: "Modos de velocidade", .russian: "Режимы скорости"
+        ],
+        "Speed Display Modes Desc": [
+            .english: "Choose between a clean digital readout or a classic analog gauge to display your speed",
+            .chineseTraditional: "在簡潔的數位顯示和經典的指針儀表之間選擇您的速度顯示方式",
+            .chineseSimplified: "在简洁的数字显示和经典的指针仪表之间选择您的速度显示方式",
+            .korean: "깔끔한 디지털 표시 또는 클래식 아날로그 계기판 중에서 속도 표시 방식을 선택하세요",
+            .japanese: "すっきりしたデジタル表示またはクラシックなアナログメーターで速度を表示します",
+            .vietnamese: "Chọn giữa màn hình kỹ thuật số gọn gàng hoặc đồng hồ tương tự cổ điển để hiển thị tốc độ",
+            .thai: "เลือกระหว่างจอแสดงผลดิจิตอลที่ชัดเจนหรือมาตรวัดอนาล็อกแบบคลาสสิก",
+            .filipino: "Pumili sa pagitan ng malinis na digital readout o klasikong analog gauge para sa iyong bilis",
+            .hindi: "अपनी गति प्रदर्शित करने के लिए एक साफ डिजिटल रीडआउट या क्लासिक एनालॉग गेज में से चुनें",
+            .arabic: "اختر بين شاشة رقمية نظيفة أو عداد تناظري كلاسيكي لعرض سرعتك",
+            .spanish: "Elija entre una lectura digital limpia o un indicador analógico clásico",
+            .german: "Wählen Sie zwischen einer digitalen oder klassischen Analoganzeige für Ihre Geschwindigkeit",
+            .french: "Choisissez entre un affichage numérique épuré ou un indicateur analogique classique",
+            .italian: "Scegli tra una lettura digitale pulita o un indicatore analogico classico",
+            .portuguese: "Escolha entre uma leitura digital limpa ou um manômetro analógico clássico",
+            .russian: "Выберите между цифровым дисплеем или классическим аналоговым спидометром"
+        ],
+        "Digital Mode": [
+            .english: "Digital Mode", .chineseTraditional: "數位模式", .chineseSimplified: "数字模式",
+            .korean: "디지털 모드", .japanese: "デジタルモード", .vietnamese: "Chế độ kỹ thuật số", .thai: "โหมดดิจิตอล",
+            .filipino: "Digital Mode", .hindi: "डिजिटल मोड", .arabic: "الوضع الرقمي", .spanish: "Modo digital",
+            .german: "Digitalmodus", .french: "Mode numérique", .italian: "Modalità digitale", .portuguese: "Modo digital", .russian: "Цифровой режим"
+        ],
+        "Analog Mode": [
+            .english: "Analog Mode", .chineseTraditional: "指針模式", .chineseSimplified: "指针模式",
+            .korean: "아날로그 모드", .japanese: "アナログモード", .vietnamese: "Chế độ tương tự", .thai: "โหมดอนาล็อก",
+            .filipino: "Analog Mode", .hindi: "एनालॉग मोड", .arabic: "الوضع التناظري", .spanish: "Modo analógico",
+            .german: "Analogmodus", .french: "Mode analogique", .italian: "Modalità analogica", .portuguese: "Modo analógico", .russian: "Аналоговый режим"
+        ],
+        "Distraction Alert Desc": [
+            .english: "Uses face tracking to detect when you're looking at your phone while driving fast, then alerts you to keep eyes on the road",
+            .chineseTraditional: "使用臉部追蹤偵測您在高速行駛時是否注視手機，並提醒您專注於路況",
+            .chineseSimplified: "使用面部追踪检测您在高速行驶时是否注视手机，并提醒您专注于路况",
+            .korean: "고속 주행 중 휴대폰을 보고 있는지 감지하고 전방 주시를 알리는 얼굴 추적 사용",
+            .japanese: "高速走行中に画面を見ているかを顔追跡で検出し、前方注視を促します",
+            .vietnamese: "Sử dụng theo dõi khuôn mặt để phát hiện khi bạn nhìn điện thoại lúc lái xe nhanh",
+            .thai: "ใช้การติดตามใบหน้าเพื่อตรวจจับเมื่อคุณมองหน้าจอขณะขับรถเร็ว",
+            .filipino: "Gumagamit ng face tracking upang matukoy kung tumitingin ka sa telepono habang mabilis ang pagmamaneho",
+            .hindi: "तेज गति से गाड़ी चलाते समय फ़ोन देखने पर फेस ट्रैकिंग से पता लगाकर सचेत करता है",
+            .arabic: "يستخدم تتبع الوجه لاكتشاف ما إذا كنت تنظر إلى هاتفك أثناء القيادة السريعة",
+            .spanish: "Usa seguimiento facial para detectar si miras el teléfono al conducir rápido y te alerta",
+            .german: "Erkennt mithilfe der Gesichtsverfolgung, ob Sie während der Fahrt auf Ihr Telefon schauen",
+            .french: "Utilise le suivi du visage pour détecter si vous regardez votre téléphone en conduisant",
+            .italian: "Usa il rilevamento del volto per capire se guardi il telefono mentre guidi velocemente",
+            .portuguese: "Usa rastreamento facial para detectar se você está olhando para o telefone enquanto dirige",
+            .russian: "Отслеживает лицо, чтобы определить, смотрите ли вы на телефон во время быстрой езды"
+        ],
+        "Face Tracking": [
+            .english: "Face Tracking", .chineseTraditional: "臉部追蹤", .chineseSimplified: "面部追踪",
+            .korean: "얼굴 추적", .japanese: "顔追跡", .vietnamese: "Theo dõi khuôn mặt", .thai: "ติดตามใบหน้า",
+            .filipino: "Face Tracking", .hindi: "फेस ट्रैकिंग", .arabic: "تتبع الوجه", .spanish: "Seguimiento facial",
+            .german: "Gesichtsverfolgung", .french: "Suivi du visage", .italian: "Rilevamento volto", .portuguese: "Rastreamento facial", .russian: "Отслеживание лица"
+        ],
+        "Speed Aware": [
+            .english: "Speed Aware", .chineseTraditional: "速度感知", .chineseSimplified: "速度感知",
+            .korean: "속도 인식", .japanese: "速度感知", .vietnamese: "Nhận biết tốc độ", .thai: "ตรวจจับความเร็ว",
+            .filipino: "Speed Aware", .hindi: "गति जागरूक", .arabic: "واعٍ للسرعة", .spanish: "Consciente de velocidad",
+            .german: "Geschwindigkeitsbewusst", .french: "Sensible à la vitesse", .italian: "Rilevamento velocità", .portuguese: "Velocidade detectada", .russian: "Контроль скорости"
+        ],
+        "Live Activity": [
+            .english: "Live Activity", .chineseTraditional: "即時活動", .chineseSimplified: "即时活动",
+            .korean: "실시간 활동", .japanese: "ライブアクティビティ", .vietnamese: "Hoạt động trực tiếp", .thai: "กิจกรรมสด",
+            .filipino: "Live Activity", .hindi: "लाइव एक्टिविटी", .arabic: "النشاط المباشر", .spanish: "Actividad en vivo",
+            .german: "Live Activity", .french: "Activité en direct", .italian: "Attività live", .portuguese: "Atividade ao vivo", .russian: "Живая активность"
+        ],
+        "Live Activity Desc": [
+            .english: "Your speed is displayed on your Lock Screen and in the Dynamic Island while the app runs in the background",
+            .chineseTraditional: "應用程式在背景執行時，速度會顯示在鎖定畫面和靈動島上",
+            .chineseSimplified: "应用程序在后台运行时，速度将显示在锁定屏幕和灵动岛上",
+            .korean: "앱이 백그라운드에서 실행되는 동안 잠금 화면과 Dynamic Island에 속도가 표시됩니다",
+            .japanese: "アプリがバックグラウンドで動作中に、速度がロック画面とDynamic Islandに表示されます",
+            .vietnamese: "Tốc độ của bạn được hiển thị trên Màn hình khóa và Dynamic Island khi ứng dụng chạy nền",
+            .thai: "ความเร็วของคุณแสดงบนหน้าจอล็อคและ Dynamic Island ขณะแอปทำงานเบื้องหลัง",
+            .filipino: "Ang iyong bilis ay ipinapakita sa Lock Screen at Dynamic Island habang nagtatakbo ang app sa background",
+            .hindi: "ऐप बैकग्राउंड में चलते समय आपकी गति लॉक स्क्रीन और Dynamic Island पर दिखती है",
+            .arabic: "تظهر سرعتك على شاشة القفل وفي الجزيرة الديناميكية أثناء تشغيل التطبيق في الخلفية",
+            .spanish: "Tu velocidad se muestra en la pantalla de bloqueo y en la Isla Dinámica mientras la app corre en segundo plano",
+            .german: "Ihre Geschwindigkeit wird auf dem Sperrbildschirm und in der Dynamic Island angezeigt, während die App im Hintergrund läuft",
+            .french: "Votre vitesse est affichée sur l'écran de verrouillage et dans la Dynamic Island pendant que l'app tourne en arrière-plan",
+            .italian: "La tua velocità viene mostrata sulla schermata di blocco e nella Dynamic Island mentre l'app è in background",
+            .portuguese: "Sua velocidade é exibida na tela de bloqueio e na Ilha Dinâmica enquanto o app roda em segundo plano",
+            .russian: "Ваша скорость отображается на экране блокировки и в Dynamic Island, пока приложение работает в фоне"
+        ],
+        "Lock Screen": [
+            .english: "Lock Screen", .chineseTraditional: "鎖定畫面", .chineseSimplified: "锁定屏幕",
+            .korean: "잠금 화면", .japanese: "ロック画面", .vietnamese: "Màn hình khóa", .thai: "หน้าจอล็อค",
+            .filipino: "Lock Screen", .hindi: "लॉक स्क्रीन", .arabic: "شاشة القفل", .spanish: "Pantalla de bloqueo",
+            .german: "Sperrbildschirm", .french: "Écran de verrouillage", .italian: "Schermata di blocco", .portuguese: "Tela de bloqueio", .russian: "Экран блокировки"
+        ],
+        "Dynamic Island": [
+            .english: "Dynamic Island", .chineseTraditional: "靈動島", .chineseSimplified: "灵动岛",
+            .korean: "Dynamic Island", .japanese: "Dynamic Island", .vietnamese: "Đảo Động", .thai: "ไดนามิกไอส์แลนด์",
+            .filipino: "Dynamic Island", .hindi: "डायनामिक आइलैंड", .arabic: "الجزيرة الديناميكية", .spanish: "Isla Dinámica",
+            .german: "Dynamic Island", .french: "Dynamic Island", .italian: "Dynamic Island", .portuguese: "Ilha Dinâmica", .russian: "Dynamic Island"
+        ],
+        "Audio Alert": [
+            .english: "Audio Alert", .chineseTraditional: "音頻警示", .chineseSimplified: "音频警示",
+            .korean: "오디오 알림", .japanese: "音声アラート", .vietnamese: "Cảnh báo âm thanh", .thai: "แจ้งเตือนเสียง",
+            .filipino: "Audio Alert", .hindi: "ऑडियो अलर्ट", .arabic: "تنبيه صوتي", .spanish: "Alerta de audio",
+            .german: "Audiowarnung", .french: "Alerte sonore", .italian: "Avviso audio", .portuguese: "Alerta sonoro", .russian: "Звуковое оповещение"
+        ],
+        "Proximity Alert": [
+            .english: "Proximity Alert", .chineseTraditional: "接近警示", .chineseSimplified: "接近警示",
+            .korean: "근접 경고", .japanese: "近接アラート", .vietnamese: "Cảnh báo gần", .thai: "แจ้งเตือนระยะใกล้",
+            .filipino: "Proximity Alert", .hindi: "निकटता अलर्ट", .arabic: "تنبيه القرب", .spanish: "Alerta de proximidad",
+            .german: "Näherungswarnung", .french: "Alerte de proximité", .italian: "Avviso di prossimità", .portuguese: "Alerta de proximidade", .russian: "Оповещение о близости"
+        ],
+        "Rotate device for landscape view": [
+            .english: "Rotate device for landscape view", .chineseTraditional: "旋轉裝置以使用橫向模式", .chineseSimplified: "旋转设备以使用横向模式",
+            .korean: "기기를 회전하여 가로 보기 사용", .japanese: "デバイスを回転して横向き表示", .vietnamese: "Xoay thiết bị cho chế độ ngang", .thai: "หมุนอุปกรณ์เพื่อโหมดแนวนอน",
+            .filipino: "I-rotate ang device para sa landscape view", .hindi: "लैंडस्केप व्यू के लिए डिवाइस घुमाएं", .arabic: "اقلب الجهاز للعرض الأفقي", .spanish: "Gire el dispositivo para vista horizontal",
+            .german: "Gerät drehen für Querformat", .french: "Tournez l'appareil pour la vue paysage", .italian: "Ruota il dispositivo per la vista orizzontale", .portuguese: "Gire o dispositivo para vista paisagem", .russian: "Поверните устройство для горизонтального вида"
+        ],
+
         // Distraction Alert
         "Distraction Alert": [
             .english: "Distraction Alert", .chineseTraditional: "分心警示", .chineseSimplified: "分心警示",

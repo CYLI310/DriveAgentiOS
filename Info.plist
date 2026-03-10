@@ -6,8 +6,12 @@
 	<array>
 		<string>location</string>
 		<string>remote-notification</string>
-		<string>processing</string>
 		<string>audio</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).refresh</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).cleanup</string>
 	</array>
 </dict>
 </plist>

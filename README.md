@@ -1,82 +1,57 @@
-# DriveAgentiOS
+# Privacy Policy for DriveAgentiOS
 
-DriveAgentiOS is a powerful and intuitive SwiftUI application designed to enhance your driving experience. It provides real-time speed and location tracking, a sleek liquid glass (glassmorphism) user interface, and intelligent safety alerts to keep you informed and safe on the road.
+**Last Updated: October 26, 2023**
 
-## Features
+DriveAgentiOS ("we", "us", or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
 
-### Core Driving Tools
-- **Analog & Digital Speedometers:** Choose between a classic high-precision analog gauge or a clean digital display to monitor your current speed.
-- **Horizontal Dashboard:** Automatically switches to a wide-screen dashboard layout when in landscape mode, placing speed, trip stats, and map controls side-by-side for optimal viewing.
-- **Real-Time Tracking:** Accurate, up-to-the-second speed and GPS coordinate tracking.
-- **Interactive Map View:** Integrated dynamic map with smooth animations and one-touch centering.
-- **Acceleration-Responsive UI:** The interface dynamically changes colors based on your driving behavior—accelerating (blue), decelerating (green), steady (teal), or stopped (gray).
+## 1. Information We Collect
 
-### Intelligent Safety & Alerts
-- **Global Speed Camera Detection:** Built-in support for regional speed trap data (currently featuring Taiwan and USA) with intelligent matching based on road name and driving direction.
-- **Smart Proximity Alerts:**
-  - **Infinite Proximity Mode:** Always shows the absolute closest camera regardless of distance.
-  - **Standard Mode:** Focused alerts for cameras within a 2km range.
-- **Multi-Sensory Speed Warnings:** Receive immediate feedback when exceeding the limit near a camera:
-  - **Visual:** Red pulsing "breathing" alerts, ambient screen glows, and blinking particle effects.
-  - **Audio:** High-quality "Navigation Pop" alert sound with adaptive intervals (4s for standard speeding, 2s for severe speeding >10 units over).
-  - **Haptic:** Synchronized physical vibrations for non-intrusive warnings.
-- **Distraction Detection:** Advanced ARKit-powered face tracking that warns you if your attention drifts from the road while driving at speed.
+### 1.1 Location Data
+DriveAgentiOS requires access to your device's location to provide its core features, including:
+- Real-time speed tracking and speedometer display.
+- Displaying your current position on the map.
+- Detecting nearby speed cameras and providing proximity alerts.
+- Calculating trip statistics such as distance and maximum speed.
 
-### System & Trip Monitoring
-- **Glassmorphism Top Bar:** Sleek, translucent overlay showing real-time system status:
-  - **Battery Level:** Current percentage and status icon.
-  - **Network Status:** Real-time signal strength and connectivity monitoring.
-  - **Current Street:** Automatic reverse-geocoding to display the street name you are currently on.
-- **Detailed Trip Statistics:** Track total distance, maximum speed, and current coordinates.
+We may request "Always" location permissions to provide background updates, enabling Live Activities and background speed camera alerts while the app is not in the foreground.
 
-### Customization
-- **Multi-Language Support:** Fully localized for 16 languages including English, Chinese (Traditional/Simplified), Korean, Japanese, Spanish, German, French, and more.
-- **Theme Engine:** Supports System, Light, and Dark modes with custom glass effects.
-- **Particle Styles:** Personalize your experience with Orbit, Gradient, or minimal particle effects that respond to your speed.
-- **Widgets & Live Activities:** Stay informed even when the app is in the background with Home Screen widgets and Lock Screen Live Activities (Dynamic Island support).
+### 1.2 Face Tracking Data (ARKit)
+The "Distraction Alert" feature uses Apple's ARKit technology to detect if you are looking at the screen while driving at high speeds. **This data is processed entirely on your device in real-time.** We do not capture, store, or transmit any facial images or biometric data to any external servers.
 
-## Technologies Used
+### 1.3 Device and System Information
+We monitor basic system information to enhance the user interface, including:
+- Battery level and charging status.
+- Network connectivity status (WiFi, Cellular, or No Connection).
 
-DriveAgentiOS is built with modern Apple frameworks:
+## 2. Use of Your Information
+All information collected is used solely to provide and improve the functionality of DriveAgentiOS. Specifically:
+- Location data is used to calculate speed and provide navigation-related alerts.
+- Reverse geocoding is used to display the name of the street you are currently on.
+- Trip statistics (distance, max speed) are stored locally on your device for your personal reference.
 
-- **SwiftUI:** For the responsive and fluid "Liquid Glass" user interface.
-- **CoreLocation:** For high-precision GPS tracking and geocoding.
-- **MapKit:** For the interactive mapping experience.
-- **ARKit:** For driver distraction detection via face tracking.
-- **AVFoundation:** For the custom Navigation Pop audio alert system.
-- **Combine:** For reactive data streams and state management.
-- **WidgetKit:** For Home Screen widgets and Live Activities.
-- **UIKit:** For specialized haptic feedback and system integrations.
+## 3. Data Sharing and Disclosure
+**We do not sell, trade, or otherwise transfer your personal data to third parties.**
 
-## Getting Started
+The app interacts with the following services:
+- **Apple Maps/MapKit:** Location data is shared with Apple's MapKit service to render the map and perform reverse geocoding. This is subject to Apple's Privacy Policy.
 
-To get started with DriveAgentiOS, you'll need Xcode 15 or later and a device running iOS 17 or later.
+## 4. Data Retention
+DriveAgentiOS is designed with a "privacy-first" approach. Most data is transient and processed in real-time. Trip statistics and user settings are stored locally on your device and are deleted if the application is uninstalled.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/DriveAgentiOS.git
-   ```
-2. **Open the project in Xcode:**
-   ```bash
-   open DriveAgentiOS/DriveAgentiOS.xcodeproj
-   ```
-3. **Add the `navigation_pop.mp3` file to the project:**
-   - In Xcode's Project Navigator, right-click on the `DriveAgentiOS` folder.
-   - Select "Add Files to 'DriveAgentiOS'..."
-   - Choose the `navigation_pop.mp3` file, which is located in the `DriveAgentiOS/` directory.
-   - Ensure "Copy items if needed" is checked and the "DriveAgentiOS" target is selected.
-4. **Build and run the app:**
-   - Select your target device from the Xcode toolbar.
-   - Click the "Run" button or press `Cmd+R`.
+## 5. User Rights and Choices
+You have full control over the data shared with DriveAgentiOS:
+- You can enable or disable location services in your device settings at any time.
+- You can enable or disable the Distraction Alert (Camera/ARKit) feature within the app's settings.
+- You can reset your trip statistics within the app.
 
-## Project Structure
+## 6. Security
+We implement a variety of security measures to maintain the safety of your information. Since the majority of your data stays on your device, the security of your data is also protected by your device's own security features.
 
-- `DriveAgentiOS/`: Main application source code.
-- `SpeedWidget/`: Source code for the compact speed widget.
-- `Widget/`: Source code for the versatile dashboard widget.
-- `speedtraps.geojson`: Taiwan-region speed trap data.
-- `usspeedtraps.json`: USA-region speed trap data.
+## 7. Changes to This Privacy Policy
+We may update our Privacy Policy from time to time. Any changes will be reflected by the "Last Updated" date at the top of this page.
 
-## License
+## 8. Contact Us
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at support@driveagentios.example.com.
 
-DriveAgentiOS is licensed under the MIT License. See the `LICENSE` file for more information.
+---
+&copy; 2023 Cheng Yang Li. All rights reserved.

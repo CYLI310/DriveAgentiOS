@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import AudioToolbox
 import UIKit
+import AVFoundation
 
 enum SpeedDisplayMode: String, CaseIterable, Identifiable {
     case digital = "Digital"
@@ -65,6 +66,26 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    @Published var alarmSound: AlertFeedbackManager.AlarmSound {
+        didSet {
+            UserDefaults.standard.set(alarmSound.rawValue, forKey: "alarmSound")
+        }
+    }
+    
+    /// Alert volume, stored as a percentage (0–200). 100 = normal (1.0x).
+    @Published var alarmVolume: Double {
+        didSet {
+            UserDefaults.standard.set(alarmVolume, forKey: "alarmVolume")
+        }
+    }
+    
+    /// When true, PiP starts automatically when the app is backgrounded.
+    @Published var pipEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(pipEnabled, forKey: "pipEnabled")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
@@ -78,6 +99,14 @@ class ThemeManager: ObservableObject {
         
         let savedDash = UserDefaults.standard.string(forKey: "analogDashColor") ?? DashColor.black.rawValue
         self.analogDashColor = DashColor(rawValue: savedDash) ?? .black
+        
+        let savedSound = UserDefaults.standard.string(forKey: "alarmSound") ?? AlertFeedbackManager.AlarmSound.default_.rawValue
+        self.alarmSound = AlertFeedbackManager.AlarmSound(rawValue: savedSound) ?? .default_
+        
+        let savedVolume = UserDefaults.standard.object(forKey: "alarmVolume") as? Double
+        self.alarmVolume = savedVolume ?? 100.0
+        
+        self.pipEnabled = UserDefaults.standard.object(forKey: "pipEnabled") as? Bool ?? false
     }
     
     func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
@@ -96,6 +125,7 @@ struct SettingsView: View {
     @ObservedObject var speedTrapDetector: SpeedTrapDetector
     @ObservedObject var languageManager: LanguageManager
     @ObservedObject var distractionDetector: DistractionDetector
+    @ObservedObject var pipManager: PiPManager
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
 
@@ -132,6 +162,33 @@ struct SettingsView: View {
                         .onChange(of: themeManager.hapticFeedbackEnabled) { _ in themeManager.triggerHaptic(.medium) }
                     
                     Text(languageManager.localize("Haptic Feedback Description"))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Section(header: Text(languageManager.localize("Sound"))) {
+                    Picker(languageManager.localize("Alarm Sound"), selection: $themeManager.alarmSound) {
+                        ForEach(AlertFeedbackManager.AlarmSound.allCases) { sound in
+                            Text(languageManager.localize(sound.displayName)).tag(sound)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .onChange(of: themeManager.alarmSound) { _ in themeManager.triggerHaptic() }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text(languageManager.localize("Volume"))
+                            Spacer()
+                            Text("\(Int(themeManager.alarmVolume))%")
+                                .foregroundColor(.secondary)
+                                .monospacedDigit()
+                        }
+                        Slider(value: $themeManager.alarmVolume, in: 0...200, step: 5)
+                            .onChange(of: themeManager.alarmVolume) { _ in
+                                themeManager.triggerHaptic()
+                            }
+                    }
+                    Text(languageManager.localize("Volume Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -227,6 +284,27 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text(languageManager.localize("Other Settings"))) {
+                    // Picture-in-Picture row (only shown on supported devices)
+                    if pipManager.isSupported {
+                        Toggle(isOn: $themeManager.pipEnabled) {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(languageManager.localize("Picture in Picture"))
+                                    Text(languageManager.localize("Picture in Picture Description"))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "pip")
+                                    .foregroundColor(.blue)
+                            }
+                        }
+                        .onChange(of: themeManager.pipEnabled) { _, enabled in
+                            themeManager.triggerHaptic()
+                            if !enabled { pipManager.stopPiP() }
+                        }
+                    }
+
                     Button {
                         themeManager.triggerHaptic()
                         showTutorial = true

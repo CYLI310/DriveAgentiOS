@@ -27,7 +27,7 @@ class AlertFeedbackManager: ObservableObject {
         }
     }
     
-    func startSpeedingAlert(interval: TimeInterval = 4.0) {
+    func startSpeedingAlert(interval: TimeInterval = 4.0, sound: AlarmSound = .default_, volume: Float = 1.0) {
         // If already playing, check if we need to update the interval
         if isPlayingAlert {
             if let timer = feedbackTimer, abs(timer.timeInterval - interval) > 0.1 {
@@ -35,7 +35,7 @@ class AlertFeedbackManager: ObservableObject {
                 feedbackTimer?.invalidate()
                 feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
                     Task { @MainActor in
-                        self?.playChime(isUrgent: true)
+                        self?.playChime(sound: sound, volume: volume, isUrgent: true)
                         self?.triggerHaptic()
                     }
                 }
@@ -46,13 +46,13 @@ class AlertFeedbackManager: ObservableObject {
         isPlayingAlert = true
         
         // Play more aggressive initial chime sequence
-        playChime(isUrgent: true)
+        playChime(sound: sound, volume: volume, isUrgent: true)
         triggerHaptic()
         
         // Set up repeating timer
         feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.playChime(isUrgent: true)
+                self?.playChime(sound: sound, volume: volume, isUrgent: true)
                 self?.triggerHaptic()
             }
         }
@@ -71,38 +71,45 @@ class AlertFeedbackManager: ObservableObject {
         audioPlayer = nil
     }
     
-    // Navigation Pop is the only alert sound
-    enum AlertSound: Int, CaseIterable, Identifiable {
-        case navigationPop = 0  // Custom sound file
+    // Alert sound options
+    enum AlarmSound: String, CaseIterable, Identifiable {
+        case default_ = "Default"
+        case chime = "Chime"
+        case pace = "Pace"
+        case ding = "Ding"
         
-        var id: Int { rawValue }
+        var id: String { rawValue }
         
-        var name: String {
-            return "Navigation Pop"
+        /// The display name shown in the UI
+        var displayName: String { rawValue }
+        
+        /// The filename (without extension) of the corresponding MP3 in the bundle
+        var fileName: String {
+            switch self {
+            case .default_: return "navigation_pop"
+            case .chime:    return "navigation_push"
+            case .pace:     return "3rdParty_Failure_Haptic"
+            case .ding:     return "3rdParty_Retry_Haptic"
+            }
         }
     }
 
-    private func playChime(isUrgent: Bool = false) {
-        if let soundURL = Bundle.main.url(forResource: "navigation_pop", withExtension: "mp3") {
+    private func playChime(sound: AlarmSound = .default_, volume: Float = 1.0, isUrgent: Bool = false) {
+        if let soundURL = Bundle.main.url(forResource: sound.fileName, withExtension: "mp3") {
             do {
                 if audioPlayer == nil || audioPlayer?.url != soundURL {
                     audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
                     audioPlayer?.prepareToPlay()
                 }
                 
-                // Force volume to max
-                audioPlayer?.volume = 1.0
+                // Apply volume (clamped to 0...2 range but AVAudioPlayer supports 0...1 natively;
+                // values above 1.0 are allowed on AVAudioPlayer and act as a software gain boost)
+                audioPlayer?.volume = min(volume, 2.0)
                 
-                // For urgent speed alerts, we can play it twice in quick succession 
-                // or ensure it's at the very front of the audio queue
+                // For urgent speed alerts ensure session is active
                 if isUrgent {
-                    // Double tap effect for better visibility
                     audioPlayer?.currentTime = 0
                     audioPlayer?.play()
-                    
-                    // Simple way to make it "louder" is to play it again after a tiny delay
-                    // but we have to be careful not to create a messy echo.
-                    // Instead, let's just ensure session is active.
                     try? AVAudioSession.sharedInstance().setActive(true)
                 } else {
                     audioPlayer?.currentTime = 0
@@ -110,10 +117,10 @@ class AlertFeedbackManager: ObservableObject {
                 }
                 
             } catch {
-                print("Failed to play navigation_pop.mp3: \(error)")
+                print("Failed to play \(sound.fileName).mp3: \(error)")
             }
         } else {
-            print("navigation_pop.mp3 not found in bundle")
+            print("\(sound.fileName).mp3 not found in bundle")
         }
     }
     

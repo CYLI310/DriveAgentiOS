@@ -442,11 +442,95 @@ class LanguageManager: ObservableObject {
             .filipino: "Positibo", .hindi: "सकारात्मक", .arabic: "إيجابي", .spanish: "Positivo",
             .german: "Positiv", .french: "Positif", .italian: "Positivo", .portuguese: "Positivo", .russian: "Позитивный"
         ],
+        "Sound": [
+            .english: "Sound", .chineseTraditional: "音效", .chineseSimplified: "音效",
+            .korean: "소리", .japanese: "サウンド", .vietnamese: "Âm thanh", .thai: "เสียง",
+            .filipino: "Tunog", .hindi: "ध्वनि", .arabic: "الصوت", .spanish: "Sonido",
+            .german: "Sound", .french: "Son", .italian: "Suono", .portuguese: "Som", .russian: "Звук"
+        ],
+        "Alarm Sound": [
+            .english: "Alarm Sound", .chineseTraditional: "警報音效", .chineseSimplified: "警报音效",
+            .korean: "알람 소리", .japanese: "アラーム音", .vietnamese: "Âm thanh báo động", .thai: "เสียงแจ้งเตือน",
+            .filipino: "Tunog ng Alarm", .hindi: "अलार्म ध्वनि", .arabic: "صوت التنبيه", .spanish: "Sonido de alarma",
+            .german: "Alarmton", .french: "Son d'alarme", .italian: "Suono allarme", .portuguese: "Som de alarme", .russian: "Звук будильника"
+        ],
+        "Volume": [
+            .english: "Volume", .chineseTraditional: "音量", .chineseSimplified: "音量",
+            .korean: "볼륨", .japanese: "音量", .vietnamese: "Âm lượng", .thai: "ระดับเสียง",
+            .filipino: "Volume", .hindi: "वॉल्यूम", .arabic: "الصوت", .spanish: "Volumen",
+            .german: "Lautstärke", .french: "Volume", .italian: "Volume", .portuguese: "Volume", .russian: "Громкость"
+        ],
+        "Volume Description": [
+            .english: "Adjusts the alert sound volume. 100% is normal volume; up to 200% for louder alerts.",
+            .chineseTraditional: "調整警報音量。100% 為正常音量；最高可調至 200% 使警報更響亮。",
+            .chineseSimplified: "调整警报音量。100% 为正常音量；最高可调至 200% 使警报更响亮。",
+            .korean: "알람 소리 음량을 조절합니다. 100%가 기본 볼륨이며 최대 200%까지 높일 수 있습니다.",
+            .japanese: "アラート音の音量を調整します。100% が通常音量、最大 200% まで大きくできます。",
+            .vietnamese: "Điều chỉnh âm lượng cảnh báo. 100% là âm lượng bình thường; tối đa 200% để cảnh báo to hơn.",
+            .thai: "ปรับระดับเสียงแจ้งเตือน 100% คือเสียงปกติ สูงสุดถึง 200% เพื่อเสียงดังขึ้น",
+            .filipino: "Inaayos ang volume ng tunog ng alerto. 100% ang normal na volume; hanggang 200% para sa mas malakas na alerto.",
+            .hindi: "अलर्ट ध्वनि वॉल्यूम समायोजित करता है। 100% सामान्य वॉल्यूम है; तेज़ अलर्ट के लिए 200% तक।",
+            .arabic: "يضبط مستوى صوت التنبيه. 100% هو الصوت الطبيعي; حتى 200% للحصول على تنبيهات أعلى.",
+            .spanish: "Ajusta el volumen del sonido de alerta. 100% es el volumen normal; hasta 200% para alertas más altas.",
+            .german: "Passt die Lautstärke des Alarmtons an. 100% ist die normale Lautstärke; bis zu 200% für lautere Alarme.",
+            .french: "Règle le volume du son d'alerte. 100% est le volume normal; jusqu'à 200% pour des alertes plus fortes.",
+            .italian: "Regola il volume del suono di avviso. Il 100% è il volume normale; fino al 200% per avvisi più forti.",
+            .portuguese: "Ajusta o volume do som de alerta. 100% é o volume normal; até 200% para alertas mais altos.",
+            .russian: "Регулирует громкость звука оповещения. 100% — нормальная громкость; до 200% для более громких оповещений."
+        ],
+        "Default": [
+            .english: "Default", .chineseTraditional: "預設", .chineseSimplified: "默认",
+            .korean: "기본", .japanese: "デフォルト", .vietnamese: "Mặc định", .thai: "ค่าเริ่มต้น",
+            .filipino: "Default", .hindi: "डिफ़ॉल्ट", .arabic: "افتراضي", .spanish: "Predeterminado",
+            .german: "Standard", .french: "Par défaut", .italian: "Predefinito", .portuguese: "Padrão", .russian: "По умолчанию"
+        ],
+        "Chime": [
+            .english: "Chime", .chineseTraditional: "鈴聲", .chineseSimplified: "铃声",
+            .korean: "차임", .japanese: "チャイム", .vietnamese: "Chuông", .thai: "เสียงระฆัง",
+            .filipino: "Chime", .hindi: "चाइम", .arabic: "رنين", .spanish: "Campanilla",
+            .german: "Gong", .french: "Carillon", .italian: "Rintocco", .portuguese: "Carrilhão", .russian: "Звон"
+        ],
+        "Pace": [
+            .english: "Pace", .chineseTraditional: "節奏", .chineseSimplified: "节奏",
+            .korean: "페이스", .japanese: "ペース", .vietnamese: "Nhịp", .thai: "จังหวะ",
+            .filipino: "Pace", .hindi: "पेस", .arabic: "إيقاع", .spanish: "Ritmo",
+            .german: "Rhythmus", .french: "Cadence", .italian: "Ritmo", .portuguese: "Ritmo", .russian: "Темп"
+        ],
+        "Ding": [
+            .english: "Ding", .chineseTraditional: "叮", .chineseSimplified: "叮",
+            .korean: "딩", .japanese: "ディン", .vietnamese: "Ding", .thai: "ดิ้ง",
+            .filipino: "Ding", .hindi: "डिंग", .arabic: "دنق", .spanish: "Din",
+            .german: "Ding", .french: "Ding", .italian: "Ding", .portuguese: "Ding", .russian: "Динь"
+        ],
         "Other Settings": [
             .english: "Other Settings", .chineseTraditional: "其他設定", .chineseSimplified: "其他设置",
             .korean: "기타 설정", .japanese: "その他の設定", .vietnamese: "Cài đặt khác", .thai: "การตั้งค่าอื่นๆ",
             .filipino: "Iba pang Mga Setting", .hindi: "अन्य सेटिंग्स", .arabic: "إعدادات أخرى", .spanish: "Otras configuraciones",
             .german: "Andere Einstellungen", .french: "Autres paramètres", .italian: "Altre impostazioni", .portuguese: "Outras configurações", .russian: "Другие настройки"
+        ],
+        "Picture in Picture": [
+            .english: "Picture in Picture", .chineseTraditional: "子母畫面", .chineseSimplified: "画中画",
+            .korean: "화면 속 화면", .japanese: "ピクチャ イン ピクチャ", .vietnamese: "Hình trong hình", .thai: "ภาพในภาพ",
+            .filipino: "Picture in Picture", .hindi: "पिक्चर इन पिक्चर", .arabic: "صورة داخل صورة", .spanish: "Imagen en imagen",
+            .german: "Bild in Bild", .french: "Incrustation vidéo", .italian: "Immagine nell'immagine", .portuguese: "Imagem em imagem", .russian: "Картинка в картинке"
+        ],
+        "Picture in Picture Description": [
+            .english: "Speed overlay floats on top of other apps when you switch away.",
+            .chineseTraditional: "切換到其他 App 時，速度視窗將懸浮在上方。",
+            .chineseSimplified: "切换到其他 App 时，速度浮窗将悬浮在上方。",
+            .korean: "다른 앱으로 전환 시 속도 오버레이가 위에 표시됩니다.",
+            .japanese: "他のアプリに切り替えると速度ウィジェットが上に表示されます。",
+            .vietnamese: "Lớp tốc độ nổi trên các ứng dụng khác khi bạn chuyển đổi.",
+            .thai: "แสดงความเร็วลอยอยู่เหนือแอปอื่นเมื่อคุณสลับออกไป",
+            .filipino: "Ang overlay ng bilis ay lulutang sa ibabaw ng ibang apps kapag lumipat ka.",
+            .hindi: "दूसरे ऐप पर जाने पर स्पीड ओवरले ऊपर तैरता है।",
+            .arabic: "تظهر نافذة السرعة فوق التطبيقات الأخرى عند التبديل.",
+            .spanish: "La velocidad flota sobre otras apps al cambiar de aplicación.",
+            .german: "Die Geschwindigkeitsanzeige schwebt über anderen Apps beim Wechsel.",
+            .french: "L'affichage de la vitesse flotte au-dessus des autres apps lors du changement.",
+            .italian: "La velocità fluttua sopra le altre app quando passi ad esse.",
+            .portuguese: "A velocidade flutua sobre outros apps ao trocar de aplicativo.",
+            .russian: "Оверлей скорости отображается поверх других приложений при переключении."
         ],
         "Show Tutorial": [
             .english: "Show Tutorial", .chineseTraditional: "顯示教學", .chineseSimplified: "显示教程",
@@ -633,8 +717,8 @@ class LanguageManager: ObservableObject {
         ],
         "Speed Display Modes Desc": [
             .english: "Choose between a clean digital readout or a classic analog gauge to display your speed",
-            .chineseTraditional: "在簡潔的數位顯示和經典的指針儀表之間選擇您的速度顯示方式",
-            .chineseSimplified: "在简洁的数字显示和经典的指针仪表之间选择您的速度显示方式",
+            .chineseTraditional: "在數位顯示和指針儀表之間選擇您的速度顯示方式",
+            .chineseSimplified: "在数字显示和指针仪表之间选择您的速度显示方式",
             .korean: "깔끔한 디지털 표시 또는 클래식 아날로그 계기판 중에서 속도 표시 방식을 선택하세요",
             .japanese: "すっきりしたデジタル表示またはクラシックなアナログメーターで速度を表示します",
             .vietnamese: "Chọn giữa màn hình kỹ thuật số gọn gàng hoặc đồng hồ tương tự cổ điển để hiển thị tốc độ",

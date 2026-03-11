@@ -120,6 +120,7 @@ struct ContentView: View {
     @StateObject private var languageManager = LanguageManager()
     @StateObject private var alertFeedbackManager = AlertFeedbackManager()
     @StateObject private var distractionDetector = DistractionDetector()
+    @StateObject private var pipManager = PiPManager()
     @State private var liveActivityManager: LiveActivityManager?
     @Environment(\.scenePhase) private var scenePhase
 
@@ -209,7 +210,8 @@ struct ContentView: View {
                     locationManager: locationManager,
                     speedTrapDetector: speedTrapDetector,
                     languageManager: languageManager,
-                    distractionDetector: distractionDetector
+                    distractionDetector: distractionDetector,
+                    pipManager: pipManager
                 )
             }
             .fullScreenCover(isPresented: $showOnboarding) {
@@ -225,6 +227,13 @@ struct ContentView: View {
                 if #available(iOS 16.1, *) {
                     if liveActivityManager == nil {
                         liveActivityManager = LiveActivityManager(locationManager: locationManager)
+                    }
+                }
+
+                // Prepare PiP if enabled (delay slightly to ensure window is ready)
+                if themeManager.pipEnabled {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        pipManager.prepare()
                     }
                 }
             }
@@ -245,7 +254,11 @@ struct ContentView: View {
                         if speedTrapDetector.isSpeeding {
                             let isSevere = speedTrapDetector.speedingAmount > 10
                             let interval = isSevere ? 2.0 : 4.0
-                            alertFeedbackManager.startSpeedingAlert(interval: interval)
+                            alertFeedbackManager.startSpeedingAlert(
+                                interval: interval,
+                                sound: themeManager.alarmSound,
+                                volume: Float(themeManager.alarmVolume / 100.0)
+                            )
                         }
                         print("App moved to foreground - stopping Live Activity")
                     case .inactive:
@@ -273,11 +286,28 @@ struct ContentView: View {
                     )
                     distractionDetector.updateSpeed(speedMps: locationManager.currentSpeedMps)
                 }
+                
+                // Keep PiP HUD fresh with latest data
+                pipManager.update(data: PiPDashboardData(
+                    speed: locationManager.currentSpeed,
+                    isSpeeding: speedTrapDetector.isSpeeding,
+                    streetName: locationManager.currentStreetName,
+                    speedingAmount: speedTrapDetector.speedingAmount,
+                    closestTrapDistance: speedTrapDetector.closestTrap?.distance,
+                    speedLimit: speedTrapDetector.closestTrap?.speedLimit,
+                    tripDistance: locationManager.getFormattedDistance(),
+                    maxSpeed: locationManager.getFormattedMaxSpeed()
+                ))
             }
             .onChange(of: speedTrapDetector.infiniteProximity) { _, newValue in
                 // Force a check when the setting is toggled
                 if let location = locationManager.currentLocation {
                     speedTrapDetector.checkForNearbyTraps(userLocation: location, currentSpeed: locationManager.currentSpeedMps)
+                }
+            }
+            .onChange(of: themeManager.pipEnabled) { _, enabled in
+                if enabled {
+                    pipManager.prepare()
                 }
             }
             .onReceive(locationManager.recenterPublisher) {_ in
@@ -387,10 +417,22 @@ struct ContentView: View {
                speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity {
                 VStack(spacing: 8) {
                     HStack(spacing: 16) {
-                        Image(systemName: "camera.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.white)
-                            .symbolEffect(.bounce, options: .repeating)
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 30))
+                                .foregroundColor(.white)
+                                .symbolEffect(.bounce, options: .repeating)
+                        } else {
+                            // Fallback on earlier versions
+                        }
+                        if #available(iOS 18.0, *) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 30))
+                                .foregroundColor(.white)
+                                .symbolEffect(.bounce, options: .repeating)
+                        } else {
+                            // Fallback on earlier versions
+                        }
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(speedTrapDetector.speedingAmount > 10 ? languageManager.localize("Reduce speed immediately") : languageManager.localize("Speed Camera Ahead!"))
@@ -561,7 +603,11 @@ struct ContentView: View {
                 // Start audio chime and haptic feedback with appropriate interval
                 let isSevere = speedTrapDetector.speedingAmount > 10
                 let interval = isSevere ? 2.0 : 4.0
-                alertFeedbackManager.startSpeedingAlert(interval: interval)
+                alertFeedbackManager.startSpeedingAlert(
+                    interval: interval,
+                    sound: themeManager.alarmSound,
+                    volume: Float(themeManager.alarmVolume / 100.0)
+                )
             } else {
                 // Reset glow opacity
                 withAnimation(.easeInOut(duration: 0.5)) {
@@ -576,7 +622,11 @@ struct ContentView: View {
             if speedTrapDetector.isSpeeding {
                 let isSevere = amount > 10
                 let interval = isSevere ? 2.0 : 4.0
-                alertFeedbackManager.startSpeedingAlert(interval: interval)
+                alertFeedbackManager.startSpeedingAlert(
+                    interval: interval,
+                    sound: themeManager.alarmSound,
+                    volume: Float(themeManager.alarmVolume / 100.0)
+                )
             }
         }
     }

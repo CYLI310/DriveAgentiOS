@@ -83,7 +83,7 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
 
         // Embed a minimal host view — must NOT be hidden, but can be tiny/transparent
         let host = UIView(frame: CGRect(x: -2, y: -2, width: 2, height: 2))
-        host.alpha = 0.05 // Tiny but sufficiently visible for the OS
+        host.alpha = 0.1 // Tiny but sufficiently visible for the OS
         host.clipsToBounds = true
         host.isUserInteractionEnabled = false
         host.layer.addSublayer(sbLayer)

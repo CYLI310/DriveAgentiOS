@@ -7,7 +7,6 @@
 		<string>location</string>
 		<string>remote-notification</string>
 		<string>audio</string>
-		<string>picture-in-picture</string>
 	</array>
 	<key>NSSupportsLiveActivities</key>
 	<true/>

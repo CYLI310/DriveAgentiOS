@@ -249,6 +249,13 @@ struct ContentView: View {
                     case .active:
                         // Stop Live Activity when app comes to foreground
                         liveActivityManager?.stop()
+                        // Stop PiP — user is back in the app
+                        pipManager.stopPiP()
+                        
+                        // Re-prepare if enabled so it's ready for the next backgrounding
+                        if themeManager.pipEnabled {
+                            pipManager.prepare()
+                        }
                         
                         // Check if speeding and start alert with appropriate interval
                         if speedTrapDetector.isSpeeding {

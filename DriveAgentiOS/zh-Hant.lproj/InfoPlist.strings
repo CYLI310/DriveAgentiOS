@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "測速";
+"CFBundleName" = "測速";
+"NSCameraUsageDescription" = "使用 TrueDepth 相機進行即時眼部偏移檢測，以在危險駕駛時提供提醒。";
+"NSFaceIDUsageDescription" = "使用面部追蹤技術檢測駕駛者的分心狀態並提供安全提醒。";

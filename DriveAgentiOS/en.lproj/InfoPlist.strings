@@ -1,0 +1,4 @@
+"CFBundleDisplayName" = "WhatsMySpeed";
+"CFBundleName" = "WhatsMySpeed";
+"NSCameraUsageDescription" = "Camera is used to detect eye distraction using the TrueDepth camera for safer driving.";
+"NSFaceIDUsageDescription" = "Face tracking is used to detect driver eye distraction for safety warnings.";

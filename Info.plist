@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDisplayName</key>
+	<string>WhatsMySpeed</string>
+	<key>CFBundleName</key>
+	<string>WhatsMySpeed</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -12,6 +16,10 @@
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Privacy Camera Usage Desc</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Privacy Face ID Usage Desc</string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).refresh</string>

@@ -16,7 +16,7 @@ DriveAgentiOS requires access to your device's location to provide its core feat
 We may request "Always" location permissions to provide background updates, enabling Live Activities and background speed camera alerts while the app is not in the foreground.
 
 ### 1.2 Face Tracking Data (ARKit)
-The "Distraction Alert" feature uses Apple's ARKit technology to detect if you are looking at the screen while driving at high speeds. **This data is processed entirely on your device in real-time.** We do not capture, store, or transmit any facial images or biometric data to any external servers.
+The "Distraction Alert" feature uses Apple's ARKit and the **TureDepth API** technology to detect if you are looking at the screen while driving at high speeds. **This data is processed entirely on your device in real-time.** We do not capture, store, or transmit any facial images or biometric data to any external servers.
 
 ### 1.3 Device and System Information
 We monitor basic system information to enhance the user interface, including:

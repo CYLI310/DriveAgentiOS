@@ -51,7 +51,7 @@ We implement a variety of security measures to maintain the safety of your infor
 We may update our Privacy Policy from time to time. Any changes will be reflected by the "Last Updated" date at the top of this page.
 
 ## 8. Contact Us
-If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at support@driveagentios.example.com.
+If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at chengyangli3041@gmail.com.
 
 ---
 &copy; 2023 Cheng Yang Li. All rights reserved.

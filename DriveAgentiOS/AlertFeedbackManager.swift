@@ -5,7 +5,12 @@ import Combine
 
 @MainActor
 class AlertFeedbackManager: ObservableObject {
-    private var audioPlayer: AVAudioPlayer?
+    private var audioEngine: AVAudioEngine?
+    private var audioPlayerNode: AVAudioPlayerNode?
+    private var audioEQ: AVAudioUnitEQ?
+    
+    private var loadedAudioBuffers: [AlarmSound: AVAudioPCMBuffer] = [:]
+    
     private var feedbackTimer: Timer?
     private let hapticGenerator = UINotificationFeedbackGenerator()
     private var isPlayingAlert = false
@@ -13,6 +18,7 @@ class AlertFeedbackManager: ObservableObject {
     init() {
         hapticGenerator.prepare()
         configureAudioSession()
+        setupAudioEngineAndPreload()
     }
     
     private func configureAudioSession() {
@@ -24,6 +30,57 @@ class AlertFeedbackManager: ObservableObject {
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
             print("Failed to configure audio session: \(error)")
+        }
+    }
+    
+    private func setupAudioEngineAndPreload() {
+        let engine = AVAudioEngine()
+        let playerNode = AVAudioPlayerNode()
+        
+        // Use an EQ node to allow gain boosting > 100%
+        let eq = AVAudioUnitEQ(numberOfBands: 1)
+        eq.globalGain = 0 // Initial gain in dB
+        
+        engine.attach(playerNode)
+        engine.attach(eq)
+        
+        var commonFormat: AVAudioFormat?
+        
+        // Preload sounds
+        for sound in AlarmSound.allCases {
+            if let url = Bundle.main.url(forResource: sound.fileName, withExtension: "mp3") {
+                do {
+                    let file = try AVAudioFile(forReading: url)
+                    let format = file.processingFormat
+                    if commonFormat == nil {
+                        commonFormat = format
+                    }
+                    
+                    let targetFormat = commonFormat ?? format
+                    
+                    if let buffer = AVAudioPCMBuffer(pcmFormat: targetFormat, frameCapacity: AVAudioFrameCount(file.length)) {
+                        try file.read(into: buffer)
+                        loadedAudioBuffers[sound] = buffer
+                    }
+                } catch {
+                    print("Failed to load \(sound.fileName): \(error)")
+                }
+            }
+        }
+        
+        // Connect nodes using the unified format
+        let connectionFormat = commonFormat ?? engine.mainMixerNode.outputFormat(forBus: 0)
+        engine.connect(playerNode, to: eq, format: connectionFormat)
+        engine.connect(eq, to: engine.mainMixerNode, format: connectionFormat)
+        
+        do {
+            engine.prepare()
+            try engine.start()
+            self.audioEngine = engine
+            self.audioPlayerNode = playerNode
+            self.audioEQ = eq
+        } catch {
+            print("Failed to start audio engine: \(error)")
         }
     }
     
@@ -67,8 +124,7 @@ class AlertFeedbackManager: ObservableObject {
         feedbackTimer = nil
         
         // Stop audio
-        audioPlayer?.stop()
-        audioPlayer = nil
+        audioPlayerNode?.stop()
     }
     
     // Alert sound options
@@ -95,33 +151,39 @@ class AlertFeedbackManager: ObservableObject {
     }
 
     private func playChime(sound: AlarmSound = .default_, volume: Float = 1.0, isUrgent: Bool = false) {
-        if let soundURL = Bundle.main.url(forResource: sound.fileName, withExtension: "mp3") {
-            do {
-                if audioPlayer == nil || audioPlayer?.url != soundURL {
-                    audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-                    audioPlayer?.prepareToPlay()
-                }
-                
-                // Apply volume (clamped to 0...2 range but AVAudioPlayer supports 0...1 natively;
-                // values above 1.0 are allowed on AVAudioPlayer and act as a software gain boost)
-                audioPlayer?.volume = min(volume, 2.0)
-                
-                // For urgent speed alerts ensure session is active
-                if isUrgent {
-                    audioPlayer?.currentTime = 0
-                    audioPlayer?.play()
-                    try? AVAudioSession.sharedInstance().setActive(true)
-                } else {
-                    audioPlayer?.currentTime = 0
-                    audioPlayer?.play()
-                }
-                
-            } catch {
-                print("Failed to play \(sound.fileName).mp3: \(error)")
-            }
-        } else {
-            print("\(sound.fileName).mp3 not found in bundle")
+        guard let engine = audioEngine, let player = audioPlayerNode, let eq = audioEQ else {
+            // Re-setup if somehow nil
+            setupAudioEngineAndPreload()
+            return playChime(sound: sound, volume: volume, isUrgent: isUrgent)
         }
+        
+        guard let buffer = loadedAudioBuffers[sound] else {
+            print("\(sound.fileName).mp3 buffer not found")
+            return
+        }
+        
+        // Convert linear volume (0.0 to 2.0+) to dB Gain
+        // Formula: gain_dB = 20 * log10(volume)
+        // If volume is 0, we should set a very low negative dB or stop.
+        let safeVolume = max(volume, 0.001)
+        let gainDb = 20.0 * log10(safeVolume)
+        
+        // Limit max gain to prevent extreme clipping/damage (+12 dB max, usually corresponds to ~4.0 volume)
+        eq.globalGain = max(min(gainDb, 12.0), -80.0)
+        
+        if isUrgent {
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
+        
+        if !engine.isRunning {
+            try? engine.start()
+        }
+        
+        player.stop() // Clear queued buffers to start fresh
+        player.scheduleBuffer(buffer, at: nil, options: .interrupts) {
+            // Completion handler
+        }
+        player.play()
     }
     
     private func triggerHaptic() {
@@ -135,6 +197,5 @@ class AlertFeedbackManager: ObservableObject {
     nonisolated deinit {
         // Clean up resources directly without calling main actor methods
         feedbackTimer?.invalidate()
-        audioPlayer?.stop()
     }
 }

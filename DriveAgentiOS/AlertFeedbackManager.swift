@@ -14,12 +14,16 @@ class AlertFeedbackManager: ObservableObject {
     private var feedbackTimer: Timer?
     private let hapticGenerator = UINotificationFeedbackGenerator()
     private var isPlayingAlert = false
+    private var lastPlayTime: Date?
+    private var bgTask: UIBackgroundTaskIdentifier = .invalid
     
     init() {
         hapticGenerator.prepare()
         configureAudioSession()
         setupAudioEngineAndPreload()
     }
+    
+    // ... configureAudioSession ...
     
     private func configureAudioSession() {
         do {
@@ -85,8 +89,17 @@ class AlertFeedbackManager: ObservableObject {
     }
     
     func startSpeedingAlert(interval: TimeInterval = 4.0, sound: AlarmSound = .default_, volume: Float = 1.0) {
+        let now = Date()
+        
         // If already playing, check if we need to update the interval
         if isPlayingAlert {
+            // Background fallback: If the timer suspended but the app was woken by GPS, force a play
+            if let last = lastPlayTime, now.timeIntervalSince(last) >= interval - 0.1 {
+                playChime(sound: sound, volume: volume, isUrgent: true)
+                triggerHaptic()
+                lastPlayTime = now
+            }
+            
             if let timer = feedbackTimer, abs(timer.timeInterval - interval) > 0.1 {
                 // Interval changed significantly, restart timer
                 feedbackTimer?.invalidate()
@@ -94,6 +107,7 @@ class AlertFeedbackManager: ObservableObject {
                     Task { @MainActor in
                         self?.playChime(sound: sound, volume: volume, isUrgent: true)
                         self?.triggerHaptic()
+                        self?.lastPlayTime = Date()
                     }
                 }
             }
@@ -102,15 +116,24 @@ class AlertFeedbackManager: ObservableObject {
         
         isPlayingAlert = true
         
+        if bgTask == .invalid {
+            bgTask = UIApplication.shared.beginBackgroundTask(withName: "SpeedingAlertChime") {
+                UIApplication.shared.endBackgroundTask(self.bgTask)
+                self.bgTask = .invalid
+            }
+        }
+        
         // Play more aggressive initial chime sequence
         playChime(sound: sound, volume: volume, isUrgent: true)
         triggerHaptic()
+        lastPlayTime = now
         
         // Set up repeating timer
         feedbackTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.playChime(sound: sound, volume: volume, isUrgent: true)
                 self?.triggerHaptic()
+                self?.lastPlayTime = Date()
             }
         }
     }
@@ -118,6 +141,11 @@ class AlertFeedbackManager: ObservableObject {
     func stopSpeedingAlert() {
         guard isPlayingAlert else { return }
         isPlayingAlert = false
+        
+        if bgTask != .invalid {
+            UIApplication.shared.endBackgroundTask(bgTask)
+            bgTask = .invalid
+        }
         
         // Stop timer
         feedbackTimer?.invalidate()

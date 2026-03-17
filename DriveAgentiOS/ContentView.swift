@@ -243,8 +243,6 @@ struct ContentView: View {
                     case .background:
                         // Start Live Activity when app goes to background
                         liveActivityManager?.start()
-                        // Stop alert feedback to avoid background sounds
-                        alertFeedbackManager.stopSpeedingAlert()
                         print("App moved to background - starting Live Activity")
                     case .active:
                         // Stop Live Activity when app comes to foreground

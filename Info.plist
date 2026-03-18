@@ -9,7 +9,6 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
-		<string>remote-notification</string>
 		<string>audio</string>
 	</array>
 	<key>NSSupportsLiveActivities</key>
@@ -20,10 +19,5 @@
 	<string>Privacy Camera Usage Desc</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Privacy Face ID Usage Desc</string>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER).refresh</string>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER).cleanup</string>
-	</array>
 </dict>
 </plist>

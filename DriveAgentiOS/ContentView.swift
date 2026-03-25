@@ -354,7 +354,26 @@ struct ContentView: View {
             VStack(spacing: 8) {
                 speedDisplayView()
                 
-                if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible {
+                // Compact road name pill shown while moving when top bar is hidden
+                if !themeManager.showTopBar && !locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
+                    HStack(spacing: 5) {
+                        Image(systemName: "map.fill")
+                            .font(.caption2)
+                        Text(locationManager.currentStreetName)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                    .foregroundColor(dashTextColor)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 5)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 1))
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                }
+                
+                if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
                     // Show additional info when stopped
                     VStack(spacing: 4) {
                         Text(locationManager.currentStreetName)
@@ -403,14 +422,16 @@ struct ContentView: View {
                         }
                     }
                     .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                } else if let location = locationManager.currentLocation {
-                    Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                        .font(.subheadline)
-                        .foregroundColor(dashSecondaryTextColor)
-                } else {
-                    Text(languageManager.localize("Searching for location..."))
-                        .font(.subheadline)
-                        .foregroundColor(dashSecondaryTextColor)
+                } else if !isMapVisible && !showingSpeedTrapList {
+                    if let location = locationManager.currentLocation {
+                        Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                            .font(.subheadline)
+                            .foregroundColor(dashSecondaryTextColor)
+                    } else {
+                        Text(languageManager.localize("Searching for location..."))
+                            .font(.subheadline)
+                            .foregroundColor(dashSecondaryTextColor)
+                    }
                 }
             }
             .padding(.vertical, 20)
@@ -427,16 +448,6 @@ struct ContentView: View {
                                 .font(.system(size: 30))
                                 .foregroundColor(.white)
                                 .symbolEffect(.bounce, options: .repeating)
-                        } else {
-                            // Fallback on earlier versions
-                        }
-                        if #available(iOS 18.0, *) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.white)
-                                .symbolEffect(.bounce, options: .repeating)
-                        } else {
-                            // Fallback on earlier versions
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {

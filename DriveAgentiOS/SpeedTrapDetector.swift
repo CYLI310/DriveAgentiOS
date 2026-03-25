@@ -65,6 +65,7 @@ class SpeedTrapDetector: ObservableObject {
     @Published var infiniteProximity: Bool = false // when true, ignores 2km limit
     
     private var lastCheckLocation: CLLocation?
+    private var lastCheckTime: Date?
     private var isChecking = false
     private var cachedTraps: [UnifiedTrap]?
     
@@ -126,18 +127,21 @@ class SpeedTrapDetector: ObservableObject {
         // Prevent concurrent checks
         guard !isChecking else { return }
         
-        // Only check if user has moved significantly (100m)
+        // Check if user has moved enough (30m) or enough time has elapsed (10s)
         let currentLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        let now = Date()
         
-        if let lastLocation = lastCheckLocation {
+        if let lastLocation = lastCheckLocation, let lastTime = lastCheckTime {
             let distance = currentLocation.distance(from: lastLocation)
-            // Skip check if haven't moved 100m AND infinite proximity is OFF
-            if distance < 100 && !infiniteProximity {
+            let elapsed = now.timeIntervalSince(lastTime)
+            // Skip if haven't moved 30m AND less than 10s elapsed AND infinite proximity is OFF
+            if distance < 30 && elapsed < 10 && !infiniteProximity {
                 return
             }
         }
         
         lastCheckLocation = currentLocation
+        lastCheckTime = now
         isChecking = true
         
         // Capture the setting value before entering detached task
@@ -158,7 +162,9 @@ class SpeedTrapDetector: ObservableObject {
             // Keep track of the best candidate based on matching criteria
             var bestCandidate: UnifiedTrap?
             var bestCandidateDistance = Double.infinity
-            var bestCandidateScore = 0 // Higher is better
+            var bestCandidateScore = Int.min // Start at minimum so even low-scoring traps can be selected
+            
+            let hasValidHeading = currentCourse >= 0
             
             // Find closest trap
             for trap in traps {
@@ -176,37 +182,44 @@ class SpeedTrapDetector: ObservableObject {
                     let direction = trap.direction
                     let address = trap.address
                     
-                    // 1. Direction Match
+                    // 1. Direction Match — hard-disqualify opposite-direction traps
                     var directionScore = 0
-                    var isDirectionMatched = false
                     
-                    if currentCourse >= 0 {
+                    if hasValidHeading {
+                        let dirText = direction.uppercased()
+                        let hasKnownDirection = !direction.isEmpty
+                            && dirText != "N/A"
+                            && !dirText.contains("雙向")
+                            && !dirText.contains("BOTH")
+                            && !dirText.contains("BIDIRECTIONAL")
+                        
                         if self.isDirectionMatching(userCourse: currentCourse, trapDirection: direction) {
                             directionScore = 500
-                            isDirectionMatched = true
-                        } else if direction.isEmpty || direction == "N/A" {
-                            // If no direction info, don't penalize but don't reward
-                            directionScore = 0
-                        } else {
-                            // Direction known and doesn't match - heavy penalty
-                            directionScore = -1000
+                        } else if hasKnownDirection {
+                            // Direction is known AND does NOT match → skip this trap entirely
+                            // This prevents opposite-side-of-road / opposite-lane alerts
+                            continue
                         }
+                        // else: no direction info → neutral score (0)
                     }
                     
-                    // 2. Ahead Check
-                    let bearingToTrap = self.calculateBearing(from: userLocation, to: trap.coordinate)
-                    let bearingDiff = abs(currentCourse - bearingToTrap)
-                    let minBearingDiff = min(bearingDiff, 360 - bearingDiff)
-                    
+                    // 2. Ahead / Behind Check — only when GPS heading is valid
                     var aheadScore = 0
-                    let isAhead = minBearingDiff < 60 // Trap is in front of us
-                    let isPassed = minBearingDiff > 120 // Trap is behind us
                     
-                    if isAhead {
-                        aheadScore = 400
-                    } else if isPassed && distance > 50 {
-                        // Already passed by more than 50m - heavy penalty
-                        aheadScore = -2000
+                    if hasValidHeading {
+                        let bearingToTrap = self.calculateBearing(from: userLocation, to: trap.coordinate)
+                        let bearingDiff = abs(currentCourse - bearingToTrap)
+                        let minBearingDiff = min(bearingDiff, 360 - bearingDiff)
+                        
+                        let isAhead = minBearingDiff < 60    // Trap is in front of us
+                        let isPassed = minBearingDiff > 120   // Trap is behind us
+                        
+                        if isAhead {
+                            aheadScore = 400
+                        } else if isPassed && distance > 50 {
+                            // Already passed by more than 50m — skip entirely
+                            continue
+                        }
                     }
                     
                     // 3. Road Name Match

@@ -872,6 +872,60 @@ class LanguageManager: ObservableObject {
             .korean: "운전에 집중하세요", .japanese: "運転に集中してください", .vietnamese: "Tập trung lái xe", .thai: "มีสมาธิกับการขับรถ",
             .filipino: "Mag-focus sa pagmamaneho", .hindi: "ड्राइविंग पर ध्यान दें", .arabic: "ركز على القيادة", .spanish: "Concéntrese en conducir",
             .german: "Konzentrieren Sie sich auf das Fahren", .french: "Concentrez-vous sur la conduite", .italian: "Concentrati sulla guida", .portuguese: "Concentre-se em dirigir", .russian: "Сосредоточьтесь на вождении"
+        ],
+        "Reset Preferences": [
+            .english: "Reset Preferences", .chineseTraditional: "重置偏好設定", .chineseSimplified: "重置偏好设置",
+            .korean: "환경설정 초기화", .japanese: "設定をリセット", .vietnamese: "Đặt lại tùy chọn", .thai: "รีเซ็ตการตั้งค่า",
+            .filipino: "I-reset ang Mga Kagustuhan", .hindi: "प्राथमिकताएं रीसेट करें", .arabic: "إعادة تعيين التفضيلات", .spanish: "Restablecer preferencias",
+            .german: "Einstellungen zurücksetzen", .french: "Réinitialiser les préférences", .italian: "Reimposta preferenze", .portuguese: "Redefinir preferências", .russian: "Сбросить настройки"
+        ],
+        "Reset": [
+            .english: "Reset", .chineseTraditional: "重置", .chineseSimplified: "重置",
+            .korean: "초기화", .japanese: "リセット", .vietnamese: "Đặt lại", .thai: "รีเซ็ต",
+            .filipino: "I-reset", .hindi: "रीसेट", .arabic: "إعادة تعيين", .spanish: "Restablecer",
+            .german: "Zurücksetzen", .french: "Réinitialiser", .italian: "Reimposta", .portuguese: "Redefinir", .russian: "Сбросить"
+        ],
+        "Cancel": [
+            .english: "Cancel", .chineseTraditional: "取消", .chineseSimplified: "取消",
+            .korean: "취소", .japanese: "キャンセル", .vietnamese: "Hủy", .thai: "ยกเลิก",
+            .filipino: "Kanselahin", .hindi: "रद्द करें", .arabic: "إلغاء", .spanish: "Cancelar",
+            .german: "Abbrechen", .french: "Annuler", .italian: "Annulla", .portuguese: "Cancelar", .russian: "Отмена"
+        ],
+        "Resets all settings to their default values.": [
+            .english: "Resets all settings to their default values.",
+            .chineseTraditional: "將所有設定重置為預設值。",
+            .chineseSimplified: "将所有设置重置为默认值。",
+            .korean: "모든 설정을 기본값으로 초기화합니다.",
+            .japanese: "すべての設定をデフォルト値にリセットします。",
+            .vietnamese: "Đặt lại tất cả cài đặt về giá trị mặc định.",
+            .thai: "รีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น",
+            .filipino: "Iri-reset ang lahat ng setting sa default na halaga.",
+            .hindi: "सभी सेटिंग्स को उनके डिफ़ॉल्ट मानों पर रीसेट करता है।",
+            .arabic: "يعيد تعيين جميع الإعدادات إلى قيمها الافتراضية.",
+            .spanish: "Restablece todos los ajustes a sus valores predeterminados.",
+            .german: "Setzt alle Einstellungen auf die Standardwerte zurück.",
+            .french: "Réinitialise tous les paramètres à leurs valeurs par défaut.",
+            .italian: "Reimposta tutte le impostazioni ai valori predefiniti.",
+            .portuguese: "Redefine todas as configurações para seus valores padrão.",
+            .russian: "Сбрасывает все настройки к значениям по умолчанию."
+        ],
+        "This will reset all preferences to defaults. This cannot be undone.": [
+            .english: "This will reset all preferences to defaults. This cannot be undone.",
+            .chineseTraditional: "這將重置所有偏好設定為預設值，此操作無法復原。",
+            .chineseSimplified: "这将重置所有偏好设置为默认值，此操作不可撤销。",
+            .korean: "모든 설정을 기본값으로 초기화합니다. 이 작업은 되돌릴 수 없습니다.",
+            .japanese: "すべての設定をデフォルトにリセットします。この操作は取り消せません。",
+            .vietnamese: "Điều này sẽ đặt lại tất cả tùy chọn về mặc định. Không thể hoàn tác.",
+            .thai: "การดำเนินการนี้จะรีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น ไม่สามารถยกเลิกได้",
+            .filipino: "Iri-reset nito ang lahat ng kagustuhan sa default. Hindi ito maaaring bawiin.",
+            .hindi: "यह सभी प्राथमिकताओं को डिफ़ॉल्ट पर रीसेट करेगा। इसे पूर्ववत नहीं किया जा सकता।",
+            .arabic: "سيؤدي هذا إلى إعادة تعيين جميع التفضيلات إلى الإعدادات الافتراضية. لا يمكن التراجع عن هذا.",
+            .spanish: "Esto restablecerá todas las preferencias a los valores predeterminados. No se puede deshacer.",
+            .german: "Dadurch werden alle Einstellungen auf die Standardwerte zurückgesetzt. Dies kann nicht rückgängig gemacht werden.",
+            .french: "Cela réinitialisera toutes les préférences aux valeurs par défaut. Cette action est irréversible.",
+            .italian: "Questo ripristinerà tutte le preferenze ai valori predefiniti. Non può essere annullato.",
+            .portuguese: "Isso redefinirá todas as preferências para os padrões. Isso não pode ser desfeito.",
+            .russian: "Это сбросит все настройки к значениям по умолчанию. Это действие необратимо."
         ]
     ]
     

@@ -90,7 +90,7 @@ class ThemeManager: ObservableObject {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
         
-        self.showTopBar = UserDefaults.standard.object(forKey: "showTopBar") as? Bool ?? true
+        self.showTopBar = UserDefaults.standard.object(forKey: "showTopBar") as? Bool ?? false
         
         let savedMode = UserDefaults.standard.string(forKey: "speedDisplayMode") ?? SpeedDisplayMode.digital.rawValue
         self.speedDisplayMode = SpeedDisplayMode(rawValue: savedMode) ?? .digital
@@ -128,6 +128,7 @@ struct SettingsView: View {
     @ObservedObject var pipManager: PiPManager
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
+    @State private var showResetAlert = false
 
     var body: some View {
         NavigationStack {
@@ -319,6 +320,43 @@ struct SettingsView: View {
                     }
                     .foregroundColor(.primary)
                 }
+                
+                Section {
+                    Button(role: .destructive) {
+                        themeManager.triggerHaptic(.medium)
+                        showResetAlert = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise")
+                            Text(languageManager.localize("Reset Preferences"))
+                        }
+                    }
+                } footer: {
+                    Text(languageManager.localize("Resets all settings to their default values."))
+                        .font(.caption)
+                }
+            }
+            .alert(languageManager.localize("Reset Preferences"), isPresented: $showResetAlert) {
+                Button(languageManager.localize("Reset"), role: .destructive) {
+                    let keys = [
+                        "showTopBar", "selectedTheme", "speedDisplayMode",
+                        "hapticFeedbackEnabled", "analogDashColor", "alarmSound",
+                        "alarmVolume", "pipEnabled"
+                    ]
+                    keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
+                    themeManager.showTopBar = false
+                    themeManager.currentTheme = .system
+                    themeManager.speedDisplayMode = .digital
+                    themeManager.hapticFeedbackEnabled = true
+                    themeManager.analogDashColor = .black
+                    themeManager.alarmSound = .default_
+                    themeManager.alarmVolume = 100.0
+                    themeManager.pipEnabled = false
+                    locationManager.useMetric = true
+                }
+                Button(languageManager.localize("Cancel"), role: .cancel) { }
+            } message: {
+                Text(languageManager.localize("This will reset all preferences to defaults. This cannot be undone."))
             }
             .onAppear {
                 // Sync with current detector value

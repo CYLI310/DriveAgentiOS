@@ -47,7 +47,8 @@ private struct USMinimalFeatureCollection: Decodable {
     let features: [USMinimalFeature]
 }
 
-struct UnifiedTrap {
+struct UnifiedTrap: Identifiable {
+    var id: String { "\(coordinate.latitude),\(coordinate.longitude)-\(address)" }
     let coordinate: CLLocationCoordinate2D
     let speedLimitValue: Double // Always in km/h for comparison
     let speedLimitDisplay: String // For UI display
@@ -64,13 +65,15 @@ class SpeedTrapDetector: ObservableObject {
     @Published var alertDistance: Double = 500 // meters - configurable
     @Published var infiniteProximity: Bool = false // when true, ignores 2km limit
     
+    @Published var allTraps: [UnifiedTrap] = []
+    @Published var nearbyTraps: [UnifiedTrap] = [] // Efficient map rendering limit
+    
     private var lastCheckLocation: CLLocation?
     private var lastCheckTime: Date?
     private var isChecking = false
-    private var cachedTraps: [UnifiedTrap]?
     
     private func loadAllTraps() -> [UnifiedTrap] {
-        if let cached = cachedTraps { return cached }
+        if !allTraps.isEmpty { return allTraps }
         
         var traps: [UnifiedTrap] = []
         let decoder = JSONDecoder()
@@ -119,7 +122,10 @@ class SpeedTrapDetector: ObservableObject {
             }
         }
         
-        cachedTraps = traps
+        let finalTraps = traps
+        Task { @MainActor in
+            self.allTraps = finalTraps
+        }
         return traps
     }
     
@@ -164,6 +170,8 @@ class SpeedTrapDetector: ObservableObject {
             var bestCandidateDistance = Double.infinity
             var bestCandidateScore = Int.min // Start at minimum so even low-scoring traps can be selected
             
+            var localNearbyTraps: [UnifiedTrap] = []
+            
             let hasValidHeading = currentCourse >= 0
             
             // Find closest trap
@@ -175,7 +183,12 @@ class SpeedTrapDetector: ObservableObject {
                 
                 let distance = currentLocation.distance(from: trapLocation)
                 
-                // Only consider traps within range
+                // Collect traps within 15km for efficient Map rendering
+                if distance < 15000 {
+                    localNearbyTraps.append(trap)
+                }
+                
+                // Only consider traps within range for alerts
                 let withinRange = useInfiniteProximity || distance < 2000
                 
                 if withinRange {
@@ -260,6 +273,8 @@ class SpeedTrapDetector: ObservableObject {
                 
                 // Update on main thread
                 await MainActor.run {
+                    self.nearbyTraps = localNearbyTraps
+                    
                     if let trapData = closestTrapData {
                         self.closestTrap = SpeedTrapInfo(
                             coordinate: trapData.coordinate,

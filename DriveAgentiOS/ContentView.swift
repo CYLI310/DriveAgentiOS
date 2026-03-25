@@ -126,11 +126,7 @@ struct ContentView: View {
 
     @State private var showingSettings = false
     @State private var showingSpeedTrapList = false
-    @State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 25.0330, longitude: 121.5654),
-        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-    )
-    @State private var hasCenteredMap = false
+    @State private var cameraPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var isMapVisible = false
     @State private var showOnboarding = false
     @State private var alertGlowOpacity: Double = 1.0 // For ambient glow blinking
@@ -275,13 +271,6 @@ struct ContentView: View {
             }
 
             .onReceive(locationManager.$currentLocation) { location in
-                if let location, !hasCenteredMap {
-                    // Center map on the first location update
-                    region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
-                    hasCenteredMap = true
-                }
-                
-                // Check for nearby speed traps
                 if let location {
                     speedTrapDetector.checkForNearbyTraps(
                         userLocation: location,
@@ -315,19 +304,9 @@ struct ContentView: View {
                     pipManager.prepare()
                 }
             }
-            .onReceive(locationManager.recenterPublisher) {_ in
-                if let location = locationManager.currentLocation {
-                    // Animate to user's location when relocate is tapped
-                    withAnimation {
-                        region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
-                    }
-                }
-            }
-            .onReceive(timer) { _ in
-                if isMapVisible, let location = locationManager.currentLocation {
-                    withAnimation {
-                        region = MKCoordinateRegion(center: location, latitudinalMeters: 1000, longitudinalMeters: 1000)
-                    }
+            .onReceive(locationManager.recenterPublisher) { _ in
+                withAnimation {
+                    cameraPosition = .userLocation(fallback: .automatic)
                 }
             }
         }
@@ -353,194 +332,17 @@ struct ContentView: View {
             
             VStack(spacing: 8) {
                 speedDisplayView()
-                
-                // Compact road name pill shown while moving when top bar is hidden
-                if !themeManager.showTopBar && !locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
-                    HStack(spacing: 5) {
-                        Image(systemName: "map.fill")
-                            .font(.caption2)
-                        Text(locationManager.currentStreetName)
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                    }
-                    .foregroundColor(dashTextColor)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 5)
-                    .background(.ultraThinMaterial, in: Capsule())
-                    .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 1))
-                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                }
-                
-                if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
-                    // Show additional info when stopped
-                    VStack(spacing: 4) {
-                        Text(locationManager.currentStreetName)
-                            .font(.headline)
-                            .foregroundColor(dashTextColor)
-                        
-                        if let location = locationManager.currentLocation {
-                            Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                                .font(.caption)
-                                .foregroundColor(dashSecondaryTextColor)
-                        }
-                        
-                        Divider()
-                            .padding(.vertical, 4)
-                        
-                        HStack(spacing: 20) {
-                            VStack(spacing: 2) {
-                                Text(languageManager.localize("Trip Distance"))
-                                    .font(.caption2)
-                                    .foregroundColor(dashSecondaryTextColor)
-                                Text(locationManager.getFormattedDistance())
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(dashTextColor)
-                            }
-                            
-                            VStack(spacing: 2) {
-                                Text(languageManager.localize("Max Speed"))
-                                    .font(.caption2)
-                                    .foregroundColor(dashSecondaryTextColor)
-                                Text(locationManager.getFormattedMaxSpeed())
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(dashTextColor)
-                            }
-                        }
-                        
-                        if systemInfoManager.batteryLevel >= 0 {
-                            HStack(spacing: 4) {
-                                Image(systemName: "battery.100percent")
-                                    .foregroundColor(.green)
-                                Text("\(Int(systemInfoManager.batteryLevel * 100))%")
-                                    .font(.caption)
-                            }
-                            .padding(.top, 4)
-                        }
-                    }
-                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
-                } else if !isMapVisible && !showingSpeedTrapList {
-                    if let location = locationManager.currentLocation {
-                        Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
-                            .font(.subheadline)
-                            .foregroundColor(dashSecondaryTextColor)
-                    } else {
-                        Text(languageManager.localize("Searching for location..."))
-                            .font(.subheadline)
-                            .foregroundColor(dashSecondaryTextColor)
-                    }
-                }
+                roadNamePill
+                speedStatsPill
             }
             .padding(.vertical, 20)
             
             Spacer()
             
-            // Speed Trap Warning
-            if let trap = speedTrapDetector.closestTrap, 
-               speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity {
-                VStack(spacing: 8) {
-                    HStack(spacing: 16) {
-                        if #available(iOS 18.0, *) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 30))
-                                .foregroundColor(.white)
-                                .symbolEffect(.bounce, options: .repeating)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(speedTrapDetector.speedingAmount > 10 ? languageManager.localize("Reduce speed immediately") : languageManager.localize("Speed Camera Ahead!"))
-                                .font(.title3.bold())
-                                .foregroundColor(.white)
-                            
-                            HStack(spacing: 8) {
-                                Text(formatDistance(trap.distance))
-                                    .font(.headline)
-                                    .foregroundColor(.white.opacity(0.9))
-                                
-                                Text("•")
-                                    .foregroundColor(.white.opacity(0.6))
-                                
-                                Text("\(languageManager.localize("Limit")): \(trap.speedLimit.replacingOccurrences(of: ".0", with: ""))")
-                                    .font(.headline)
-                                    .foregroundColor(speedTrapDetector.speedingAmount > 10 ? .red : .white)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 4)
-                                            .stroke(speedTrapDetector.speedingAmount > 10 ? Color.red : Color.white, lineWidth: 1.5)
-                                    )
-                                    .background(speedTrapDetector.speedingAmount > 10 ? Color.white : Color.clear)
-                                    .cornerRadius(4)
-                            }
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .background(
-                        ZStack {
-                            // Breathing Gradient Background
-                            LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color.red.opacity(alertBackgroundOpacity),
-                                    Color.red.opacity(alertBackgroundOpacity * 0.6)
-                                ]),
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            .blur(radius: 0)
-                            
-                            // Glass effect overlay
-                            Rectangle()
-                                .fill(.ultraThinMaterial)
-                                .opacity(0.3)
-                        }
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
-                        )
-                    )
-                    .shadow(color: .red.opacity(0.4), radius: 10, x: 0, y: 5)
-                }
-                .padding(.horizontal, 20)
-                .transition(.opacity.combined(with: .scale))
-                .animation(.spring(), value: speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity)
-                .padding(.bottom, 10)
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                        alertBackgroundOpacity = 0.9
-                    }
-                }
-            }
+            speedTrapWarningOverlay
             
-            
-            // Map View or Speed Trap List View (mutually exclusive)
             if isMapVisible {
-                ZStack(alignment: .topTrailing) {
-                    Map(coordinateRegion: $region, showsUserLocation: true)
-                        .frame(height: 450)
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                    
-                    // Exit button
-                    Button {
-                        themeManager.triggerHaptic()
-                        withAnimation(.spring()) {
-                            isMapVisible = false
-                        }
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title)
-                            .foregroundColor(.white)
-                            .background(Circle().fill(Color.black.opacity(0.6)))
-                    }
-                    .padding(16)
-                }
-                .padding(.horizontal, 20)
-                .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                mapOverlayView
             } else if showingSpeedTrapList {
                 SpeedTrapListView(
                     speedTrapDetector: speedTrapDetector,
@@ -553,97 +355,310 @@ struct ContentView: View {
             
             Spacer()
             
-            // Buttons
-            HStack(spacing: 40) {
-                Button {
-                    themeManager.triggerHaptic()
-                    withAnimation(.spring()) {
-                        isMapVisible = false  // Close map if open
-                        showingSpeedTrapList = true
-                    }
-                } label: {
-                    Image(systemName: "camera.metering.multispot")
-                }
-                .buttonStyle(GlassButtonStyle())
-                
-                Button {
-                    themeManager.triggerHaptic()
-                    withAnimation(.spring()) {
-                        showingSpeedTrapList = false  // Close speed trap list if open
-                        isMapVisible.toggle()
-                    }
-                } label: {
-                    Image(systemName: "map")
-                }
-                .buttonStyle(GlassButtonStyle())
-                .scaleEffect(1.2) // Magnify the center button
-
-                Button {
-                    themeManager.triggerHaptic()
-                    showingSettings = true
-                } label: {
-                    Image(systemName: "gearshape")
-                }
-                .buttonStyle(GlassButtonStyle())
-            }
-            .padding(.vertical, 30)
-            .padding(.bottom, 40)
+            bottomActionButtons
         }
         .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
-        .background(
-            // Modern ambient glow effect when speeding
-            ZStack {
-                if speedTrapDetector.isSpeeding {
-                    RadialGradient(
-                        gradient: Gradient(colors: [
-                            Color.red.opacity(alertGlowOpacity * 0.5),
-                            Color.red.opacity(alertGlowOpacity * 0.2),
-                            Color.clear
-                        ]),
-                        center: .center,
-                        startRadius: 50,
-                        endRadius: 600
-                    )
-                    .ignoresSafeArea()
-                    .transition(.opacity)
-                }
-            }
-        )
+        .background(speedingGlowOverlay)
         .onChange(of: speedTrapDetector.isSpeeding) { _, isSpeeding in
-            if isSpeeding {
-                // Trigger visual feedback (red glow)
-                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                    alertGlowOpacity = 0.5
-                }
-                
-                // Start audio chime and haptic feedback with appropriate interval
-                let isSevere = speedTrapDetector.speedingAmount > 10
-                let interval = isSevere ? 2.0 : 4.0
-                alertFeedbackManager.startSpeedingAlert(
-                    interval: interval,
-                    sound: themeManager.alarmSound,
-                    volume: Float(themeManager.alarmVolume / 100.0)
-                )
-            } else {
-                // Reset glow opacity
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    alertGlowOpacity = 0.0
-                }
-                
-                // Stop audio chime and haptic feedback
-                alertFeedbackManager.stopSpeedingAlert()
-            }
+            handleSpeedingChange(isSpeeding: isSpeeding)
         }
         .onChange(of: speedTrapDetector.speedingAmount) { _, amount in
-            if speedTrapDetector.isSpeeding {
-                let isSevere = amount > 10
-                let interval = isSevere ? 2.0 : 4.0
-                alertFeedbackManager.startSpeedingAlert(
-                    interval: interval,
-                    sound: themeManager.alarmSound,
-                    volume: Float(themeManager.alarmVolume / 100.0)
-                )
+            handleSpeedingAmountChange(amount: amount)
+        }
+    }
+
+    // MARK: - Subviews
+
+    @ViewBuilder
+    private var roadNamePill: some View {
+        if !themeManager.showTopBar && !locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
+            HStack(spacing: 5) {
+                Image(systemName: "map.fill")
+                    .font(.caption2)
+                Text(locationManager.currentStreetName)
+                    .font(.caption)
+                    .fontWeight(.medium)
             }
+            .foregroundColor(dashTextColor)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 5)
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 1))
+            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+        }
+    }
+
+    @ViewBuilder
+    private var speedStatsPill: some View {
+        if locationManager.currentSpeed.hasPrefix("0 ") && !isMapVisible && !showingSpeedTrapList {
+            VStack(spacing: 4) {
+                Text(locationManager.currentStreetName)
+                    .font(.headline)
+                    .foregroundColor(dashTextColor)
+                
+                if let location = locationManager.currentLocation {
+                    Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                        .font(.caption)
+                        .foregroundColor(dashSecondaryTextColor)
+                }
+                
+                Divider().padding(.vertical, 4)
+                
+                HStack(spacing: 20) {
+                    tripStatItem(label: "Trip Distance", value: locationManager.getFormattedDistance())
+                    tripStatItem(label: "Max Speed", value: locationManager.getFormattedMaxSpeed())
+                }
+                
+                if systemInfoManager.batteryLevel >= 0 {
+                    batteryInfoView
+                }
+            }
+            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+        } else if !isMapVisible && !showingSpeedTrapList {
+            locationCoordsView
+        }
+    }
+
+    @ViewBuilder
+    private func tripStatItem(label: String, value: String) -> some View {
+        VStack(spacing: 2) {
+            Text(languageManager.localize(label))
+                .font(.caption2)
+                .foregroundColor(dashSecondaryTextColor)
+            Text(value)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .foregroundColor(dashTextColor)
+        }
+    }
+
+    @ViewBuilder
+    private var batteryInfoView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "battery.100percent")
+                .foregroundColor(.green)
+            Text("\(Int(systemInfoManager.batteryLevel * 100))%")
+                .font(.caption)
+        }
+        .padding(.top, 4)
+    }
+
+    @ViewBuilder
+    private var locationCoordsView: some View {
+        if let location = locationManager.currentLocation {
+            Text("\(location.latitude, specifier: "%.4f"), \(location.longitude, specifier: "%.4f")")
+                .font(.subheadline)
+                .foregroundColor(dashSecondaryTextColor)
+        } else {
+            Text(languageManager.localize("Searching for location..."))
+                .font(.subheadline)
+                .foregroundColor(dashSecondaryTextColor)
+        }
+    }
+
+    @ViewBuilder
+    private var speedTrapWarningOverlay: some View {
+        if let trap = speedTrapDetector.closestTrap, 
+           speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity {
+            VStack(spacing: 8) {
+                HStack(spacing: 16) {
+                    if #available(iOS 18.0, *) {
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 30))
+                            .foregroundColor(.white)
+                            .symbolEffect(.bounce, options: .repeating)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(speedTrapDetector.speedingAmount > 10 ? languageManager.localize("Reduce speed immediately") : languageManager.localize("Speed Camera Ahead!"))
+                            .font(.title3.bold())
+                            .foregroundColor(.white)
+                        
+                        trapStatsHStack(trap: trap)
+                    }
+                    Spacer()
+                }
+                .padding()
+                .background(trapWarningBackground)
+                .shadow(color: .red.opacity(0.4), radius: 10, x: 0, y: 5)
+            }
+            .padding(.horizontal, 20)
+            .transition(.opacity.combined(with: .scale))
+            .animation(.spring(), value: speedTrapDetector.isWithinRange || speedTrapDetector.infiniteProximity)
+            .padding(.bottom, 10)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                    alertBackgroundOpacity = 0.9
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func trapStatsHStack(trap: SpeedTrapInfo) -> some View {
+        HStack(spacing: 8) {
+            Text(formatDistance(trap.distance))
+                .font(.headline)
+                .foregroundColor(.white.opacity(0.9))
+            
+            Text("•").foregroundColor(.white.opacity(0.6))
+            
+            Text("\(languageManager.localize("Limit")): \(trap.speedLimit.replacingOccurrences(of: ".0", with: ""))")
+                .font(.headline)
+                .foregroundColor(speedTrapDetector.speedingAmount > 10 ? .red : .white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(speedTrapDetector.speedingAmount > 10 ? Color.red : Color.white, lineWidth: 1.5)
+                )
+                .background(speedTrapDetector.speedingAmount > 10 ? Color.white : Color.clear)
+                .cornerRadius(4)
+        }
+    }
+
+    private var trapWarningBackground: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.red.opacity(alertBackgroundOpacity),
+                    Color.red.opacity(alertBackgroundOpacity * 0.6)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Rectangle().fill(.ultraThinMaterial).opacity(0.3)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.5), lineWidth: 1))
+    }
+
+    @ViewBuilder
+    private var mapOverlayView: some View {
+        ZStack(alignment: .topTrailing) {
+            Map(position: $cameraPosition) {
+                UserAnnotation()
+                SpeedTrapAnnotations(traps: speedTrapDetector.nearbyTraps)
+            }
+            .mapStyle(.standard(elevation: .realistic, pointsOfInterest: .excludingAll, showsTraffic: true))
+            .frame(height: 450)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            
+            mapControls
+        }
+        .padding(.horizontal, 20)
+        .transition(.opacity.combined(with: .scale(scale: 0.8)))
+    }
+
+    private var mapControls: some View {
+        VStack(spacing: 16) {
+            Button {
+                themeManager.triggerHaptic()
+                withAnimation(.spring()) { isMapVisible = false }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .background(Circle().fill(Color.black.opacity(0.6)))
+            }
+            
+            Button {
+                themeManager.triggerHaptic()
+                withAnimation(.spring()) { cameraPosition = .userLocation(fallback: .automatic) }
+            } label: {
+                Image(systemName: "location.fill")
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .padding(10)
+                    .background(Circle().fill(Color.blue.opacity(0.8)))
+            }
+        }
+        .padding(16)
+    }
+
+    private var bottomActionButtons: some View {
+        HStack(spacing: 40) {
+            Button {
+                themeManager.triggerHaptic()
+                withAnimation(.spring()) {
+                    isMapVisible = false
+                    showingSpeedTrapList = true
+                }
+            } label: {
+                Image(systemName: "camera.metering.multispot")
+            }
+            .buttonStyle(GlassButtonStyle())
+            
+            Button {
+                themeManager.triggerHaptic()
+                withAnimation(.spring()) {
+                    showingSpeedTrapList = false
+                    isMapVisible.toggle()
+                }
+            } label: {
+                Image(systemName: "map")
+            }
+            .buttonStyle(GlassButtonStyle())
+            .scaleEffect(1.2) // Magnify the center button
+
+            Button {
+                themeManager.triggerHaptic()
+                showingSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+            }
+            .buttonStyle(GlassButtonStyle())
+        }
+        .padding(.vertical, 30)
+        .padding(.bottom, 40)
+    }
+
+    private var speedingGlowOverlay: some View {
+        ZStack {
+            if speedTrapDetector.isSpeeding {
+                RadialGradient(
+                    gradient: Gradient(colors: [
+                        Color.red.opacity(alertGlowOpacity * 0.5),
+                        Color.red.opacity(alertGlowOpacity * 0.2),
+                        Color.clear
+                    ]),
+                    center: .center,
+                    startRadius: 50,
+                    endRadius: 600
+                )
+                .ignoresSafeArea()
+                .transition(.opacity)
+            }
+        }
+    }
+
+    private func handleSpeedingChange(isSpeeding: Bool) {
+        if isSpeeding {
+            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                alertGlowOpacity = 0.5
+            }
+            let isSevere = speedTrapDetector.speedingAmount > 10
+            let interval = isSevere ? 2.0 : 4.0
+            alertFeedbackManager.startSpeedingAlert(
+                interval: interval,
+                sound: themeManager.alarmSound,
+                volume: Float(themeManager.alarmVolume / 100.0)
+            )
+        } else {
+            withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
+            alertFeedbackManager.stopSpeedingAlert()
+        }
+    }
+
+    private func handleSpeedingAmountChange(amount: Double) {
+        if speedTrapDetector.isSpeeding {
+            let isSevere = amount > 10
+            let interval = isSevere ? 2.0 : 4.0
+            alertFeedbackManager.startSpeedingAlert(
+                interval: interval,
+                sound: themeManager.alarmSound,
+                volume: Float(themeManager.alarmVolume / 100.0)
+            )
         }
     }
     
@@ -725,5 +740,21 @@ struct PermissionDeniedView: View {
             .buttonStyle(.bordered)
             .padding(.top)
         }
+    }
+}
+
+struct SpeedTrapAnnotations: MapContent, Equatable {
+    let traps: [UnifiedTrap]
+    
+    var body: some MapContent {
+        ForEach(traps) { trap in
+            Marker(trap.address, systemImage: "camera.fill", coordinate: trap.coordinate)
+                .tint(.red)
+        }
+    }
+    
+    static func == (lhs: SpeedTrapAnnotations, rhs: SpeedTrapAnnotations) -> Bool {
+        // Assume traps list rarely changes completely to avoid deep diffing cost every 1/60s
+        lhs.traps.count == rhs.traps.count
     }
 }

@@ -251,16 +251,8 @@ struct ContentView: View {
                             pipManager.prepare()
                         }
                         
-                        // Check if speeding and start alert with appropriate interval
-                        if speedTrapDetector.isSpeeding {
-                            let isSevere = speedTrapDetector.speedingAmount > 10
-                            let interval = isSevere ? 2.0 : 4.0
-                            alertFeedbackManager.startSpeedingAlert(
-                                interval: interval,
-                                sound: themeManager.alarmSound,
-                                volume: Float(themeManager.alarmVolume / 100.0)
-                            )
-                        }
+                        // Evaluate alert state upon returning to active
+                        evaluateAlertState()
                         print("App moved to foreground - stopping Live Activity")
                     case .inactive:
                         break
@@ -359,11 +351,14 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
         .background(speedingGlowOverlay)
-        .onChange(of: speedTrapDetector.isSpeeding) { _, isSpeeding in
-            handleSpeedingChange(isSpeeding: isSpeeding)
+        .onChange(of: speedTrapDetector.isSpeeding) { _, _ in
+            evaluateAlertState()
         }
-        .onChange(of: speedTrapDetector.speedingAmount) { _, amount in
-            handleSpeedingAmountChange(amount: amount)
+        .onChange(of: speedTrapDetector.isWithinRange) { _, _ in
+            evaluateAlertState()
+        }
+        .onChange(of: speedTrapDetector.speedingAmount) { _, _ in
+            evaluateAlertState()
         }
     }
 
@@ -632,33 +627,32 @@ struct ContentView: View {
         }
     }
 
-    private func handleSpeedingChange(isSpeeding: Bool) {
-        if isSpeeding {
-            withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
-                alertGlowOpacity = 0.5
+    private func evaluateAlertState() {
+        let isProximity = speedTrapDetector.isWithinRange || (speedTrapDetector.infiniteProximity && speedTrapDetector.closestTrap != nil)
+        
+        if isProximity {
+            if speedTrapDetector.isSpeeding {
+                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    alertGlowOpacity = 0.5
+                }
+                let isSevere = speedTrapDetector.speedingAmount > 10
+                let interval = isSevere ? 2.0 : 4.0
+                alertFeedbackManager.startSpeedingAlert(
+                    interval: interval,
+                    sound: themeManager.alarmSound,
+                    volume: Float(themeManager.alarmVolume / 100.0)
+                )
+            } else {
+                withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
+                alertFeedbackManager.startSpeedingAlert(
+                    interval: 8.0,
+                    sound: themeManager.alarmSound,
+                    volume: Float(themeManager.alarmVolume / 100.0)
+                )
             }
-            let isSevere = speedTrapDetector.speedingAmount > 10
-            let interval = isSevere ? 2.0 : 4.0
-            alertFeedbackManager.startSpeedingAlert(
-                interval: interval,
-                sound: themeManager.alarmSound,
-                volume: Float(themeManager.alarmVolume / 100.0)
-            )
         } else {
             withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
             alertFeedbackManager.stopSpeedingAlert()
-        }
-    }
-
-    private func handleSpeedingAmountChange(amount: Double) {
-        if speedTrapDetector.isSpeeding {
-            let isSevere = amount > 10
-            let interval = isSevere ? 2.0 : 4.0
-            alertFeedbackManager.startSpeedingAlert(
-                interval: interval,
-                sound: themeManager.alarmSound,
-                volume: Float(themeManager.alarmVolume / 100.0)
-            )
         }
     }
     

@@ -72,7 +72,7 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
         
         // CRITICAL for Auto-PiP: Set a timebase and set its rate to 1.0 (playing)
         var timebase: CMTimebase?
-        CMTimebaseCreateWithMasterClock(allocator: kCFAllocatorDefault, masterClock: CMClockGetHostTimeClock(), timebaseOut: &timebase)
+        CMTimebaseCreateWithSourceClock(allocator: kCFAllocatorDefault, sourceClock: CMClockGetHostTimeClock(), timebaseOut: &timebase)
         if let tb = timebase {
             sbLayer.controlTimebase = tb
             CMTimebaseSetTime(tb, time: .zero)

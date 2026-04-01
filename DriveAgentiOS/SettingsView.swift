@@ -126,6 +126,7 @@ struct SettingsView: View {
     @ObservedObject var languageManager: LanguageManager
     @ObservedObject var distractionDetector: DistractionDetector
     @ObservedObject var pipManager: PiPManager
+    @ObservedObject var voiceAlertManager: VoiceAlertManager
     @State private var alertProximity: Double = 500 // meters
     @State private var showTutorial = false
     @State private var showResetAlert = false
@@ -192,6 +193,25 @@ struct SettingsView: View {
                     Text(languageManager.localize("Volume Description"))
                         .font(.caption)
                         .foregroundColor(.secondary)
+                    
+                    Divider()
+                    
+                    Toggle(isOn: $voiceAlertManager.voiceAlertsEnabled) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(languageManager.localize("Voice Alerts"))
+                                Text(languageManager.localize("Voice Alerts Description"))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "waveform")
+                                .foregroundColor(.purple)
+                        }
+                    }
+                    .onChange(of: voiceAlertManager.voiceAlertsEnabled) { _ in
+                        themeManager.triggerHaptic()
+                    }
                 }
                 
                 Section(header: Text(languageManager.localize("Speed Display"))) {

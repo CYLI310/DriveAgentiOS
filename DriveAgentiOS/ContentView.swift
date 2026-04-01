@@ -119,6 +119,7 @@ struct ContentView: View {
     @StateObject private var speedTrapDetector = SpeedTrapDetector()
     @StateObject private var languageManager = LanguageManager()
     @StateObject private var alertFeedbackManager = AlertFeedbackManager()
+    @StateObject private var voiceAlertManager = VoiceAlertManager()
     @StateObject private var distractionDetector = DistractionDetector()
     @StateObject private var pipManager = PiPManager()
     @State private var liveActivityManager: LiveActivityManager?
@@ -207,7 +208,8 @@ struct ContentView: View {
                     speedTrapDetector: speedTrapDetector,
                     languageManager: languageManager,
                     distractionDetector: distractionDetector,
-                    pipManager: pipManager
+                    pipManager: pipManager,
+                    voiceAlertManager: voiceAlertManager
                 )
             }
             .fullScreenCover(isPresented: $showOnboarding) {
@@ -650,9 +652,21 @@ struct ContentView: View {
                     volume: Float(themeManager.alarmVolume / 100.0)
                 )
             }
+            // Voice announcement — fires once per trap with cooldown
+            if let trap = speedTrapDetector.closestTrap {
+                voiceAlertManager.announce(
+                    distanceMeters: trap.distance,
+                    speedLimit: trap.speedLimit,
+                    isSpeeding: speedTrapDetector.isSpeeding,
+                    language: languageManager.currentLanguage,
+                    trapID: "\(trap.coordinate.latitude),\(trap.coordinate.longitude)",
+                    useMetric: locationManager.useMetric
+                )
+            }
         } else {
             withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
             alertFeedbackManager.stopSpeedingAlert()
+            voiceAlertManager.resetCooldown()
         }
     }
     

@@ -926,6 +926,30 @@ class LanguageManager: ObservableObject {
             .italian: "Questo ripristinerà tutte le preferenze ai valori predefiniti. Non può essere annullato.",
             .portuguese: "Isso redefinirá todas as preferências para os padrões. Isso não pode ser desfeito.",
             .russian: "Это сбросит все настройки к значениям по умолчанию. Это действие необратимо."
+        ],
+        "Voice Alerts": [
+            .english: "Voice Alerts", .chineseTraditional: "語音提醒", .chineseSimplified: "语音提醒",
+            .korean: "음성 알림", .japanese: "音声アラート", .vietnamese: "Cảnh báo bằng giọng nói", .thai: "การแจ้งเตือนด้วยเสียง",
+            .filipino: "Voice Alerts", .hindi: "वॉइस अलर्ट", .arabic: "تنبيهات صوتية", .spanish: "Alertas de voz",
+            .german: "Sprachansagen", .french: "Alertes vocales", .italian: "Avvisi vocali", .portuguese: "Alertas de voz", .russian: "Голосовые оповещения"
+        ],
+        "Voice Alerts Description": [
+            .english: "Announces speed cameras aloud in your language.",
+            .chineseTraditional: "以您的語言朗讀測速照相警示。",
+            .chineseSimplified: "以您的语言朗读测速照相警示。",
+            .korean: "선택한 언어로 과속 카메라 경고를 음성으로 안내합니다.",
+            .japanese: "選択した言語でスピードカメラ警告を音声で読み上げます。",
+            .vietnamese: "Thông báo cảnh báo camera tốc độ bằng giọng nói theo ngôn ngữ của bạn.",
+            .thai: "อ่านออกเสียงคำเตือนกล้องตรวจจับความเร็วในภาษาของคุณ",
+            .filipino: "Binibigkas ang mga babala ng speed camera sa iyong wika.",
+            .hindi: "आपकी भाषा में स्पीड कैमरा चेतावनी ज़ोर से पढ़कर सुनाता है।",
+            .arabic: "يُعلنك بتحذيرات كاميرا السرعة بصوت عالٍ بلغتك.",
+            .spanish: "Anuncia las alertas de cámara de velocidad en voz alta en tu idioma.",
+            .german: "Liest Blitzerwarnungen laut in Ihrer Sprache vor.",
+            .french: "Annonce les alertes radar à voix haute dans votre langue.",
+            .italian: "Annuncia gli avvisi autovelox ad alta voce nella tua lingua.",
+            .portuguese: "Anuncia avisos de radar em voz alta no seu idioma.",
+            .russian: "Зачитывает предупреждения о камерах вслух на вашем языке."
         ]
     ]
     

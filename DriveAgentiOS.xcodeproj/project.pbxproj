@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5205E1122F7D35470073055E /* SpotifyiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5205E1112F7D35470073055E /* SpotifyiOS.xcframework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		523A313D2ECDEA6200DD8FC4 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,6 +24,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5205E1112F7D35470073055E /* SpotifyiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = SpotifyiOS.xcframework; sourceTree = "<group>"; };
 		523A31012ECDDEC100DD8FC4 /* DriveAgentiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DriveAgentiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		523A31242ECDEA6100DD8FC4 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		523A31262ECDEA6100DD8FC4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -48,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5205E1122F7D35470073055E /* SpotifyiOS.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,7 @@
 			children = (
 				523A31242ECDEA6100DD8FC4 /* WidgetKit.framework */,
 				523A31262ECDEA6100DD8FC4 /* SwiftUI.framework */,
+				5205E1112F7D35470073055E /* SpotifyiOS.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -312,7 +319,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.03;
+				MARKETING_VERSION = 1.04;
 				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -354,7 +361,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.03;
+				MARKETING_VERSION = 1.04;
 				PRODUCT_BUNDLE_IDENTIFIER = CYLI310.DriveAgentiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

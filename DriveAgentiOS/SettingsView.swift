@@ -86,6 +86,13 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    /// When true, the media controls bar is shown on the main screen while audio plays.
+    @Published var mediaControlsEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(mediaControlsEnabled, forKey: "mediaControlsEnabled")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? AppTheme.system.rawValue
         self.currentTheme = AppTheme(rawValue: savedTheme) ?? .system
@@ -107,6 +114,8 @@ class ThemeManager: ObservableObject {
         self.alarmVolume = savedVolume ?? 100.0
         
         self.pipEnabled = UserDefaults.standard.object(forKey: "pipEnabled") as? Bool ?? false
+        
+        self.mediaControlsEnabled = UserDefaults.standard.object(forKey: "mediaControlsEnabled") as? Bool ?? true
     }
     
     func triggerHaptic(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
@@ -210,6 +219,25 @@ struct SettingsView: View {
                         }
                     }
                     .onChange(of: voiceAlertManager.voiceAlertsEnabled) { _ in
+                        themeManager.triggerHaptic()
+                    }
+                    
+                    Divider()
+                    
+                    Toggle(isOn: $themeManager.mediaControlsEnabled) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(languageManager.localize("Media Controls"))
+                                Text(languageManager.localize("Media Controls Description"))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "music.note")
+                                .foregroundColor(.pink)
+                        }
+                    }
+                    .onChange(of: themeManager.mediaControlsEnabled) { _ in
                         themeManager.triggerHaptic()
                     }
                 }
@@ -361,7 +389,7 @@ struct SettingsView: View {
                     let keys = [
                         "showTopBar", "selectedTheme", "speedDisplayMode",
                         "hapticFeedbackEnabled", "analogDashColor", "alarmSound",
-                        "alarmVolume", "pipEnabled"
+                        "alarmVolume", "pipEnabled", "mediaControlsEnabled"
                     ]
                     keys.forEach { UserDefaults.standard.removeObject(forKey: $0) }
                     themeManager.showTopBar = false
@@ -372,6 +400,7 @@ struct SettingsView: View {
                     themeManager.alarmSound = .default_
                     themeManager.alarmVolume = 100.0
                     themeManager.pipEnabled = false
+                    themeManager.mediaControlsEnabled = true
                     locationManager.useMetric = true
                 }
                 Button(languageManager.localize("Cancel"), role: .cancel) { }

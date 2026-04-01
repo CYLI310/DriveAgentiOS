@@ -950,6 +950,30 @@ class LanguageManager: ObservableObject {
             .italian: "Annuncia gli avvisi autovelox ad alta voce nella tua lingua.",
             .portuguese: "Anuncia avisos de radar em voz alta no seu idioma.",
             .russian: "Зачитывает предупреждения о камерах вслух на вашем языке."
+        ],
+        "Media Controls": [
+            .english: "Media Controls", .chineseTraditional: "媒體控制", .chineseSimplified: "媒体控制",
+            .korean: "미디어 컨트롤", .japanese: "メディアコントロール", .vietnamese: "Điều khiển phương tiện", .thai: "ควบคุมสื่อ",
+            .filipino: "Mga Kontrol sa Media", .hindi: "मीडिया नियंत्रण", .arabic: "التحكم في الوسائط", .spanish: "Controles de medios",
+            .german: "Mediensteuerung", .french: "Contrôles média", .italian: "Controlli multimediali", .portuguese: "Controles de mídia", .russian: "Управление медиа"
+        ],
+        "Media Controls Description": [
+            .english: "Shows album art and playback controls while music is playing.",
+            .chineseTraditional: "播放音樂時顯示專輯封面與播放控制。",
+            .chineseSimplified: "播放音乐时显示专辑封面与播放控制。",
+            .korean: "음악 재생 중 앨범 아트와 재생 컨트롤을 표시합니다.",
+            .japanese: "音楽再生中にアルバムアートと再生コントロールを表示します。",
+            .vietnamese: "Hiển thị ảnh bìa album và điều khiển phát nhạc khi đang phát nhạc.",
+            .thai: "แสดงอาร์ตเวิร์กอัลบั้มและตัวควบคุมการเล่นขณะเล่นเพลง",
+            .filipino: "Nagpapakita ng album art at mga kontrol sa pag-play habang tumutugtog ang musika.",
+            .hindi: "संगीत चलते समय एल्बम आर्ट और प्लेबैक नियंत्रण दिखाता है।",
+            .arabic: "يعرض غلاف الألبوم وأدوات التشغيل أثناء تشغيل الموسيقى.",
+            .spanish: "Muestra la carátula del álbum y los controles de reproducción mientras suena la música.",
+            .german: "Zeigt Albumcover und Wiedergabesteuerung während der Musikwiedergabe.",
+            .french: "Affiche la pochette de l'album et les commandes de lecture pendant la musique.",
+            .italian: "Mostra la copertina dell'album e i controlli di riproduzione durante la musica.",
+            .portuguese: "Mostra a capa do álbum e os controles de reprodução enquanto a música toca.",
+            .russian: "Показывает обложку альбома и элементы управления воспроизведением во время музыки."
         ]
     ]
     

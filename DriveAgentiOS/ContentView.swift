@@ -120,9 +120,9 @@ struct ContentView: View {
     @StateObject private var languageManager = LanguageManager()
     @StateObject private var alertFeedbackManager = AlertFeedbackManager()
     @StateObject private var voiceAlertManager = VoiceAlertManager()
+    @StateObject private var mediaPlayerManager = MediaPlayerManager()
     @StateObject private var distractionDetector = DistractionDetector()
     @StateObject private var pipManager = PiPManager()
-    @State private var liveActivityManager: LiveActivityManager?
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingSettings = false
@@ -220,13 +220,6 @@ struct ContentView: View {
                 if !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") {
                     showOnboarding = true
                 }
-                
-                // Initialize LiveActivityManager (iOS 16.1+)
-                if #available(iOS 16.1, *) {
-                    if liveActivityManager == nil {
-                        liveActivityManager = LiveActivityManager(locationManager: locationManager)
-                    }
-                }
 
                 // Prepare PiP if enabled (delay slightly to ensure window is ready)
                 if themeManager.pipEnabled {
@@ -236,31 +229,25 @@ struct ContentView: View {
                 }
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
-                if #available(iOS 16.1, *) {
-                    switch newPhase {
-                    case .background:
-                        // Start Live Activity when app goes to background
-                        liveActivityManager?.start()
-                        print("App moved to background - starting Live Activity")
-                    case .active:
-                        // Stop Live Activity when app comes to foreground
-                        liveActivityManager?.stop()
-                        // Stop PiP — user is back in the app
-                        pipManager.stopPiP()
-                        
-                        // Re-prepare if enabled so it's ready for the next backgrounding
-                        if themeManager.pipEnabled {
-                            pipManager.prepare()
-                        }
-                        
-                        // Evaluate alert state upon returning to active
-                        evaluateAlertState()
-                        print("App moved to foreground - stopping Live Activity")
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
+                switch newPhase {
+                case .background:
+                    print("App moved to background")
+                case .active:
+                    // Stop PiP — user is back in the app
+                    pipManager.stopPiP()
+                    
+                    // Re-prepare if enabled so it's ready for the next backgrounding
+                    if themeManager.pipEnabled {
+                        pipManager.prepare()
                     }
+                    
+                    // Evaluate alert state upon returning to active
+                    evaluateAlertState()
+                    print("App moved to foreground")
+                case .inactive:
+                    break
+                @unknown default:
+                    break
                 }
             }
 
@@ -333,6 +320,18 @@ struct ContentView: View {
             
             Spacer()
             
+            // Media controls — appears automatically when any audio is playing
+            if themeManager.mediaControlsEnabled && mediaPlayerManager.isAudioActive {
+                MediaControlsView(manager: mediaPlayerManager, themeManager: themeManager)
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.96, anchor: .bottom)),
+                            removal: .opacity.combined(with: .scale(scale: 0.96, anchor: .bottom))
+                        )
+                    )
+                    .padding(.bottom, 6)
+            }
+            
             speedTrapWarningOverlay
             
             if isMapVisible {
@@ -352,6 +351,7 @@ struct ContentView: View {
             bottomActionButtons
         }
         .animation(.easeInOut(duration: 0.5), value: speedTrapDetector.isSpeeding)
+        .animation(.spring(response: 0.4, dampingFraction: 0.82), value: mediaPlayerManager.isAudioActive)
         .background(speedingGlowOverlay)
         .onChange(of: speedTrapDetector.isSpeeding) { _, _ in
             evaluateAlertState()

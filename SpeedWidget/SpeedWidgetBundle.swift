@@ -13,6 +13,5 @@ struct SpeedWidgetBundle: WidgetBundle {
     var body: some Widget {
         SpeedWidget()
         SpeedWidgetControl()
-        SpeedWidgetLiveActivity()
     }
 }

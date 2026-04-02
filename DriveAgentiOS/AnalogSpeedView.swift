@@ -172,7 +172,7 @@ struct AnalogSpeedView: View {
                     .offset(y: -52.5)
             }
             .rotationEffect(needleAngle)
-            .animation(.spring(response: 0.6, dampingFraction: 0.82), value: currentSpeed)
+            .animation(.interactiveSpring(response: 0.15, dampingFraction: 0.86), value: currentSpeed)
             
             // Hub
             Circle()

@@ -17,19 +17,19 @@ struct DriveAgentiOSApp: App {
                 .onAppear {
                     UIApplication.shared.isIdleTimerDisabled = true
                 }
-                .onOpenURL { url in
-                    _ = SpotifyManager.shared.handleURL(url)
-                }
+//                .onOpenURL { url in
+//                    _ = SpotifyManager.shared.handleURL(url)
+//                }
         }
-        .onChange(of: scenePhase) { oldPhase, newPhase in
-            switch newPhase {
-            case .active:
-                SpotifyManager.shared.connect()
-            case .background:
-                SpotifyManager.shared.disconnect()
-            default:
-                break
-            }
-        }
+//        .onChange(of: scenePhase) { oldPhase, newPhase in
+//            switch newPhase {
+//            case .active:
+//                SpotifyManager.shared.connect()
+//            case .background:
+//                SpotifyManager.shared.disconnect()
+//            default:
+//                break
+//            }
+//        }
     }
 }

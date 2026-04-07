@@ -35,12 +35,12 @@ class MediaPlayerManager: ObservableObject {
         setupNotifications()
         startPolling()
         
-        // Listen to Spotify updates so UI reacts instantly to track changes
-        SpotifyManager.shared.$trackTitle
-            .combineLatest(SpotifyManager.shared.$isPlaying, SpotifyManager.shared.$artistName)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in self?.poll() }
-            .store(in: &cancellables)
+//        // Listen to Spotify updates so UI reacts instantly to track changes
+//        SpotifyManager.shared.$trackTitle
+//            .combineLatest(SpotifyManager.shared.$isPlaying, SpotifyManager.shared.$artistName)
+//            .receive(on: RunLoop.main)
+//            .sink { [weak self] _ in self?.poll() }
+//            .store(in: &cancellables)
             
         poll() // Immediate first read
     }
@@ -78,16 +78,16 @@ class MediaPlayerManager: ObservableObject {
     // MARK: - Core Poll
 
     private func poll() {
-        // 1. Spotify Priority
-        let spotify = SpotifyManager.shared
-        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-            self.trackTitle = spotify.trackTitle
-            self.artistName = spotify.artistName
-            self.isPlaying = spotify.isPlaying
-            self.albumArtwork = spotify.albumArt
-            self.isAudioActive = true
-            return
-        }
+//        // 1. Spotify Priority
+//        let spotify = SpotifyManager.shared
+//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
+//            self.trackTitle = spotify.trackTitle
+//            self.artistName = spotify.artistName
+//            self.isPlaying = spotify.isPlaying
+//            self.albumArtwork = spotify.albumArt
+//            self.isAudioActive = true
+//            return
+//        }
         
         // 2. Apple Music / System Audio Fallback
         let authStatus = MPMediaLibrary.authorizationStatus()
@@ -128,11 +128,11 @@ class MediaPlayerManager: ObservableObject {
     // MARK: - Transport Controls
 
     func togglePlayPause() {
-        let spotify = SpotifyManager.shared
-        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-            spotify.playPause()
-            return
-        }
+//        let spotify = SpotifyManager.shared
+//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
+//            spotify.playPause()
+//            return
+//        }
         
         if isPlaying {
             systemPlayer.pause()
@@ -143,20 +143,20 @@ class MediaPlayerManager: ObservableObject {
     }
 
     func skipNext() {
-        let spotify = SpotifyManager.shared
-        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-            spotify.skipNext()
-            return
-        }
+//        let spotify = SpotifyManager.shared
+//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
+//            spotify.skipNext()
+//            return
+//        }
         systemPlayer.skipToNextItem()
     }
 
     func skipPrevious() {
-        let spotify = SpotifyManager.shared
-        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-            spotify.skipPrevious()
-            return
-        }
+//        let spotify = SpotifyManager.shared
+//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
+//            spotify.skipPrevious()
+//            return
+//        }
         
         if systemPlayer.currentPlaybackTime > 3 {
             systemPlayer.skipToBeginning()

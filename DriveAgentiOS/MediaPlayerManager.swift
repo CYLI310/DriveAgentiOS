@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import MediaPlayer
 import AVFoundation
 
@@ -9,6 +10,8 @@ import AVFoundation
 /// private framework, loaded dynamically so we never statically link to it.
 @MainActor
 class MediaPlayerManager: ObservableObject {
+    let objectWillChange: ObservableObjectPublisher = ObservableObjectPublisher()
+    
 
     // MARK: - Published State
 
@@ -43,10 +46,13 @@ class MediaPlayerManager: ObservableObject {
     // MARK: - Init
 
     init() {
-        loadMediaRemote()
-        registerNowPlayingNotifications()
-        startPolling()
-        poll()
+        // Ensure all stored properties are initialized before using self
+        defer {
+            loadMediaRemote()
+            registerNowPlayingNotifications()
+            startPolling()
+            poll()
+        }
     }
 
     // MARK: - Dynamic framework loading
@@ -166,3 +172,4 @@ class MediaPlayerManager: ObservableObject {
 
     nonisolated deinit { }
 }
+

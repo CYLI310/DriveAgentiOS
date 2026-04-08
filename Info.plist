@@ -17,20 +17,6 @@
 	<string>Privacy Camera Usage Desc</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Privacy Face ID Usage Desc</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>spotify</string>
-	</array>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.driveagent.spotify</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>driveagent</string>
-			</array>
-		</dict>
-	</array>
+
 </dict>
 </plist>

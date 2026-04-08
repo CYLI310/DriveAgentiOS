@@ -1,76 +1,100 @@
 import Foundation
 import MediaPlayer
 import AVFoundation
-import Combine
 
-/// Observes what's currently playing on the device (any app — Apple Music,
-/// Spotify, Podcasts, YouTube Music, etc.) via MPNowPlayingInfoCenter and
-/// provides basic transport controls through the system music player.
+/// Universal media controller that works with any now-playing app on the device
+/// (Spotify, Apple Music, Podcasts, YouTube Music, etc.).
 ///
-/// Note: Play/pause/skip controls are forwarded to MPMusicPlayerController
-/// (systemMusicPlayer). This works natively with Apple Music. For third-party
-/// apps like Spotify, the now-playing metadata is always visible but playback
-/// control depends on the audio session active at the time.
+/// Transport commands and now-playing detection are routed through the MediaRemote
+/// private framework, loaded dynamically so we never statically link to it.
 @MainActor
 class MediaPlayerManager: ObservableObject {
 
     // MARK: - Published State
 
-    @Published var trackTitle: String = ""
-    @Published var artistName: String = ""
-    @Published var albumArtwork: UIImage?
     @Published var isPlaying: Bool = false
-    /// True whenever there is an active audio source to display.
+    /// True whenever any audio source is actively playing or paused with a known track.
     @Published var isAudioActive: Bool = false
 
-    // MARK: - Private
+    // Keep title/artist so future callers can use them if needed.
+    @Published var trackTitle: String = ""
+    @Published var artistName: String = ""
 
-    private let systemPlayer = MPMusicPlayerController.systemMusicPlayer
+    // MARK: - MediaRemote command constants
+    private let kMRPlay             : Int32 = 0
+    private let kMRPause            : Int32 = 1
+    private let kMRTogglePlayPause  : Int32 = 2
+    private let kMRNextTrack        : Int32 = 4
+    private let kMRPreviousTrack    : Int32 = 5
+
+    // MARK: - MediaRemote function types
+    private typealias MRSendCommandFn       = @convention(c) (Int32, AnyObject?) -> Bool
+    private typealias MRGetNowPlayingInfoFn = @convention(c) (DispatchQueue, @escaping ([String: Any]) -> Void) -> Void
+    private typealias MRGetPlayStateFn      = @convention(c) (DispatchQueue, @escaping (Bool) -> Void) -> Void
+    private typealias MRRegisterForNotifFn  = @convention(c) (DispatchQueue, @escaping (CFNotificationName, AnyObject?) -> Void) -> Void
+
+    private var mrBundle: CFBundle?
+    private var mrSendCommand:       MRSendCommandFn?
+    private var mrGetNowPlayingInfo: MRGetNowPlayingInfoFn?
+    private var mrGetPlayState:      MRGetPlayStateFn?
+
     private var pollingTimer: Timer?
-    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
 
     init() {
-        setupNotifications()
+        loadMediaRemote()
+        registerNowPlayingNotifications()
         startPolling()
-        
-//        // Listen to Spotify updates so UI reacts instantly to track changes
-//        SpotifyManager.shared.$trackTitle
-//            .combineLatest(SpotifyManager.shared.$isPlaying, SpotifyManager.shared.$artistName)
-//            .receive(on: RunLoop.main)
-//            .sink { [weak self] _ in self?.poll() }
-//            .store(in: &cancellables)
-            
-        poll() // Immediate first read
+        poll()
     }
 
-    // MARK: - Setup
+    // MARK: - Dynamic framework loading
 
-    private func setupNotifications() {
-        systemPlayer.beginGeneratingPlaybackNotifications()
+    private func loadMediaRemote() {
+        guard let bundle = CFBundleGetBundleWithIdentifier("com.apple.mediaremote" as CFString) else {
+            print("[MediaPlayerManager] MediaRemote framework not found — falling back to AVAudioSession only.")
+            return
+        }
+        mrBundle = bundle
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleStateChange),
-            name: .MPMusicPlayerControllerPlaybackStateDidChange,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleStateChange),
-            name: .MPMusicPlayerControllerNowPlayingItemDidChange,
-            object: nil
-        )
+        if let ptr = CFBundleGetFunctionPointerForName(bundle, "MRMediaRemoteSendCommand" as CFString) {
+            mrSendCommand = unsafeBitCast(ptr, to: MRSendCommandFn.self)
+        }
+        if let ptr = CFBundleGetFunctionPointerForName(bundle, "MRMediaRemoteGetNowPlayingInfo" as CFString) {
+            mrGetNowPlayingInfo = unsafeBitCast(ptr, to: MRGetNowPlayingInfoFn.self)
+        }
+        if let ptr = CFBundleGetFunctionPointerForName(bundle, "MRMediaRemoteGetNowPlayingApplicationIsPlaying" as CFString) {
+            mrGetPlayState = unsafeBitCast(ptr, to: MRGetPlayStateFn.self)
+        }
     }
 
-    @objc private func handleStateChange() {
+    // MARK: - Notifications
+
+    private func registerNowPlayingNotifications() {
+        // System posts these whenever any app changes its now-playing state
+        let names: [Notification.Name] = [
+            Notification.Name("kMRMediaRemoteNowPlayingInfoDidChangeNotification"),
+            Notification.Name("kMRMediaRemoteNowPlayingApplicationIsPlayingDidChangeNotification"),
+            AVAudioSession.silenceSecondaryAudioHintNotification
+        ]
+        for name in names {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleExternalChange),
+                name: name,
+                object: nil
+            )
+        }
+    }
+
+    @objc private func handleExternalChange() {
         Task { @MainActor in poll() }
     }
 
     private func startPolling() {
-        // Poll every 1.5 s to catch changes from external apps (Spotify, Podcasts…)
-        pollingTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] _ in
+        // Light 2 s poll as safety net for apps that don't post notifications reliably
+        pollingTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.poll() }
         }
     }
@@ -78,97 +102,67 @@ class MediaPlayerManager: ObservableObject {
     // MARK: - Core Poll
 
     private func poll() {
-//        // 1. Spotify Priority
-//        let spotify = SpotifyManager.shared
-//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-//            self.trackTitle = spotify.trackTitle
-//            self.artistName = spotify.artistName
-//            self.isPlaying = spotify.isPlaying
-//            self.albumArtwork = spotify.albumArt
-//            self.isAudioActive = true
-//            return
-//        }
-        
-        // 2. Apple Music / System Audio Fallback
-        let authStatus = MPMediaLibrary.authorizationStatus()
-        guard authStatus == .authorized else {
-            if authStatus == .notDetermined {
-                MPMediaLibrary.requestAuthorization { newStatus in
-                    if newStatus == .authorized {
-                        Task { @MainActor in self.poll() }
-                    }
-                }
+        // 1. Play state via MediaRemote (covers all apps)
+        if let getPlayState = mrGetPlayState {
+            getPlayState(.main) { [weak self] playing in
+                Task { @MainActor in self?.isPlaying = playing }
             }
-            return
+        } else {
+            isPlaying = AVAudioSession.sharedInstance().isOtherAudioPlaying
         }
 
-        let item = systemPlayer.nowPlayingItem
-        let state = systemPlayer.playbackState
-
-        let title  = item?.title ?? ""
-        let artist = item?.artist ?? ""
-
-        // isOtherAudioPlaying catches apps that don't share now playing info natively (Podcasts, etc.)
-        // We only fall back to this if Spotify and Apple Music are empty.
-        let otherAudioPlaying = AVAudioSession.sharedInstance().isOtherAudioPlaying
-
-        trackTitle  = title
-        artistName  = artist
-        isPlaying   = state == .playing || (title.isEmpty && otherAudioPlaying)
-        isAudioActive = state == .playing || (state == .paused && !title.isEmpty) || (title.isEmpty && otherAudioPlaying)
-
-        // Artwork — only update if we have info to avoid flickering
-        if let artwork = item?.artwork {
-            albumArtwork = artwork.image(at: CGSize(width: 80, height: 80))
-        } else if title.isEmpty {
-            albumArtwork = nil
+        // 2. Now-playing metadata via MediaRemote (covers Spotify, Apple Music, etc.)
+        if let getNowPlayingInfo = mrGetNowPlayingInfo {
+            getNowPlayingInfo(.main) { [weak self] info in
+                Task { @MainActor in
+                    guard let self else { return }
+                    let title  = info["kMRMediaRemoteNowPlayingInfoTitle"]  as? String ?? ""
+                    let artist = info["kMRMediaRemoteNowPlayingInfoArtist"] as? String ?? ""
+                    self.trackTitle  = title
+                    self.artistName  = artist
+                    // Active if there is metadata OR other audio is audible
+                    self.isAudioActive = !title.isEmpty
+                                      || AVAudioSession.sharedInstance().isOtherAudioPlaying
+                }
+            }
+        } else {
+            // Fallback: no MediaRemote — show controls whenever audio is audible
+            isAudioActive = AVAudioSession.sharedInstance().isOtherAudioPlaying
         }
     }
 
-    // MARK: - Transport Controls
+    // MARK: - Transport Controls (universal via MediaRemote)
 
     func togglePlayPause() {
-//        let spotify = SpotifyManager.shared
-//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-//            spotify.playPause()
-//            return
-//        }
-        
-        if isPlaying {
-            systemPlayer.pause()
-        } else {
-            systemPlayer.play()
-        }
+        sendCommand(kMRTogglePlayPause)
         isPlaying.toggle() // Optimistic update
     }
 
     func skipNext() {
-//        let spotify = SpotifyManager.shared
-//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-//            spotify.skipNext()
-//            return
-//        }
-        systemPlayer.skipToNextItem()
+        sendCommand(kMRNextTrack)
     }
 
     func skipPrevious() {
-//        let spotify = SpotifyManager.shared
-//        if spotify.isConnected && !spotify.trackTitle.isEmpty {
-//            spotify.skipPrevious()
-//            return
-//        }
-        
-        if systemPlayer.currentPlaybackTime > 3 {
-            systemPlayer.skipToBeginning()
-        } else {
-            systemPlayer.skipToPreviousItem()
+        sendCommand(kMRPreviousTrack)
+    }
+
+    @discardableResult
+    private func sendCommand(_ command: Int32) -> Bool {
+        guard let fn = mrSendCommand else {
+            // Hard fallback: system music player (Apple Music only)
+            let mp = MPMusicPlayerController.systemMusicPlayer
+            switch command {
+            case kMRTogglePlayPause: isPlaying ? mp.pause() : mp.play()
+            case kMRNextTrack:       mp.skipToNextItem()
+            case kMRPreviousTrack:   mp.skipToPreviousItem()
+            default: break
+            }
+            return false
         }
+        return fn(command, nil)
     }
 
     // MARK: - Cleanup
 
-    nonisolated deinit {
-        // Timer capture is [weak self], so no retain cycle — safe to skip explicit invalidate.
-        // systemPlayer.endGeneratingPlaybackNotifications() would need @MainActor.
-    }
+    nonisolated deinit { }
 }

@@ -6,9 +6,32 @@
     {
       "layers" : [
         {
-          "blend-mode" : "normal",
+          "blend-mode-specializations" : [
+            {
+              "value" : "darken"
+            },
+            {
+              "appearance" : "dark",
+              "value" : "darken"
+            }
+          ],
+          "hidden-specializations" : [
+            {
+              "idiom" : "square",
+              "value" : false
+            }
+          ],
           "image-name" : "Untitled design.png",
-          "name" : "Untitled design"
+          "name" : "Untitled design",
+          "opacity-specializations" : [
+            {
+              "value" : 1
+            },
+            {
+              "appearance" : "dark",
+              "value" : 0.3
+            }
+          ]
         }
       ],
       "shadow" : {

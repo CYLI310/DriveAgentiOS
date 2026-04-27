@@ -54,4 +54,4 @@ We may update our Privacy Policy from time to time. Any changes will be reflecte
 If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at chengyangli3041@gmail.com.
 
 ---
-&copy; 2023 Cheng Yang Li. All rights reserved.
+&copy; 2026 Cheng Yang Li. All rights reserved.

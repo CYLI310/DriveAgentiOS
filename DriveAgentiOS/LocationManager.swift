@@ -84,7 +84,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         lastTripLocation = location
         
         if speedInMetersPerSecond > 0 {
-            let speedInKilometersPerHour = speedInMetersPerSecond * 3.6
+            _ = speedInMetersPerSecond * 3.6
             currentSpeed = formatSpeed(speedInMetersPerSecond)
             currentSpeedMps = speedInMetersPerSecond
             

@@ -123,6 +123,7 @@ struct ContentView: View {
     @StateObject private var mediaPlayerManager = MediaPlayerManager()
     @StateObject private var distractionDetector = DistractionDetector()
     @StateObject private var pipManager = PiPManager()
+    @StateObject private var aseZoneDetector = ASEZoneDetector()
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var showingSettings = false
@@ -227,6 +228,9 @@ struct ContentView: View {
                         pipManager.prepare()
                     }
                 }
+
+                // Geocode ASE zones in background (cached after first run)
+                Task { await aseZoneDetector.loadZones() }
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 switch newPhase {
@@ -257,6 +261,10 @@ struct ContentView: View {
                         userLocation: location,
                         currentSpeed: locationManager.currentSpeedMps,
                         currentStreetName: locationManager.currentStreetName,
+                        currentCourse: locationManager.currentCourse
+                    )
+                    aseZoneDetector.checkForNearbyZones(
+                        userLocation: location,
                         currentCourse: locationManager.currentCourse
                     )
                     distractionDetector.updateSpeed(speedMps: locationManager.currentSpeedMps)
@@ -332,6 +340,7 @@ struct ContentView: View {
                     .padding(.bottom, 6)
             }
             
+            aseZoneWarningOverlay
             speedTrapWarningOverlay
             
             if isMapVisible {
@@ -361,6 +370,17 @@ struct ContentView: View {
         }
         .onChange(of: speedTrapDetector.speedingAmount) { _, _ in
             evaluateAlertState()
+        }
+        .onChange(of: aseZoneDetector.isWithinRange) { _, inRange in
+            if inRange, let info = aseZoneDetector.closestZone {
+                voiceAlertManager.announceASEZone(
+                    distanceMeters: info.distance,
+                    speedLimit: info.zone.speedLimit,
+                    language: languageManager.currentLanguage,
+                    zoneID: info.zone.id,
+                    useMetric: locationManager.useMetric
+                )
+            }
         }
     }
 
@@ -489,6 +509,90 @@ struct ContentView: View {
                 }
             }
         }
+    }
+
+    // MARK: - ASE Zone Warning
+
+    @ViewBuilder
+    private var aseZoneWarningOverlay: some View {
+        if let info = aseZoneDetector.closestZone, aseZoneDetector.isWithinRange {
+            HStack(spacing: 12) {
+                Image(systemName: "gauge.with.dots.needle.67percent")
+                    .font(.system(size: 26))
+                    .foregroundColor(.white)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(aseZoneTitle)
+                        .font(.subheadline.bold())
+                        .foregroundColor(.white)
+
+                    HStack(spacing: 6) {
+                        Text(formatDistance(info.distance))
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.9))
+
+                        Text("•").foregroundColor(.white.opacity(0.5))
+
+                        let limitDisplay = info.zone.speedLimit
+                            .replacingOccurrences(of: "KM", with: " km/h")
+                        Text("\(languageManager.localize("Limit")): \(limitDisplay)")
+                            .font(.caption.bold())
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(RoundedRectangle(cornerRadius: 3).stroke(Color.white, lineWidth: 1))
+
+                        if info.zone.length != "N/A" {
+                            Text("•").foregroundColor(.white.opacity(0.5))
+                            Text(info.zone.length)
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                    }
+
+                    Text(info.zone.location)
+                        .font(.caption2)
+                        .foregroundColor(.white.opacity(0.65))
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(aseWarningBackground)
+            .shadow(color: .orange.opacity(0.4), radius: 8, x: 0, y: 4)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 6)
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: aseZoneDetector.isWithinRange)
+        }
+    }
+
+    private var aseZoneTitle: String {
+        switch languageManager.currentLanguage {
+        case .chineseTraditional: return "區間測速"
+        case .chineseSimplified:  return "区间测速"
+        case .japanese:           return "区間速度取締"
+        case .korean:             return "구간 단속"
+        default:                  return "Average Speed Zone"
+        }
+    }
+
+    private var aseWarningBackground: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.orange.opacity(0.88),
+                    Color.orange.opacity(0.55)
+                ]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Rectangle().fill(.ultraThinMaterial).opacity(0.25)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.white.opacity(0.4), lineWidth: 1))
     }
 
     @ViewBuilder

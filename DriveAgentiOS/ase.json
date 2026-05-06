@@ -1,0 +1,595 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台北中山 自強隧道(雙向)",
+        "speed_limit": "50KM",
+        "length": "約900公尺",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台北大安 辛亥隧道(雙向)",
+        "speed_limit": "50KM",
+        "length": "約600公尺",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 台9線 北宜公路19.1K-23.1K(雙向)",
+        "speed_limit": "40KM",
+        "length": "約4公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 台64線 25K-新店端",
+        "speed_limit": "70KM",
+        "length": "約3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 新店區環河路(中央路至白馬寺)",
+        "speed_limit": "60KM",
+        "length": "約1.5公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 汐止區汐萬路三段 6.2K-14.3K(雙向)",
+        "speed_limit": "40KM",
+        "length": "約8.1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 台9線23.1-56K",
+        "speed_limit": "40KM",
+        "length": "約1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 環河路往碧潭(往南)",
+        "speed_limit": "60KM",
+        "length": "約1.29公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新店 環河路往碧潭(往北)",
+        "speed_limit": "60KM",
+        "length": "約1.13公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新莊 壽山路 0K-1.2K",
+        "speed_limit": "30KM",
+        "length": "1.1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北新莊 台64線觀音山隧道",
+        "speed_limit": "60KM",
+        "length": "約7.9公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北石碇 台9線26.2K-32.2K",
+        "speed_limit": "40KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北中和 台64線25.2K-28.4K",
+        "speed_limit": "70KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新北 龍洞隧道 台2線85.8K-87.5K",
+        "speed_limit": "50KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "基隆七堵 台62線西向 11.3-6.2K",
+        "speed_limit": "80KM",
+        "length": "約5.1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "基隆中正 基隆市台62甲線(2號隧道至東海街出口前)",
+        "speed_limit": "40KM",
+        "length": "約1.7公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園觀音 台61線 47-53K(往南)",
+        "speed_limit": "90KM",
+        "length": "約6公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園 台61線 52.43~47.15K(往北)",
+        "speed_limit": "90KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園龜山 青山路二段往龜山(往北)",
+        "speed_limit": "50KM",
+        "length": "約1.5公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園龜山 青山路二段往迴龍(往南)",
+        "speed_limit": "50KM",
+        "length": "約1.7公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園龜山 台1甲萬壽路一段往迴龍(往南)",
+        "speed_limit": "50KM",
+        "length": "約1.23公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園龜山 台1甲萬壽路一段往龜山(往北)",
+        "speed_limit": "50KM",
+        "length": "約1.15公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園觀音 台66 3-6.9K(往東)",
+        "speed_limit": "90KM",
+        "length": "約3.87公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園新屋 台66 14.8-11.5K(往西)",
+        "speed_limit": "90KM",
+        "length": "約3.26公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園大溪 台7乙 8.2-12.1K(雙向)",
+        "speed_limit": "40KM",
+        "length": "約3.83公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園大溪 台3線 永福段 (30.5公里至31.7K)",
+        "speed_limit": "50KM",
+        "length": "約1.2公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "桃園龍潭 上林段(新龍路至健康路)",
+        "speed_limit": "60KM",
+        "length": "約1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新竹 台15線鳳鼻尾隧道",
+        "speed_limit": "60KM",
+        "length": "約2.2公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新竹北埔 台3線 82-84.3K",
+        "speed_limit": "60KM",
+        "length": "2公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "新竹新豐 台3線 66.3-69.5K",
+        "speed_limit": "60KM",
+        "length": "3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗三義 縣140 6.2-3.2K-25.1(東西雙向)",
+        "speed_limit": "日間60KM/夜間50KM",
+        "length": "約8.91公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗造橋 台13甲 8.3-9.5K(往南)",
+        "speed_limit": "日間60KM/夜間50KM",
+        "length": "約1.2公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗造橋 台13甲 9.8-11K(往北)",
+        "speed_limit": "日間60KM/夜間50KM",
+        "length": "約1.2公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗 台3線103.2-108K(往南)",
+        "speed_limit": "60KM",
+        "length": "約5公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗 台3線114.5-122.8K(往北)",
+        "speed_limit": "60KM",
+        "length": "約6公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗通霄 台61 122.2-130.2K(往南)",
+        "speed_limit": "90KM",
+        "length": "約8公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "苗栗通霄 台61 122.6-115.6K(往北)",
+        "speed_limit": "90KM",
+        "length": "約7公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台中沙鹿 向上路六段-龍井交流道(往北)",
+        "speed_limit": "50KM",
+        "length": "約820公尺",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台中清水 台61線 148.1-156.4K(往南)",
+        "speed_limit": "90KM",
+        "length": "約8.31公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台中梧棲 台61線 157.8-151.6K(往北)",
+        "speed_limit": "90KM",
+        "length": "約6.17公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "彰化鹿港 台61線 177-168.1(往北)",
+        "speed_limit": "90KM",
+        "length": "約8.94公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "南投埔里 台21線 51-54K(雙向)",
+        "speed_limit": "60KM",
+        "length": "約3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "雲林麥寮 台61線 218.25-226.25K(往南)",
+        "speed_limit": "90KM",
+        "length": "約9公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台南龍崎 市182 龍崎段 22-28K(雙向)",
+        "speed_limit": "50KM",
+        "length": "約6公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "高雄鳥松 松藝路 仁武至鳥松(雙向)",
+        "speed_limit": "50KM",
+        "length": "約1.3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "高雄內門 市182 28.6k-33.75K(雙向)",
+        "speed_limit": "50KM",
+        "length": "約4.8公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "高雄內門 內門區台3線389K-396K",
+        "speed_limit": "60KM",
+        "length": "約7公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "屏東佳冬 台1線 429.5-433K(雙向)",
+        "speed_limit": "70KM",
+        "length": "約3.5公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "屏東獅子 台9草埔隧道(雙向)",
+        "speed_limit": "70KM",
+        "length": "約3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "屏東車城 台26線 8.4K-13.7K",
+        "speed_limit": "70KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "宜蘭頭城 台9線 北宜公路56.5K-68.6K(雙向)",
+        "speed_limit": "40KM",
+        "length": "約12.1公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "宜蘭蘇澳 台9東澳隧道(單向)",
+        "speed_limit": "70KM",
+        "length": "約3.3公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "宜蘭南澳 台9觀音隧道(雙向)",
+        "speed_limit": "70KM",
+        "length": "約7.9公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "宜蘭南澳 台9谷風隧道(雙向)",
+        "speed_limit": "70KM",
+        "length": "約4.6公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "花蓮秀林 台9中仁隧道(雙向)",
+        "speed_limit": "70KM",
+        "length": "4.7公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "花蓮秀林 台9仁水隧道(雙向)",
+        "speed_limit": "50KM",
+        "length": "2.9公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "花蓮 台9丁線59.5-64K",
+        "speed_limit": "40KM",
+        "length": "5公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台東達仁 台9戊3.94-9.92K(雙向)",
+        "speed_limit": "40KM",
+        "length": "約5.98公里",
+        "type": "Average Speed Enforcement"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "LineString", "coordinates": [] },
+      "properties": {
+        "location": "台東 台11線海岸公路 126.8-130.8K",
+        "speed_limit": "50KM",
+        "length": "N/A",
+        "type": "Average Speed Enforcement"
+      }
+    }
+  ]
+}

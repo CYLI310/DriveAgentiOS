@@ -69,6 +69,32 @@ class VoiceAlertManager: ObservableObject {
         speak(text: text, language: language)
     }
 
+    /// Announce an average-speed enforcement (區間測速) zone warning.
+    func announceASEZone(
+        distanceMeters: Double,
+        speedLimit: String,
+        language: AppLanguage,
+        zoneID: String,
+        useMetric: Bool
+    ) {
+        guard voiceAlertsEnabled else { return }
+        let now = Date()
+        let cooldownID = "ase_\(zoneID)"
+        if cooldownID == lastAnnouncedTrapID,
+           let last = lastAnnounceTime,
+           now.timeIntervalSince(last) < cooldown { return }
+        lastAnnouncedTrapID = cooldownID
+        lastAnnounceTime = now
+        let distStr = formatDistance(distanceMeters, useMetric: useMetric, language: language)
+        // Normalise display: "50KM" → "50"
+        let limitStr = speedLimit
+            .replacingOccurrences(of: "KM", with: "")
+            .replacingOccurrences(of: "km", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        let text = aseTemplate(language: language, distance: distStr, limit: limitStr)
+        speak(text: text, language: language)
+    }
+
     /// Immediately stop any ongoing speech (e.g. when alert clears).
     func stopSpeaking() {
         synthesizer.stopSpeaking(at: .immediate)
@@ -174,6 +200,45 @@ class VoiceAlertManager: ObservableObject {
             return "Atenção! Você está acima do limite. Radar em \(distance). Limite: \(limit). Reduza a velocidade."
         case .russian:
             return "Внимание! Вы превышаете скорость. Камера через \(distance). Ограничение: \(limit). Немедленно снизьте скорость."
+        }
+    }
+
+    // MARK: - ASE Template
+
+    private func aseTemplate(language: AppLanguage, distance: String, limit: String) -> String {
+        switch language {
+        case .english:
+            return "Average speed zone in \(distance). Maintain speed below \(limit) kilometres per hour."
+        case .chineseTraditional:
+            return "前方 \(distance) 進入區間測速，速限 \(limit) 公里，請保持穩定車速。"
+        case .chineseSimplified:
+            return "前方 \(distance) 进入区间测速，限速 \(limit) 公里，请保持稳定车速。"
+        case .korean:
+            return "전방 \(distance)에 구간 단속 구역이 있습니다. 제한 속도 \(limit) km/h 이하로 유지하세요."
+        case .japanese:
+            return "前方 \(distance) に区間速度取締エリアがあります。時速 \(limit) キロ以下を維持してください。"
+        case .vietnamese:
+            return "Khu vực đo tốc độ trung bình cách \(distance). Giữ tốc độ dưới \(limit) km/h."
+        case .thai:
+            return "โซนตรวจจับความเร็วเฉลี่ยอีก \(distance) ข้างหน้า รักษาความเร็วต่ำกว่า \(limit) กม./ชม."
+        case .filipino:
+            return "Average speed zone sa \(distance) sa harap. Panatilihing mababa sa \(limit) km/h."
+        case .hindi:
+            return "आगे \(distance) पर औसत गति क्षेत्र है। \(limit) किमी/घंटे से कम रखें।"
+        case .arabic:
+            return "منطقة السرعة المتوسطة على بُعد \(distance). حافظ على سرعة أقل من \(limit) كم/ساعة."
+        case .spanish:
+            return "Zona de velocidad media en \(distance). Velocidad menor de \(limit) km/h."
+        case .german:
+            return "Streckenradar in \(distance). Geschwindigkeit unter \(limit) km/h halten."
+        case .french:
+            return "Radar tronçon dans \(distance). Vitesse inférieure à \(limit) km/h."
+        case .italian:
+            return "Rilevatore di velocità media tra \(distance). Mantieni sotto \(limit) km/h."
+        case .portuguese:
+            return "Radar de velocidade média a \(distance). Mantenha abaixo de \(limit) km/h."
+        case .russian:
+            return "Контроль средней скорости через \(distance). Скорость ниже \(limit) км/ч."
         }
     }
 

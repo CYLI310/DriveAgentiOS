@@ -365,6 +365,9 @@ struct ContentView: View {
         .onChange(of: speedTrapDetector.isSpeeding) { _, _ in
             evaluateAlertState()
         }
+        .onChange(of: speedTrapDetector.isAlarmSpeeding) { _, _ in
+            evaluateAlertState()
+        }
         .onChange(of: speedTrapDetector.isWithinRange) { _, _ in
             evaluateAlertState()
         }
@@ -737,10 +740,17 @@ struct ContentView: View {
         let isProximity = speedTrapDetector.isWithinRange || (speedTrapDetector.infiniteProximity && speedTrapDetector.closestTrap != nil)
         
         if isProximity {
+            // --- Visuals: show as soon as any overspeed occurs ---
             if speedTrapDetector.isSpeeding {
                 withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                     alertGlowOpacity = 0.5
                 }
+            } else {
+                withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
+            }
+
+            // --- Audio / haptic: only when >5 km/h over limit ---
+            if speedTrapDetector.isAlarmSpeeding {
                 let isSevere = speedTrapDetector.speedingAmount > 10
                 let interval = isSevere ? 2.0 : 4.0
                 alertFeedbackManager.startSpeedingAlert(
@@ -749,19 +759,21 @@ struct ContentView: View {
                     volume: Float(themeManager.alarmVolume / 100.0)
                 )
             } else {
-                withAnimation(.easeInOut(duration: 0.5)) { alertGlowOpacity = 0.0 }
+                // Within range but not >5 km/h over — slow proximity chime only
                 alertFeedbackManager.startSpeedingAlert(
                     interval: 8.0,
                     sound: themeManager.alarmSound,
                     volume: Float(themeManager.alarmVolume / 100.0)
                 )
             }
+
             // Voice announcement — fires once per trap with cooldown
+            // Only announce speeding voice when >5 km/h over limit
             if let trap = speedTrapDetector.closestTrap {
                 voiceAlertManager.announce(
                     distanceMeters: trap.distance,
                     speedLimit: trap.speedLimit,
-                    isSpeeding: speedTrapDetector.isSpeeding,
+                    isSpeeding: speedTrapDetector.isAlarmSpeeding,
                     language: languageManager.currentLanguage,
                     trapID: "\(trap.coordinate.latitude),\(trap.coordinate.longitude)",
                     useMetric: locationManager.useMetric

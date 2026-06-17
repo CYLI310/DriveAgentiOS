@@ -60,8 +60,9 @@ struct UnifiedTrap: Identifiable {
 class SpeedTrapDetector: ObservableObject {
     @Published var closestTrap: SpeedTrapInfo?
     @Published var isWithinRange: Bool = false
-    @Published var isSpeeding: Bool = false // true when speed exceeds speed limit
-    @Published var speedingAmount: Double = 0.0 // Amount over limit in km/h
+    @Published var isSpeeding: Bool = false      // true when speed exceeds speed limit (visuals)
+    @Published var isAlarmSpeeding: Bool = false  // true only when >5 km/h over limit (audio/haptic)
+    @Published var speedingAmount: Double = 0.0  // Amount over limit in km/h
     @Published var alertDistance: Double = 500 // meters - configurable
     @Published var infiniteProximity: Bool = false // when true, ignores 2km limit
     
@@ -289,15 +290,21 @@ class SpeedTrapDetector: ObservableObject {
                         if trapData.speedLimitValue > 0 {
                             let currentSpeedKmh = currentSpeed * 3.6 // Convert m/s to km/h
                             self.speedingAmount = currentSpeedKmh - trapData.speedLimitValue
-                            self.isSpeeding = (self.isWithinRange || self.infiniteProximity) && self.speedingAmount > 0
+                            let inProximity = self.isWithinRange || self.infiniteProximity
+                            // Visuals: any overspeed
+                            self.isSpeeding = inProximity && self.speedingAmount > 0
+                            // Alarm / voice: only when >5 km/h over limit
+                            self.isAlarmSpeeding = inProximity && self.speedingAmount > 5
                         } else {
                             self.isSpeeding = false
+                            self.isAlarmSpeeding = false
                             self.speedingAmount = 0.0
                         }
                     } else {
                         self.closestTrap = nil
                         self.isWithinRange = false
                         self.isSpeeding = false
+                        self.isAlarmSpeeding = false
                         self.speedingAmount = 0.0
                     }
                 }
